@@ -8,6 +8,9 @@ import {
 import "@mantine/core/styles.css";
 import "./globals.css";
 
+import { AuthProvider } from "@/contexts/AuthContext";
+import { mantineTheme } from "@/lib/mantine-theme";
+
 export const metadata: Metadata = {
   title: "Meli Trends",
   description: "Analyze Mercado Libre product trends with ease.",
@@ -21,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider theme={mantineTheme} defaultColorScheme="auto">
+          <AuthProvider>{children}</AuthProvider>
+        </MantineProvider>
       </body>
     </html>
   );
