@@ -78,24 +78,39 @@ async function fetchSearchResults(
       const encodedKeyword = encodeURIComponent(variant);
       const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
 
+      const headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json',
+        'Accept-Language': 'es-AR,es;q=0.9',
+        'Referer': 'https://www.mercadolibre.com.ar/',
+      };
+
+      console.log(`🔍 [DEBUG] Fetching Search API:`);
+      console.log(`   URL: ${url}`);
+      console.log(`   Headers:`, JSON.stringify(headers, null, 2));
+
       // Search API is public - no auth required!
       // Add browser-like headers to avoid blocking
       const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'application/json',
-          'Accept-Language': 'es-AR,es;q=0.9',
-          'Referer': 'https://www.mercadolibre.com.ar/',
-        },
+        headers,
         cache: 'no-store',
       });
 
+      console.log(`📡 [DEBUG] Response status: ${response.status}`);
+      console.log(`📡 [DEBUG] Response headers:`, {
+        'content-type': response.headers.get('content-type'),
+        'x-request-id': response.headers.get('x-request-id'),
+        'server': response.headers.get('server'),
+      });
+
       if (!response.ok) {
+        const errorText = await response.text();
         console.error(
-          `Search API error for "${variant}":`,
+          `❌ Search API error for "${variant}":`,
           response.status,
-          await response.text()
+          errorText
         );
+        console.error(`   Full response headers:`, Object.fromEntries(response.headers.entries()));
         continue; // Try next variant
       }
 
