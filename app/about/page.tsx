@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import {
   Container,
   Title,
@@ -33,7 +34,9 @@ import { Header } from '@/components/layout/Header';
 export default function AboutPage() {
   return (
     <AppShell header={{ height: 60 }} padding="md">
-      <Header currentCountry="MLA" />
+      <Suspense fallback={<AppShell.Header />}>
+        <Header currentCountry="MLA" />
+      </Suspense>
 
       <AppShell.Main>
         <Container size="lg" py="xl">
