@@ -63,11 +63,12 @@ function getKeywordVariants(keyword: string): string[] {
 
 /**
  * Fetch search results for a keyword with fallback variants
- * NOTE: Search API is public and doesn't require authentication
+ * NOTE: Search API is public but we'll try with OAuth token first for server-side requests
  */
 async function fetchSearchResults(
   siteId: SiteId,
   keyword: string,
+  accessToken?: string,
   limit: number = PRODUCTS_PER_KEYWORD
 ): Promise<SearchResponse> {
   const variants = getKeywordVariants(keyword);
@@ -78,12 +79,18 @@ async function fetchSearchResults(
       const encodedKeyword = encodeURIComponent(variant);
       const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
 
-      const headers = {
+      const headers: Record<string, string> = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'application/json',
         'Accept-Language': 'es-AR,es;q=0.9',
         'Referer': 'https://www.mercadolibre.com.ar/',
       };
+
+      // Try with OAuth token first (might reduce rate limiting)
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+        console.log(`🔑 [DEBUG] Using OAuth token for Search API`);
+      }
 
       console.log(`🔍 [DEBUG] Fetching Search API:`);
       console.log(`   URL: ${url}`);
@@ -245,6 +252,7 @@ function calculateMetrics(
 async function processEnrichedTrends(
   trends: TrendItem[],
   siteId: SiteId,
+  accessToken: string,
   offset: number = 0,
   limit: number = 10
 ): Promise<EnrichedTrendItem[]> {
@@ -264,7 +272,8 @@ async function processEnrichedTrends(
         try {
           const searchData = await fetchSearchResults(
             siteId,
-            trend.keyword
+            trend.keyword,
+            accessToken
           );
 
           return calculateMetrics(trend, searchData);
@@ -395,6 +404,7 @@ export async function GET(
     const enrichedTrends = await processEnrichedTrends(
       trends,
       siteId,
+      access_token,
       offset,
       limit
     );
