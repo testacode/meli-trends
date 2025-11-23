@@ -27,7 +27,42 @@ const CONCURRENCY_LIMIT = 5;
 const PRODUCTS_PER_KEYWORD = 3;
 
 /**
- * Fetch search results for a keyword
+ * Simplify keyword for better search results
+ * Examples:
+ * - "black edition 4x4" -> "black edition 4x4" (try exact first)
+ * - If no results -> "black edition" (remove last word)
+ * - If still no results -> "black" (first significant word)
+ */
+function getKeywordVariants(keyword: string): string[] {
+  const variants: string[] = [keyword]; // Start with exact keyword
+
+  // Split into words and remove common filler words
+  const words = keyword
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 2) // Remove very short words
+    .filter((w) => !['de', 'la', 'el', 'los', 'las', 'con', 'para'].includes(w));
+
+  // Add progressively shorter variants
+  if (words.length > 2) {
+    // Try first 2-3 words
+    variants.push(words.slice(0, 3).join(' '));
+    variants.push(words.slice(0, 2).join(' '));
+  }
+
+  if (words.length > 1) {
+    // Try first word if it's meaningful
+    const firstWord = words[0];
+    if (firstWord.length > 3) {
+      variants.push(firstWord);
+    }
+  }
+
+  return [...new Set(variants)]; // Remove duplicates
+}
+
+/**
+ * Fetch search results for a keyword with fallback variants
  */
 async function fetchSearchResults(
   siteId: SiteId,
@@ -35,26 +70,64 @@ async function fetchSearchResults(
   accessToken: string,
   limit: number = PRODUCTS_PER_KEYWORD
 ): Promise<SearchResponse> {
-  const encodedKeyword = encodeURIComponent(keyword);
-  const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
+  const variants = getKeywordVariants(keyword);
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: 'no-store',
-  });
+  // Try each variant until we get results
+  for (const variant of variants) {
+    try {
+      const encodedKeyword = encodeURIComponent(variant);
+      const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
 
-  if (!response.ok) {
-    console.error(
-      `Search API error for "${keyword}":`,
-      response.status,
-      await response.text()
-    );
-    throw new Error(`Search API failed for keyword: ${keyword}`);
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        console.error(
+          `Search API error for "${variant}":`,
+          response.status,
+          await response.text()
+        );
+        continue; // Try next variant
+      }
+
+      const data: SearchResponse = await response.json();
+
+      // If we got results, return them
+      if (data.paging.total > 0) {
+        if (variant !== keyword) {
+          console.log(
+            `✅ Found results for "${keyword}" using variant "${variant}" (${data.paging.total} results)`
+          );
+        }
+        return data;
+      }
+
+      console.log(`⚠️  No results for variant "${variant}", trying next...`);
+    } catch (error) {
+      console.error(`Error with variant "${variant}":`, error);
+      continue;
+    }
   }
 
-  return response.json();
+  // No variants worked, return empty response
+  console.log(`❌ No results found for "${keyword}" with any variant`);
+  return {
+    site_id: siteId,
+    query: keyword,
+    paging: {
+      total: 0,
+      offset: 0,
+      limit,
+      primary_results: 0,
+    },
+    results: [],
+    sort: { id: 'relevance', name: 'Relevance' },
+    available_sorts: [],
+  };
 }
 
 /**
@@ -147,6 +220,7 @@ function calculateMetrics(
 
 /**
  * Process trends in parallel with concurrency limit
+ * NOTE: Filters out trends with 0 results, so may return fewer than 'limit'
  */
 async function processEnrichedTrends(
   trends: TrendItem[],
@@ -155,8 +229,10 @@ async function processEnrichedTrends(
   offset: number = 0,
   limit: number = 10
 ): Promise<EnrichedTrendItem[]> {
-  // Paginate trends
-  const paginatedTrends = trends.slice(offset, offset + limit);
+  // Process more trends than requested to account for filtering
+  // This ensures we get enough trends with data
+  const fetchSize = Math.min(limit * 3, trends.length); // Fetch 3x to ensure we get enough with data
+  const paginatedTrends = trends.slice(offset, offset + fetchSize);
 
   // Process in chunks to respect concurrency limit
   const enrichedTrends: EnrichedTrendItem[] = [];
@@ -189,9 +265,23 @@ async function processEnrichedTrends(
     );
 
     enrichedTrends.push(...chunkResults);
+
+    // If we already have enough trends with data, stop processing
+    const trendsWithData = enrichedTrends.filter((t) => t.total_results > 0);
+    if (trendsWithData.length >= limit) {
+      break;
+    }
   }
 
-  return enrichedTrends;
+  // Filter out trends without data
+  const trendsWithData = enrichedTrends.filter((t) => t.total_results > 0);
+
+  console.log(
+    `📊 Processed ${enrichedTrends.length} trends, ${trendsWithData.length} have data`
+  );
+
+  // Return up to the requested limit
+  return trendsWithData.slice(0, limit);
 }
 
 /**
