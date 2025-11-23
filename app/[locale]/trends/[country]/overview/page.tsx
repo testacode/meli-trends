@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   AppShell,
@@ -10,11 +10,11 @@ import {
   Stack,
   SimpleGrid,
   Button,
-  Paper,
   Box,
+  SegmentedControl,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconArrowLeft, IconDeviceDesktop } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { useTrends } from "@/hooks/useTrends";
 import { Header } from "@/components/layout/Header";
@@ -22,6 +22,7 @@ import { LoadingSkeleton } from "@/components/common/LoadingSkeleton";
 import { ErrorState } from "@/components/common/ErrorState";
 import { CategoryColumn } from "@/components/trends/CategoryColumn";
 import { COUNTRIES, type SiteId } from "@/utils/constants";
+import type { TrendType } from "@/types/meli";
 import { analyzeProductDistribution } from "@/utils/productCategories";
 
 export default function TrendsOverviewPage() {
@@ -31,6 +32,16 @@ export default function TrendsOverviewPage() {
 
   // Media query for responsive behavior
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // State for mobile tab switching
+  const [activeTab, setActiveTab] = useState<TrendType>("fastest_growing");
+
+  // Segment data for mobile view
+  const segmentData = [
+    { label: "🚀 Rápido", value: "fastest_growing" },
+    { label: "🔍 Buscado", value: "most_wanted" },
+    { label: "⭐ Popular", value: "most_popular" },
+  ];
 
   // Validate country
   const isValidCountry = country && country in COUNTRIES;
@@ -115,56 +126,78 @@ export default function TrendsOverviewPage() {
             </Stack>
           </Stack>
 
-          {/* Mobile Warning */}
-          {isMobile && (
-            <Paper p="xl" withBorder bg="meliBlue.0" mb="xl">
-              <Stack align="center" gap="md">
-                <IconDeviceDesktop size={48} />
-                <Title order={3} ta="center">
-                  Vista optimizada para desktop
-                </Title>
-                <Text ta="center" c="dimmed">
-                  Esta vista funciona mejor en pantallas más grandes. Te
-                  recomendamos usar una computadora para una mejor experiencia.
-                </Text>
-                <Button component={Link} href={`/trends/${country}`}>
-                  Volver a vista lista
-                </Button>
-              </Stack>
-            </Paper>
-          )}
-
           {/* Loading State */}
           {loading && <LoadingSkeleton />}
 
           {/* Error State */}
           {error && !loading && <ErrorState error={error} onRetry={refetch} />}
 
-          {/* Content - 3 Column Layout */}
+          {/* Content - Responsive Layout */}
           {data && !loading && !error && (
-            <SimpleGrid
-              cols={{ base: 1, md: 3 }}
-              spacing="lg"
-              style={{ alignItems: "start" }}
-            >
-              <CategoryColumn
-                trendType="fastest_growing"
-                trends={trendsByType.fastest_growing}
-                distribution={distributions.fastest_growing}
-              />
+            <>
+              {isMobile ? (
+                // Mobile: SegmentedControl + Single Column View
+                <Stack gap="lg">
+                  <SegmentedControl
+                    value={activeTab}
+                    onChange={(value) => setActiveTab(value as TrendType)}
+                    data={segmentData}
+                    fullWidth
+                    color="meliBlue"
+                    size="md"
+                  />
 
-              <CategoryColumn
-                trendType="most_wanted"
-                trends={trendsByType.most_wanted}
-                distribution={distributions.most_wanted}
-              />
+                  {activeTab === "fastest_growing" && (
+                    <CategoryColumn
+                      trendType="fastest_growing"
+                      trends={trendsByType.fastest_growing}
+                      distribution={distributions.fastest_growing}
+                    />
+                  )}
 
-              <CategoryColumn
-                trendType="most_popular"
-                trends={trendsByType.most_popular}
-                distribution={distributions.most_popular}
-              />
-            </SimpleGrid>
+                  {activeTab === "most_wanted" && (
+                    <CategoryColumn
+                      trendType="most_wanted"
+                      trends={trendsByType.most_wanted}
+                      distribution={distributions.most_wanted}
+                    />
+                  )}
+
+                  {activeTab === "most_popular" && (
+                    <CategoryColumn
+                      trendType="most_popular"
+                      trends={trendsByType.most_popular}
+                      distribution={distributions.most_popular}
+                    />
+                  )}
+                </Stack>
+              ) : (
+                // Desktop: 3-Column Grid Layout
+                <SimpleGrid
+                  cols={{ base: 1, md: 3 }}
+                  spacing="lg"
+                  style={{ alignItems: "start" }}
+                >
+                  <CategoryColumn
+                    trendType="fastest_growing"
+                    trends={trendsByType.fastest_growing}
+                    distribution={distributions.fastest_growing}
+                  />
+
+                  <CategoryColumn
+                    trendType="most_wanted"
+                    trends={trendsByType.most_wanted}
+                    distribution={distributions.most_wanted}
+                  />
+
+                  <CategoryColumn
+                    trendType="most_popular"
+                    trends={trendsByType.most_popular}
+                    distribution={distributions.most_popular}
+                  />
+                </SimpleGrid>
+              )}
+            </>
           )}
         </Container>
       </AppShell.Main>
