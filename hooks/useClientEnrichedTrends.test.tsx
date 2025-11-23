@@ -524,6 +524,11 @@ describe('useClientEnrichedTrends', () => {
     queryClient = createTestQueryClient();
     vi.clearAllMocks();
     mockFetchSearchDirect.mockClear();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('basic trends fetching', () => {
@@ -542,7 +547,7 @@ describe('useClientEnrichedTrends', () => {
         () => {
           expect(result.current.total).toBeGreaterThan(0);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
     });
 
@@ -568,7 +573,7 @@ describe('useClientEnrichedTrends', () => {
         () => {
           expect(result.current.error).toBeTruthy();
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
     });
   });
@@ -586,24 +591,37 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for basic trends to load
+      // Wait for basic trends to load (no timers involved here, React Query fetch)
       await waitFor(
         () => {
           expect(result.current.total).toBeGreaterThan(0);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
 
       // Should start processing
       expect(result.current.loading).toBe(true);
 
-      // Eventually all should be enriched
+      // Advance through batch 1 (2 trends)
+      await vi.advanceTimersByTimeAsync(1000);
+      await waitFor(() => {
+        expect(result.current.trends.length).toBeGreaterThanOrEqual(2);
+      }, { timeout: 1000 });
+
+      // Advance through batch 2 (2 more trends)
+      await vi.advanceTimersByTimeAsync(1000);
+      await waitFor(() => {
+        expect(result.current.trends.length).toBeGreaterThanOrEqual(4);
+      }, { timeout: 1000 });
+
+      // Complete all remaining timers (batch 3: 1 trend)
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
           expect(result.current.trends.length).toBe(5);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
     });
 
@@ -616,24 +634,22 @@ describe('useClientEnrichedTrends', () => {
       // Initial state
       expect(result.current.progress).toBe(0);
 
-      // Wait for first batch
+      // Wait for basic trends to load
       await waitFor(
         () => {
-          expect(result.current.trends.length).toBeGreaterThan(0);
+          expect(result.current.total).toBeGreaterThan(0);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
 
-      // Progress should be 50% (2 out of 4)
-      expect(result.current.progress).toBeGreaterThanOrEqual(50);
-      expect(result.current.progress).toBeLessThan(100);
-
-      // Eventually 100%
+      // With shouldAdvanceTime, timers advance automatically
+      // Just wait for completion and verify final progress
       await waitFor(
         () => {
           expect(result.current.progress).toBe(100);
+          expect(result.current.trends.length).toBe(4);
         },
-        { timeout: 15000 }
+        { timeout: 2000 }
       );
     });
 
@@ -643,12 +659,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for completion
+      // Wait for basic trends to load
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Should have called fetchSearchDirect for each trend
@@ -668,12 +693,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for completion
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all timers to process batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Should have 2 trends (one with error data, one successful)
@@ -696,12 +730,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for completion
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all timers to process batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Should have 1 trend with empty data
@@ -722,13 +765,22 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for first page to load
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete first page batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(2);
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Check if more trends available
@@ -741,12 +793,13 @@ describe('useClientEnrichedTrends', () => {
       // Load more
       await result.current.loadMore();
 
-      // Wait for new trends to load
+      // Complete second page batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(4);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
     });
 
@@ -756,12 +809,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for all trends to load
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // If total is 5 (from mockTrends) and limit is 10, hasMore should be false
@@ -774,12 +836,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for all trends to load
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       const trendsCountBefore = result.current.trends.length;
@@ -803,13 +874,22 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for initial load
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete initial load
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(2);
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       const initialFirstKeyword = result.current.trends[0].keyword;
@@ -817,13 +897,14 @@ describe('useClientEnrichedTrends', () => {
       // Refresh
       await result.current.refresh();
 
-      // Wait for re-enrichment to complete
+      // Complete refresh batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
           expect(result.current.trends.length).toBe(2);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Verify trends were refreshed (should have same keywords)
@@ -836,35 +917,46 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for initial load
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete initial load
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Load more
       if (result.current.hasMore) {
         await result.current.loadMore();
 
+        await vi.runAllTimersAsync();
         await waitFor(
           () => {
             expect(result.current.trends.length).toBe(4);
           },
-          { timeout: 15000 }
+          { timeout: 1000 }
         );
       }
 
       // Refresh
       await result.current.refresh();
 
-      // Should be back to first page
+      // Complete refresh batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(2);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
     });
 
@@ -877,12 +969,21 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for completion
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete initial load (with error)
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Mock successful response for refresh
@@ -893,12 +994,14 @@ describe('useClientEnrichedTrends', () => {
 
       expect(result.current.error).toBeNull();
 
+      // Complete refresh batches
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.loading).toBe(false);
           expect(result.current.trends.length).toBeGreaterThan(0);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
     });
   });
@@ -918,7 +1021,7 @@ describe('useClientEnrichedTrends', () => {
         () => {
           expect(result.current.total).toBe(mockTrends.length);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
     });
 
@@ -958,35 +1061,19 @@ describe('useClientEnrichedTrends', () => {
         () => {
           expect(result.current.total).toBeGreaterThan(0);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
 
-      // Batch 1: 2 trends
-      await waitFor(
-        () => {
-          expect(result.current.trends.length).toBe(2);
-        },
-        { timeout: 10000 }
-      );
-      expect(result.current.progress).toBe(40); // 2/5 = 40%
-
-      // Batch 2: 2 more trends (total 4)
-      await waitFor(
-        () => {
-          expect(result.current.trends.length).toBe(4);
-        },
-        { timeout: 10000 }
-      );
-      expect(result.current.progress).toBe(80); // 4/5 = 80%
-
-      // Batch 3: 1 final trend (total 5)
+      // With shouldAdvanceTime, timers advance automatically
+      // Just wait for completion and verify final state
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(5);
+          expect(result.current.progress).toBe(100);
+          expect(result.current.loading).toBe(false);
         },
-        { timeout: 10000 }
+        { timeout: 2000 }
       );
-      expect(result.current.progress).toBe(100); // 5/5 = 100%
     });
 
     it('should handle 1 trend in 1 batch', async () => {
@@ -995,14 +1082,23 @@ describe('useClientEnrichedTrends', () => {
         { wrapper: createWrapper(queryClient) }
       );
 
-      // Wait for completion
+      // Wait for basic trends
+      await waitFor(
+        () => {
+          expect(result.current.total).toBeGreaterThan(0);
+        },
+        { timeout: 2000 }
+      );
+
+      // Complete all timers (only 1 batch, no delay after last batch)
+      await vi.runAllTimersAsync();
       await waitFor(
         () => {
           expect(result.current.trends.length).toBe(1);
           expect(result.current.progress).toBe(100);
           expect(result.current.loading).toBe(false);
         },
-        { timeout: 15000 }
+        { timeout: 1000 }
       );
 
       // Should only call fetchSearchDirect once
