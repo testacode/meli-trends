@@ -26,6 +26,7 @@ import {
   IconChevronDown,
   IconLanguage,
   IconCheck,
+  IconSettings,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
@@ -140,11 +141,11 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
             fw={700}
             style={{ color: 'var(--mantine-color-meliBlue-5)' }}
           >
-            {t('header.appName')}
+            ML
           </Text>
         </Group>
 
-        {/* Desktop: Country Menu + Category Menu + Language + Theme Toggle */}
+        {/* Desktop/Tablet: Navigation with Settings menu */}
         <Group gap="md" visibleFrom="sm">
           {/* Country Menu */}
           <Menu shadow="md" width={250} position="bottom-start">
@@ -207,73 +208,73 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
           {/* Overview Toggle */}
           {showOverviewToggle && (
-            <ActionIcon
+            <Button
               variant="subtle"
+              leftSection={isOverviewPage ? <IconList size={18} /> : <IconChartBar size={18} />}
               onClick={() => {
                 const targetPath = isOverviewPage
                   ? `/trends/${currentCountry}`
                   : `/trends/${currentCountry}/overview`;
                 router.push(targetPath);
               }}
-              size="lg"
-              aria-label={isOverviewPage ? t('header.views.list') : t('header.views.overview')}
-              title={isOverviewPage ? t('header.views.list') : t('header.views.overview')}
             >
-              {isOverviewPage ? <IconList size={20} /> : <IconChartBar size={20} />}
-            </ActionIcon>
+              {isOverviewPage ? t('header.views.list') : t('header.views.overview')}
+            </Button>
           )}
 
-          {/* Language Menu */}
-          <Menu shadow="md" width={200} position="bottom-end">
+          {/* Settings Menu - Consolidated */}
+          <Menu shadow="md" width={250} position="bottom-end">
             <Menu.Target>
-              <ActionIcon
+              <Button
                 variant="subtle"
-                size="lg"
-                aria-label={t('header.language')}
-                title={t('header.language')}
+                leftSection={<IconSettings size={18} />}
+                rightSection={<IconChevronDown size={14} />}
               >
-                <IconLanguage size={20} />
-              </ActionIcon>
+                {t('header.settings')}
+              </Button>
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Label>{t('header.language')}</Menu.Label>
-              {locales.map((loc) => (
+              {/* Language Submenu */}
+              <Menu.Sub>
+                <Menu.Sub.Target>
+                  <Menu.Sub.Item leftSection={<IconLanguage size={18} />}>
+                    {t('header.language')}
+                  </Menu.Sub.Item>
+                </Menu.Sub.Target>
+                <Menu.Sub.Dropdown>
+                  {locales.map((loc) => (
+                    <Menu.Item
+                      key={loc}
+                      component="a"
+                      href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
+                      rightSection={locale === loc ? <IconCheck size={16} /> : null}
+                    >
+                      {localeFlags[loc]} {localeNames[loc]}
+                    </Menu.Item>
+                  ))}
+                </Menu.Sub.Dropdown>
+              </Menu.Sub>
+
+              {/* Theme Toggle - Direct item */}
+              {mounted && (
                 <Menu.Item
-                  key={loc}
-                  component="a"
-                  href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
-                  rightSection={locale === loc ? <IconCheck size={16} /> : null}
+                  leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+                  onClick={() => toggleColorScheme()}
                 >
-                  {localeFlags[loc]} {localeNames[loc]}
+                  {colorScheme === 'dark' ? t('header.theme.light') : t('header.theme.dark')}
                 </Menu.Item>
-              ))}
+              )}
+
+              {/* Help - Direct item */}
+              <Menu.Item
+                leftSection={<IconInfoCircle size={18} />}
+                onClick={() => router.push('/about')}
+              >
+                {t('header.help')}
+              </Menu.Item>
             </Menu.Dropdown>
           </Menu>
-
-          {/* Help */}
-          <ActionIcon
-            variant="subtle"
-            onClick={() => router.push('/about')}
-            size="lg"
-            aria-label={t('header.help')}
-            title={t('header.help')}
-          >
-            <IconInfoCircle size={20} />
-          </ActionIcon>
-
-          {/* Theme Toggle */}
-          {mounted && (
-            <ActionIcon
-              variant="subtle"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-              aria-label={t('header.theme.toggle')}
-              title={colorScheme === 'dark' ? t('header.theme.light') : t('header.theme.dark')}
-            >
-              {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
-            </ActionIcon>
-          )}
         </Group>
 
         {/* Mobile: Hamburger Menu */}
