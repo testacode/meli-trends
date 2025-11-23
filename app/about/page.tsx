@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
+import { Suspense } from "react";
 import {
   Container,
   Title,
@@ -17,7 +17,7 @@ import {
   Anchor,
   Paper,
   useMantineColorScheme,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconTrendingUp,
   IconSearch,
@@ -28,13 +28,13 @@ import {
   IconWorld,
   IconExternalLink,
   IconAlertTriangle,
-} from '@tabler/icons-react';
-import { AppShell } from '@mantine/core';
-import { Header } from '@/components/layout/Header';
+} from "@tabler/icons-react";
+import { AppShell } from "@mantine/core";
+import { Header } from "@/components/layout/Header";
 
 export default function AboutPage() {
   const { colorScheme } = useMantineColorScheme();
-  const tipBg = colorScheme === 'dark' ? 'gray.7' : 'grape.2';
+  const tipBg = colorScheme === "dark" ? "gray.8" : "grape.2";
 
   return (
     <AppShell header={{ height: 60 }} padding="md">
@@ -51,10 +51,13 @@ export default function AboutPage() {
                 ¿Qué son los MeLi Trends?
               </Title>
               <Text size="lg" c="dimmed">
-                Los Trends de MercadoLibre muestran los <strong>50 productos más populares</strong> entre
-                los usuarios. Esta información se actualiza semanalmente y está disponible para 7 países de
-                Latinoamérica. Los trends se clasifican automáticamente en 3 tipos según su posición, y puedes
-                filtrarlos por categoría para encontrar oportunidades específicas.
+                Los Trends de MercadoLibre muestran los{" "}
+                <strong>50 productos más populares</strong> entre los usuarios.
+                Esta información se actualiza semanalmente y está disponible
+                para 7 países de Latinoamérica. Los trends se clasifican
+                automáticamente en 3 tipos según su posición, y puedes
+                filtrarlos por categoría para encontrar oportunidades
+                específicas.
               </Text>
             </Box>
 
@@ -64,19 +67,27 @@ export default function AboutPage() {
                 📊 Tres Tipos de Trends (Clasificación Automática)
               </Title>
               <Text size="sm" c="dimmed" mb="md">
-                Los 50 trends se clasifican automáticamente según su posición en la respuesta de la API.
-                Cada trend card muestra un <strong>badge de color</strong> indicando su tipo:
+                Los 50 trends se clasifican automáticamente según su posición en
+                la respuesta de la API. Cada trend card muestra un{" "}
+                <strong>badge de color</strong> indicando su tipo:
               </Text>
               <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="red" mb="md">
+                  <ThemeIcon
+                    size="xl"
+                    radius="md"
+                    variant="light"
+                    color="red"
+                    mb="md"
+                  >
                     <IconChartLine size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
                     🔴 Fastest-Growing
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    Productos con <strong>mayor aumento de revenue</strong> en la última semana.
+                    Productos con <strong>mayor aumento de revenue</strong> en
+                    la última semana.
                   </Text>
                   <Badge color="red" variant="light" mt="md">
                     Posiciones 1-10
@@ -84,14 +95,21 @@ export default function AboutPage() {
                 </Card>
 
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="blue" mb="md">
+                  <ThemeIcon
+                    size="xl"
+                    radius="md"
+                    variant="light"
+                    color="blue"
+                    mb="md"
+                  >
                     <IconSearch size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
                     🔵 Most Wanted
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    Productos con <strong>mayor volumen de búsquedas</strong> durante la última semana.
+                    Productos con <strong>mayor volumen de búsquedas</strong>{" "}
+                    durante la última semana.
                   </Text>
                   <Badge color="blue" variant="light" mt="md">
                     Posiciones 11-30
@@ -99,14 +117,21 @@ export default function AboutPage() {
                 </Card>
 
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="green" mb="md">
+                  <ThemeIcon
+                    size="xl"
+                    radius="md"
+                    variant="light"
+                    color="green"
+                    mb="md"
+                  >
                     <IconTrendingUp size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
                     🟢 Most Popular
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    Productos con <strong>mayor aumento de búsquedas</strong> comparado con hace 2 semanas.
+                    Productos con <strong>mayor aumento de búsquedas</strong>{" "}
+                    comparado con hace 2 semanas.
                   </Text>
                   <Badge color="green" variant="light" mt="md">
                     Posiciones 31-50
@@ -135,13 +160,16 @@ export default function AboutPage() {
                   </Title>
                   <List spacing="xs" size="sm">
                     <List.Item>
-                      <strong>Most Wanted</strong> → Para conocer qué está &quot;caliente&quot; ahora (alta demanda)
+                      <strong>Most Wanted</strong> → Para conocer qué está
+                      &quot;caliente&quot; ahora (alta demanda)
                     </List.Item>
                     <List.Item>
-                      <strong>Fastest-Growing</strong> → Para validar que SÍ se vende (no solo se busca)
+                      <strong>Fastest-Growing</strong> → Para validar que SÍ se
+                      vende (no solo se busca)
                     </List.Item>
                     <List.Item>
-                      <strong>Categorías específicas</strong> → Para encontrar nichos menos competidos
+                      <strong>Categorías específicas</strong> → Para encontrar
+                      nichos menos competidos
                     </List.Item>
                   </List>
                 </Box>
@@ -151,9 +179,11 @@ export default function AboutPage() {
                     📈 Volumen de Búsquedas vs. Conversión
                   </Title>
                   <Text size="sm" c="dimmed">
-                    Los productos con <strong>intención de compra clara</strong> (ej: &quot;iphone 15 pro max
-                    256gb&quot;) convierten mejor que búsquedas genéricas (ej: &quot;celular&quot;). Busca keywords
-                    específicas dentro de los trends para mejores resultados.
+                    Los productos con <strong>intención de compra clara</strong>{" "}
+                    (ej: &quot;iphone 15 pro max 256gb&quot;) convierten mejor
+                    que búsquedas genéricas (ej: &quot;celular&quot;). Busca
+                    keywords específicas dentro de los trends para mejores
+                    resultados.
                   </Text>
                 </Box>
 
@@ -162,9 +192,11 @@ export default function AboutPage() {
                     ⚡ Productos Emergentes vs. Establecidos
                   </Title>
                   <Text size="sm" c="dimmed">
-                    <strong>Most Popular</strong> (emergentes) = Menos competencia, mayor riesgo
+                    <strong>Most Popular</strong> (emergentes) = Menos
+                    competencia, mayor riesgo
                     <br />
-                    <strong>Fastest-Growing</strong> (establecidos) = Más competencia, validados con ventas
+                    <strong>Fastest-Growing</strong> (establecidos) = Más
+                    competencia, validados con ventas
                   </Text>
                 </Box>
               </Stack>
@@ -173,7 +205,12 @@ export default function AboutPage() {
             {/* Countries Section */}
             <Box>
               <Group mb="md">
-                <ThemeIcon size="lg" radius="md" variant="light" color="meliBlue">
+                <ThemeIcon
+                  size="lg"
+                  radius="md"
+                  variant="light"
+                  color="meliBlue"
+                >
                   <IconWorld size={24} />
                 </ThemeIcon>
                 <Title order={2}>🌍 Países Disponibles</Title>
@@ -214,8 +251,9 @@ export default function AboutPage() {
               </Group>
 
               <Text size="sm" mb="md">
-                <strong>¡Ahora disponible!</strong> Puedes filtrar trends por categoría específica usando el
-                dropdown en la parte superior de cualquier vista de trends. Esto te permite enfocarte en nichos
+                <strong>¡Ahora disponible!</strong> Puedes filtrar trends por
+                categoría específica usando el dropdown en la parte superior de
+                cualquier vista de trends. Esto te permite enfocarte en nichos
                 específicos y encontrar oportunidades menos competidas.
               </Text>
 
@@ -241,15 +279,23 @@ export default function AboutPage() {
                 </List.Item>
               </List>
 
-              <Paper shadow="xs" p="md" radius="md" withBorder mt="md" bg={tipBg}>
+              <Paper
+                shadow="xs"
+                p="md"
+                radius="md"
+                withBorder
+                mt="md"
+                bg={tipBg}
+              >
                 <Text size="sm" fw={500} mb="xs">
                   💡 Tip: Combina categorías con tipos de trends
                 </Text>
                 <Text size="xs" c="dimmed">
-                  Por ejemplo, filtra por &quot;Celulares y Teléfonos&quot; y busca productos en la sección{' '}
-                  <strong>Fastest-Growing</strong> (primeros 10) para encontrar teléfonos que están vendiendo
-                  bien. O busca en <strong>Most Popular</strong> (últimos 20) para identificar tendencias
-                  emergentes en esa categoría.
+                  Por ejemplo, filtra por &quot;Celulares y Teléfonos&quot; y
+                  busca productos en la sección <strong>Fastest-Growing</strong>{" "}
+                  (primeros 10) para encontrar teléfonos que están vendiendo
+                  bien. O busca en <strong>Most Popular</strong> (últimos 20)
+                  para identificar tendencias emergentes en esa categoría.
                 </Text>
               </Paper>
             </Box>
@@ -265,76 +311,99 @@ export default function AboutPage() {
 
               <Accordion variant="separated">
                 <Accordion.Item value="update">
-                  <Accordion.Control>¿Con qué frecuencia se actualizan los trends?</Accordion.Control>
+                  <Accordion.Control>
+                    ¿Con qué frecuencia se actualizan los trends?
+                  </Accordion.Control>
                   <Accordion.Panel>
-                    Los trends se actualizan <strong>semanalmente</strong> por MercadoLibre. Nuestra
-                    aplicación muestra los datos más recientes disponibles en la API oficial.
+                    Los trends se actualizan <strong>semanalmente</strong> por
+                    MercadoLibre. Nuestra aplicación muestra los datos más
+                    recientes disponibles en la API oficial.
                   </Accordion.Panel>
                 </Accordion.Item>
 
                 <Accordion.Item value="public">
-                  <Accordion.Control>¿Los trends son datos públicos o privados?</Accordion.Control>
+                  <Accordion.Control>
+                    ¿Los trends son datos públicos o privados?
+                  </Accordion.Control>
                   <Accordion.Panel>
-                    Los trends son <strong>datos públicos/generales</strong> de MercadoLibre. Muestran los
-                    mismos productos populares para todos los usuarios, no son personalizados ni requieren
-                    login de usuario.
+                    Los trends son <strong>datos públicos/generales</strong> de
+                    MercadoLibre. Muestran los mismos productos populares para
+                    todos los usuarios, no son personalizados ni requieren login
+                    de usuario.
                   </Accordion.Panel>
                 </Accordion.Item>
 
                 <Accordion.Item value="difference">
                   <Accordion.Control>
-                    ¿Cuál es la diferencia entre &quot;más buscado&quot; y &quot;más vendido&quot;?
+                    ¿Cuál es la diferencia entre &quot;más buscado&quot; y
+                    &quot;más vendido&quot;?
                   </Accordion.Control>
                   <Accordion.Panel>
                     <List size="sm" spacing="xs">
                       <List.Item>
-                        <strong>Most Wanted (más buscado)</strong> - Refleja el volumen de búsquedas, lo que
-                        la gente está buscando
+                        <strong>Most Wanted (más buscado)</strong> - Refleja el
+                        volumen de búsquedas, lo que la gente está buscando
                       </List.Item>
                       <List.Item>
-                        <strong>Fastest-Growing (más vendido)</strong> - Refleja el crecimiento de revenue,
-                        lo que realmente se está comprando
+                        <strong>Fastest-Growing (más vendido)</strong> - Refleja
+                        el crecimiento de revenue, lo que realmente se está
+                        comprando
                       </List.Item>
                     </List>
                     <Text size="sm" mt="xs">
-                      Un producto puede tener muchas búsquedas pero pocas ventas, o viceversa.
+                      Un producto puede tener muchas búsquedas pero pocas
+                      ventas, o viceversa.
                     </Text>
                   </Accordion.Panel>
                 </Accordion.Item>
 
                 <Accordion.Item value="business">
-                  <Accordion.Control>¿Cómo puedo usar esta información para mi negocio?</Accordion.Control>
+                  <Accordion.Control>
+                    ¿Cómo puedo usar esta información para mi negocio?
+                  </Accordion.Control>
                   <Accordion.Panel>
                     <List size="sm" spacing="xs">
                       <List.Item>
-                        Identifica productos con alta demanda en tu país/categoría
+                        Identifica productos con alta demanda en tu
+                        país/categoría
                       </List.Item>
-                      <List.Item>Descubre tendencias emergentes antes que tu competencia</List.Item>
                       <List.Item>
-                        Valida ideas de productos viendo si tienen tracción real (ventas)
+                        Descubre tendencias emergentes antes que tu competencia
                       </List.Item>
-                      <List.Item>Optimiza tu inventario basándote en demanda real</List.Item>
                       <List.Item>
-                        Encuentra nichos específicos con menos competencia usando categorías
+                        Valida ideas de productos viendo si tienen tracción real
+                        (ventas)
+                      </List.Item>
+                      <List.Item>
+                        Optimiza tu inventario basándote en demanda real
+                      </List.Item>
+                      <List.Item>
+                        Encuentra nichos específicos con menos competencia
+                        usando categorías
                       </List.Item>
                     </List>
                   </Accordion.Panel>
                 </Accordion.Item>
 
                 <Accordion.Item value="api">
-                  <Accordion.Control>¿De dónde vienen estos datos?</Accordion.Control>
+                  <Accordion.Control>
+                    ¿De dónde vienen estos datos?
+                  </Accordion.Control>
                   <Accordion.Panel>
-                    Todos los datos provienen de la{' '}
+                    Todos los datos provienen de la{" "}
                     <Anchor
                       href="https://developers.mercadolibre.com.ar/en_us/trends"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       API oficial de MercadoLibre Trends
-                      <IconExternalLink size={14} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
+                      <IconExternalLink
+                        size={14}
+                        style={{ marginLeft: 4, verticalAlign: "middle" }}
+                      />
                     </Anchor>
-                    . La autenticación se maneja de forma segura en nuestro servidor, sin exponer
-                    credenciales.
+                    . La autenticación se maneja de forma segura en nuestro
+                    servidor, sin exponer credenciales.
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>
@@ -359,31 +428,36 @@ export default function AboutPage() {
                   <Accordion.Panel>
                     <Stack gap="sm">
                       <Text size="sm">
-                        MercadoLibre ha restringido el acceso a su API de Búsqueda
-                        (Search API) mediante CloudFront, bloqueando todas las
-                        solicitudes con errores 403. Este problema afecta a
-                        desarrolladores en todo el mundo desde <strong>abril 2025</strong>.
+                        MercadoLibre ha restringido el acceso a su API de
+                        Búsqueda (Search API) mediante CloudFront, bloqueando
+                        todas las solicitudes con errores 403. Este problema
+                        afecta a desarrolladores en todo el mundo desde{" "}
+                        <strong>abril 2025</strong>.
                       </Text>
                       <Text size="sm">
                         <strong>Estado actual:</strong>
                       </Text>
                       <List size="sm" spacing="xs">
                         <List.Item>
-                          ✅ Los <strong>trends básicos</strong> (palabras clave) funcionan
-                          normalmente
+                          ✅ Los <strong>trends básicos</strong> (palabras
+                          clave) funcionan normalmente
                         </List.Item>
                         <List.Item>
-                          ❌ El <strong>enriquecimiento con datos de productos</strong> está
-                          bloqueado
+                          ❌ El{" "}
+                          <strong>
+                            enriquecimiento con datos de productos
+                          </strong>{" "}
+                          está bloqueado
                         </List.Item>
                         <List.Item>
-                          📧 Hemos contactado a MercadoLibre para resolver el problema
+                          📧 Hemos contactado a MercadoLibre para resolver el
+                          problema
                         </List.Item>
                       </List>
                       <Text size="xs" c="dimmed" mt="xs">
-                        Mientras tanto, puedes ver los trends básicos en la página
-                        principal. Te notificaremos cuando la funcionalidad se
-                        restablezca.
+                        Mientras tanto, puedes ver los trends básicos en la
+                        página principal. Te notificaremos cuando la
+                        funcionalidad se restablezca.
                       </Text>
                     </Stack>
                   </Accordion.Panel>
@@ -392,40 +466,44 @@ export default function AboutPage() {
                 <Accordion.Item value="enrichment">
                   <Accordion.Control>
                     <Text fw={500}>
-                      Funcionalidad de Enriquecimiento (temporalmente no disponible)
+                      Funcionalidad de Enriquecimiento (temporalmente no
+                      disponible)
                     </Text>
                   </Accordion.Control>
                   <Accordion.Panel>
                     <Stack gap="sm">
                       <Text size="sm">
-                        La vista de trends enriquecidos carga rápidamente los trends básicos.
-                        Para ver métricas detalladas (oportunidad de negocio, precios,
-                        ventas), haz click en el botón <strong>+</strong> en cada card
-                        cuando la funcionalidad esté disponible.
+                        La vista de trends enriquecidos carga rápidamente los
+                        trends básicos. Para ver métricas detalladas
+                        (oportunidad de negocio, precios, ventas), haz click en
+                        el botón <strong>+</strong> en cada card cuando la
+                        funcionalidad esté disponible.
                       </Text>
                       <Text size="sm" fw={500}>
                         Métricas incluidas:
                       </Text>
                       <List size="sm" spacing="xs">
                         <List.Item>
-                          <strong>Puntuación de oportunidad</strong> - Score 0-100 basado en
-                          volumen de búsqueda, ventas, envío gratis y disponibilidad
+                          <strong>Puntuación de oportunidad</strong> - Score
+                          0-100 basado en volumen de búsqueda, ventas, envío
+                          gratis y disponibilidad
                         </List.Item>
                         <List.Item>
-                          <strong>Rango de precios</strong> - Precio mínimo, máximo y promedio
-                          de los productos top
+                          <strong>Rango de precios</strong> - Precio mínimo,
+                          máximo y promedio de los productos top
                         </List.Item>
                         <List.Item>
-                          <strong>Ventas totales</strong> - Suma de unidades vendidas de los
-                          productos principales
+                          <strong>Ventas totales</strong> - Suma de unidades
+                          vendidas de los productos principales
                         </List.Item>
                         <List.Item>
-                          <strong>Envío gratis</strong> - Porcentaje de productos con envío
-                          gratuito
+                          <strong>Envío gratis</strong> - Porcentaje de
+                          productos con envío gratuito
                         </List.Item>
                       </List>
                       <Text size="xs" c="dimmed" mt="xs">
-                        Las métricas se cargan bajo demanda para evitar bloqueos de la API.
+                        Las métricas se cargan bajo demanda para evitar bloqueos
+                        de la API.
                       </Text>
                     </Stack>
                   </Accordion.Panel>
@@ -446,7 +524,10 @@ export default function AboutPage() {
                     rel="noopener noreferrer"
                   >
                     Documentación oficial de MercadoLibre Trends API
-                    <IconExternalLink size={14} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
+                    <IconExternalLink
+                      size={14}
+                      style={{ marginLeft: 4, verticalAlign: "middle" }}
+                    />
                   </Anchor>
                 </List.Item>
                 <List.Item>
@@ -456,7 +537,10 @@ export default function AboutPage() {
                     rel="noopener noreferrer"
                   >
                     Categorías y Atributos de MercadoLibre
-                    <IconExternalLink size={14} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
+                    <IconExternalLink
+                      size={14}
+                      style={{ marginLeft: 4, verticalAlign: "middle" }}
+                    />
                   </Anchor>
                 </List.Item>
               </List>
@@ -464,7 +548,8 @@ export default function AboutPage() {
 
             {/* Footer */}
             <Text size="sm" c="dimmed" ta="center" mt="xl">
-              Esta aplicación fue creada para visualizar trends públicos de MercadoLibre.
+              Esta aplicación fue creada para visualizar trends públicos de
+              MercadoLibre.
               <br />
               No está afiliada ni respaldada oficialmente por MercadoLibre.
             </Text>
