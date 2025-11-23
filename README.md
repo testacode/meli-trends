@@ -10,7 +10,6 @@
 ## Table of Contents
 
 - [Overview](#overview)
-- [⚠️ Important Notice](#️-important-notice)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -32,20 +31,7 @@
 MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, and Peru). The application provides two main views:
 
 1. **Basic Trends**: Keyword trends with automatic classification (Fastest-Growing, Most Wanted, Most Popular)
-2. **Enriched Trends** ⚠️ _Currently unavailable_: Keywords enhanced with real product data, metrics, and opportunity scores
-
-## ⚠️ Important Notice
-
-**Search API Status (November 2025)**
-
-The MercadoLibre Search API is currently blocked by CloudFront (403 errors). This affects enriched trends functionality:
-
-- ✅ **Working**: Basic trends (Trends API)
-- ❌ **Unavailable**: Enriched trends (Search API)
-- **Cause**: CloudFront IP-based blocking
-- **Details**: See [Search API Investigation](docs/architecture/search-api-403-investigation-2025-11.md)
-
-Basic trends functionality remains fully operational using the Trends API.
+2. **Enriched Trends**: Keywords enhanced with real product data, metrics, and opportunity scores
 
 ## Features
 
