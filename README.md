@@ -28,10 +28,7 @@
 
 ## Overview
 
-MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, and Peru). The application provides two main views:
-
-1. **Basic Trends**: Keyword trends with automatic classification (Fastest-Growing, Most Wanted, Most Popular)
-2. **Enriched Trends**: Keywords enhanced with real product data, metrics, and opportunity scores
+MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, and Peru). The application provides keyword trends with automatic classification into three categories: Fastest-Growing, Most Wanted, and Most Popular.
 
 ## Features
 
@@ -219,8 +216,7 @@ meli-trends/
 │   ├── [locale]/                   # i18n routes (es, en, pt-BR)
 │   │   ├── trends/[country]/      # Dynamic country pages
 │   │   │   ├── page.tsx           # Basic trends list
-│   │   │   ├── overview/          # Overview by trend type
-│   │   │   └── enriched/          # Enriched trends (unavailable)
+│   │   │   └── overview/          # Overview by trend type
 │   │   ├── about/                 # About page
 │   │   ├── layout.tsx             # Locale layout with i18n
 │   │   └── page.tsx               # Home page
@@ -236,7 +232,6 @@ meli-trends/
 │   ├── trends/                    # Trend components
 │   │   ├── TrendCard.tsx
 │   │   ├── TrendsList.tsx
-│   │   ├── EnrichedTrendCard.tsx
 │   │   ├── CategoryColumn.tsx              # Overview column
 │   │   └── CategoryDistributionChart.tsx   # Category chart
 │   └── common/                    # Common components
@@ -246,9 +241,7 @@ meli-trends/
 │       └── OverviewSkeleton.tsx          # Overview loading skeleton
 ├── hooks/                          # Custom React hooks
 │   ├── useTrends.ts
-│   ├── useCategories.ts
-│   ├── useClientEnrichedTrends.ts
-│   └── useEnrichTrendOnDemand.ts
+│   └── useCategories.ts
 ├── i18n/                           # Internationalization config
 │   ├── config.ts                  # next-intl setup
 │   ├── navigation.ts              # Locale-aware navigation
