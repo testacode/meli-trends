@@ -19,6 +19,7 @@ import {
   IconAlertCircle,
   IconRefresh,
   IconInfoCircle,
+  IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useTrends } from '@/hooks/useTrends';
 import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
@@ -108,10 +109,49 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
             </Group>
           )}
 
+          {/* Search API Warning */}
+          <Alert
+            icon={<IconAlertTriangle size={16} />}
+            title="⚠️ Funcionalidad de Enriquecimiento Temporalmente No Disponible"
+            color="yellow"
+            variant="filled"
+            mt="md"
+          >
+            <Stack gap="sm">
+              <Text size="sm">
+                MercadoLibre ha restringido el acceso a su API de Búsqueda
+                (Search API) mediante CloudFront, bloqueando todas las
+                solicitudes con errores 403. Este problema afecta a desarrolladores
+                en todo el mundo desde abril 2025.
+              </Text>
+              <Text size="sm">
+                <strong>Estado actual:</strong>
+              </Text>
+              <ul style={{ marginTop: 0, marginBottom: 0, fontSize: '0.875rem' }}>
+                <li>
+                  ✓ Los <strong>trends básicos</strong> (palabras clave) funcionan
+                  normalmente
+                </li>
+                <li>
+                  ✗ El <strong>enriquecimiento con datos de productos</strong> está
+                  bloqueado
+                </li>
+                <li>
+                  📧 Hemos contactado a MercadoLibre para resolver el problema
+                </li>
+              </ul>
+              <Text size="xs" c="dimmed" mt="xs">
+                Mientras tanto, puedes ver los trends básicos en la página
+                principal. Te notificaremos cuando la funcionalidad se
+                restablezca.
+              </Text>
+            </Stack>
+          </Alert>
+
           {/* Info Alert */}
           <Alert
             icon={<IconInfoCircle size={16} />}
-            title="Cómo funciona"
+            title="Cómo funciona (cuando esté disponible)"
             color="blue"
             variant="light"
             mt="md"

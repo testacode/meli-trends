@@ -145,7 +145,10 @@ export function useEnrichTrendOnDemand(siteId: SiteId, trend: TrendItem) {
       if (!searchData.results || searchData.results.length === 0) {
         logger.warn(`No products found for "${trend.keyword}"`, timer.end());
         console.log(`⚠️ [ON-DEMAND] No products found for "${trend.keyword}"`);
-        setState({ status: 'error', error: 'No se encontraron productos' });
+        setState({
+          status: 'error',
+          error: 'API de Búsqueda temporalmente no disponible (error 403)',
+        });
         return;
       }
 
@@ -162,7 +165,11 @@ export function useEnrichTrendOnDemand(siteId: SiteId, trend: TrendItem) {
       setState({ status: 'success', data: enrichedTrend });
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error desconocido';
+        error instanceof Error && error.message.includes('403')
+          ? 'API de Búsqueda bloqueada por CloudFront (error 403)'
+          : error instanceof Error
+            ? error.message
+            : 'Error desconocido';
       logger.error(
         `Failed to enrich "${trend.keyword}"`,
         error instanceof Error ? error : new Error(String(error)),
