@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, Text, Badge, Group, Stack } from '@mantine/core';
-import { IconTrendingUp, IconExternalLink } from '@tabler/icons-react';
+import { Card, Text, Badge, Group, Stack, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
+import { IconTrendingUp, IconExternalLink, IconCopy, IconCheck } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
 import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
 import { useTranslations } from 'next-intl';
@@ -71,7 +71,27 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
               </Badge>
             )}
           </Group>
-          <IconExternalLink size={18} style={{ opacity: 0.6, flexShrink: 0 }} />
+          <Group gap={4} wrap="nowrap">
+            <CopyButton value={trend.keyword} timeout={2000}>
+              {({ copied, copy }) => (
+                <Tooltip label={copied ? t('trends.copiedTrend') : t('trends.copyTrend')} withArrow position="left">
+                  <ActionIcon
+                    color={copied ? 'teal' : 'gray'}
+                    variant="subtle"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      copy();
+                    }}
+                    aria-label={t('trends.copyTrend')}
+                  >
+                    {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </CopyButton>
+            <IconExternalLink size={18} style={{ opacity: 0.6, flexShrink: 0 }} />
+          </Group>
         </Group>
 
         {/* Keyword */}
