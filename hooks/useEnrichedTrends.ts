@@ -56,6 +56,7 @@ export function useEnrichedTrends({
   const [offset, setOffset] = useState(0);
   const [cacheAge, setCacheAge] = useState<string | null>(null);
   const loadingRef = useRef(false);
+  const initializedRef = useRef(false); // Prevent infinite loop
 
   const hasMore = trends.length < total && trends.length > 0;
 
@@ -156,10 +157,11 @@ export function useEnrichedTrends({
 
   // Auto-load first page on mount
   useEffect(() => {
-    if (autoLoad && trends.length === 0 && !loading && !error) {
+    if (autoLoad && !initializedRef.current && !loading && !error) {
+      initializedRef.current = true;
       fetchTrends(0, false);
     }
-  }, [autoLoad, siteId, trends.length, loading, error, fetchTrends]);
+  }, [autoLoad, loading, error]); // Removed fetchTrends and trends.length to prevent loop
 
   // Reset when site changes
   useEffect(() => {
@@ -168,6 +170,7 @@ export function useEnrichedTrends({
     setError(null);
     setTotal(0);
     setCacheAge(null);
+    initializedRef.current = false; // Reset initialized flag
   }, [siteId]);
 
   return {
