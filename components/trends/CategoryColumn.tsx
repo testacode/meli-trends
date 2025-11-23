@@ -1,9 +1,20 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import { Stack, Title, Text, Paper, Box } from "@mantine/core";
 import type { TrendItem, TrendType } from "@/types/meli";
 import type { CategoryDistribution } from "@/utils/productCategories";
 import { getTrendTypeLabel } from "@/utils/trends";
 import { TrendCard } from "./TrendCard";
-import { CategoryDistributionChart } from "./CategoryDistributionChart";
+
+// Dynamic import with SSR disabled to prevent Recharts dimension warnings
+const CategoryDistributionChart = dynamic(
+  () =>
+    import("./CategoryDistributionChart").then(
+      (mod) => mod.CategoryDistributionChart
+    ),
+  { ssr: false }
+);
 
 type CategoryColumnProps = {
   trendType: TrendType;
