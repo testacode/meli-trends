@@ -79,6 +79,7 @@ export function Header({ currentCountry }: HeaderProps) {
             onClick={() => toggleColorScheme()}
             size="lg"
             aria-label="Toggle color scheme"
+            suppressHydrationWarning
           >
             {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
           </ActionIcon>
@@ -117,6 +118,7 @@ export function Header({ currentCountry }: HeaderProps) {
             <Menu.Item
               leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
               onClick={() => toggleColorScheme()}
+              suppressHydrationWarning
             >
               {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
             </Menu.Item>
