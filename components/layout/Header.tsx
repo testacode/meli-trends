@@ -10,6 +10,7 @@ import {
   useMantineColorScheme,
   Text,
   Menu,
+  ScrollArea,
 } from '@mantine/core';
 import {
   IconSun,
@@ -21,6 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
+import { saveSelectedCategory, getSavedCategory } from '@/utils/storage';
 
 interface HeaderProps {
   currentCountry?: SiteId;
@@ -39,11 +41,18 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
     siteId: currentCountry || 'MLA',
   });
 
-  // Only render theme toggle after component mounts (client-side only)
+  // Load saved category from localStorage on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-  }, []);
+
+    if (currentCountry && !currentCategory) {
+      const savedCategory = getSavedCategory(currentCountry);
+      if (savedCategory) {
+        handleCategoryChange(savedCategory);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCountry]);
 
   const handleCountryChange = (value: string | null) => {
     if (value) {
@@ -54,6 +63,9 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
   const handleCategoryChange = (value: string | null) => {
     if (!currentCountry) return;
+
+    // Save to localStorage
+    saveSelectedCategory(currentCountry, value);
 
     const params = new URLSearchParams(searchParams.toString());
 
@@ -156,43 +168,68 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
         {/* Mobile: Menu */}
         <Group hiddenFrom="sm">
-          <Menu shadow="md" width={200} position="bottom-end">
+          <Menu shadow="md" width={280} position="bottom-end">
             <Menu.Target>
               <ActionIcon variant="subtle" size="lg">
                 <IconMenu2 size={20} />
               </ActionIcon>
             </Menu.Target>
 
-          <Menu.Dropdown>
-            <Menu.Label>País</Menu.Label>
-            {countryOptions.map((option) => (
+            <Menu.Dropdown>
+              {/* Country Section */}
+              <Menu.Label>País</Menu.Label>
+              {countryOptions.map((option) => (
+                <Menu.Item
+                  key={option.value}
+                  onClick={() => handleCountryChange(option.value)}
+                  bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                >
+                  {option.label}
+                </Menu.Item>
+              ))}
+
+              {/* Category Section - Only show if on trends page */}
+              {showCategoryFilter && (
+                <>
+                  <Menu.Divider />
+                  <Menu.Label>Categoría</Menu.Label>
+                  <ScrollArea.Autosize mah={300}>
+                    {loadingCategories ? (
+                      <Menu.Item disabled>Cargando categorías...</Menu.Item>
+                    ) : (
+                      categoryOptions.map((option) => (
+                        <Menu.Item
+                          key={option.value}
+                          onClick={() => handleCategoryChange(option.value || null)}
+                          bg={currentCategory === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                        >
+                          {option.label}
+                        </Menu.Item>
+                      ))
+                    )}
+                  </ScrollArea.Autosize>
+                </>
+              )}
+
+              <Menu.Divider />
+
+              {/* Actions */}
               <Menu.Item
-                key={option.value}
-                onClick={() => handleCountryChange(option.value)}
-                bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                leftSection={<IconInfoCircle size={18} />}
+                onClick={() => router.push('/about')}
               >
-                {option.label}
+                Ayuda e Información
               </Menu.Item>
-            ))}
 
-            <Menu.Divider />
-
-            <Menu.Item
-              leftSection={<IconInfoCircle size={18} />}
-              onClick={() => router.push('/about')}
-            >
-              Ayuda e Información
-            </Menu.Item>
-
-            {mounted && (
-              <Menu.Item
-                leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
-                onClick={() => toggleColorScheme()}
-              >
-                {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-              </Menu.Item>
-            )}
-          </Menu.Dropdown>
+              {mounted && (
+                <Menu.Item
+                  leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+                  onClick={() => toggleColorScheme()}
+                >
+                  {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                </Menu.Item>
+              )}
+            </Menu.Dropdown>
           </Menu>
         </Group>
       </Group>
