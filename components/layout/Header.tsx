@@ -58,8 +58,12 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
   const handleCountryChange = (value: string | null) => {
     if (value) {
-      // Reset category when changing country
-      router.push(`/trends/${value}`);
+      // Preserve current page type (overview vs. list)
+      const isOnOverviewPage = pathname?.includes('/overview');
+      const basePath = `/trends/${value}`;
+      const targetPath = isOnOverviewPage ? `${basePath}/overview` : basePath;
+
+      router.push(targetPath);
     }
   };
 
