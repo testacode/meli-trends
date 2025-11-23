@@ -1,0 +1,89 @@
+{
+  "metadata": {
+    "title": "MeLi Trends - Tendências do MercadoLibre em Tempo Real",
+    "titleTemplate": "%s | MeLi Trends",
+    "description": "Descubra os 50 produtos mais pesquisados ​​e vendidos no MercadoLibre. Tendências atualizadas semanalmente para Argentina, Brasil, Chile, México, Colômbia, Uruguai e Peru."
+  },
+  "header": {
+    "appName": "MeLi Trends",
+    "countries": "Países",
+    "categories": "Categorias",
+    "allCategories": "Todas as categorias",
+    "loadingCategories": "Carregando categorias...",
+    "help": "Ajuda e Informações",
+    "language": "Idioma",
+    "selectCountry": "Selecione um país",
+    "selectCategory": "Selecione uma categoria",
+    "theme": {
+      "toggle": "Alternar tema",
+      "light": "Modo claro",
+      "dark": "Modo escuro"
+    },
+    "views": {
+      "list": "Visualização em Lista",
+      "overview": "Visualização por Categorias"
+    }
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "retry": "Tentar novamente",
+    "noData": "Nenhum dado disponível",
+    "noResults": "Nenhum resultado encontrado"
+  },
+  "trends": {
+    "title": "Tendências",
+    "enriched": "Tendências Enriquecidas",
+    "basic": "Tendências Básicas",
+    "opportunityScore": "Pontuação de Oportunidade",
+    "searchVolume": "Volume de Pesquisa",
+    "soldQuantity": "Quantidade Vendida",
+    "priceRange": "Faixa de Preço",
+    "freeShipping": "Frete Grátis",
+    "viewDetails": "Ver Detalhes",
+    "expand": "Expandir",
+    "collapse": "Recolher",
+    "viewOnMeli": "Ver no MercadoLibre →",
+    "viewDetailsTooltip": "Ver detalhes e métricas",
+    "opportunityTooltip": "Pontuação de oportunidade de negócio",
+    "businessOpportunity": "Oportunidade de Negócio",
+    "priceRangeLabel": "Faixa de preço:",
+    "averagePrice": "Preço médio:",
+    "totalSold": "Total vendido:",
+    "freeShippingLabel": "Frete grátis:",
+    "searchResults": "Resultados de pesquisa:",
+    "clickToSeeMetrics": "Clique em + para ver métricas detalhadas",
+    "errorLoadingDetails": "Erro ao carregar detalhes:",
+    "new": "Novo",
+    "more": "mais",
+    "units": "unidades",
+    "opportunityLabels": {
+      "noData": "Sem dados",
+      "excellent": "Excelente",
+      "good": "Boa",
+      "medium": "Média",
+      "low": "Baixa"
+    }
+  },
+  "errors": {
+    "fetchFailed": "Falha ao carregar dados",
+    "networkError": "Erro de conexão",
+    "tryAgain": "Por favor, tente novamente",
+    "somethingWentWrong": "Algo deu errado",
+    "loadingTrends": "Erro ao carregar tendências",
+    "retry": "Tentar novamente",
+    "backToHome": "Voltar ao início",
+    "errorCode": "Código de erro",
+    "status401": "Token inválido ou expirado. Por favor, faça login novamente.",
+    "status403": "Você não tem permissão para acessar este recurso.",
+    "status404": "Nenhum dado encontrado para este país ou categoria.",
+    "status429": "Muitas solicitações. Por favor, aguarde alguns minutos e tente novamente.",
+    "status0": "Erro de conexão. Verifique sua conexão com a internet.",
+    "defaultMessage": "Ocorreu um erro ao carregar os dados."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  }
+}

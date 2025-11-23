@@ -3,6 +3,7 @@
 import { Stack, Text, Button, Alert, Code } from '@mantine/core';
 import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import type { ApiError } from '@/types/meli';
+import { useTranslations } from 'next-intl';
 
 interface ErrorStateProps {
   error: ApiError;
@@ -10,23 +11,25 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
+  const t = useTranslations();
+
   const getErrorMessage = (error: ApiError): string => {
     if (error.status === 401) {
-      return 'Token inválido o expirado. Por favor, vuelve a iniciar sesión.';
+      return t('errors.status401');
     }
     if (error.status === 403) {
-      return 'No tienes permiso para acceder a este recurso.';
+      return t('errors.status403');
     }
     if (error.status === 404) {
-      return 'No se encontraron datos para este país o categoría.';
+      return t('errors.status404');
     }
     if (error.status === 429) {
-      return 'Demasiadas solicitudes. Por favor, espera unos minutos e intenta nuevamente.';
+      return t('errors.status429');
     }
     if (error.status === 0) {
-      return 'Error de conexión. Verifica tu conexión a internet.';
+      return t('errors.status0');
     }
-    return error.message || 'Ocurrió un error al cargar los datos.';
+    return error.message || t('errors.defaultMessage');
   };
 
   const showDetails = error.status !== 401 && error.status !== 403;
@@ -35,7 +38,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
     <Stack align="center" justify="center" mih={400} gap="lg" p="xl">
       <Alert
         icon={<IconAlertCircle size={24} />}
-        title="Error al cargar trends"
+        title={t('errors.loadingTrends')}
         color="red"
         variant="light"
         maw={600}
@@ -51,7 +54,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
 
           {showDetails && (
             <Text size="xs" c="dimmed">
-              Código de error: {error.status || 'N/A'}
+              {t('errors.errorCode')}: {error.status || 'N/A'}
             </Text>
           )}
         </Stack>
@@ -64,7 +67,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
           variant="light"
           color="meliBlue"
         >
-          Reintentar
+          {t('errors.retry')}
         </Button>
       )}
 
@@ -75,7 +78,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
           variant="filled"
           color="meliBlue"
         >
-          Volver al inicio
+          {t('errors.backToHome')}
         </Button>
       )}
     </Stack>

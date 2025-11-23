@@ -1,6 +1,8 @@
 import { render, renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NextIntlClientProvider } from 'next-intl';
 import type { ReactElement, ReactNode } from 'react';
+import messages from '@/locales/es.json';
 
 /**
  * Creates a new QueryClient instance with default options for testing
@@ -21,14 +23,16 @@ export function createTestQueryClient(): QueryClient {
 }
 
 /**
- * Wrapper component that provides QueryClient to children
+ * Wrapper component that provides QueryClient and NextIntlClientProvider to children
  */
 function createWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <NextIntlClientProvider locale="es" messages={messages}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </NextIntlClientProvider>
     );
   };
 }
