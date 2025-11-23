@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AppShell, Container } from '@mantine/core';
-import { useAuth } from '@/contexts/AuthContext';
 import { useTrends } from '@/hooks/useTrends';
 import { Header } from '@/components/layout/Header';
 import { TrendsList } from '@/components/trends/TrendsList';
@@ -14,42 +13,23 @@ import { COUNTRIES, type SiteId } from '@/utils/constants';
 export default function TrendsPage() {
   const params = useParams();
   const router = useRouter();
-  const { token, isAuthenticated, isLoading: authLoading } = useAuth();
 
   const country = params.country as SiteId;
 
   // Validate country
   const isValidCountry = country && country in COUNTRIES;
 
-  // Fetch trends
+  // Fetch trends (no auth required - handled server-side)
   const { data, loading, error, refetch } = useTrends({
-    token,
     siteId: country,
   });
 
-  // Redirect to home if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/');
-    }
-  }, [authLoading, isAuthenticated, router]);
-
   // Redirect to default country if invalid country
   useEffect(() => {
-    if (!isValidCountry && !authLoading) {
+    if (!isValidCountry) {
       router.push('/');
     }
-  }, [isValidCountry, authLoading, router]);
-
-  // Show nothing while checking auth
-  if (authLoading) {
-    return null;
-  }
-
-  // Show nothing if not authenticated (will redirect)
-  if (!isAuthenticated) {
-    return null;
-  }
+  }, [isValidCountry, router]);
 
   // Show nothing if invalid country (will redirect)
   if (!isValidCountry) {

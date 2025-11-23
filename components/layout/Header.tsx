@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   AppShell,
   Group,
@@ -8,17 +8,14 @@ import {
   ActionIcon,
   useMantineColorScheme,
   Text,
-  Button,
   Menu,
 } from '@mantine/core';
 import {
   IconSun,
   IconMoon,
-  IconLogout,
   IconWorld,
   IconMenu2,
 } from '@tabler/icons-react';
-import { useAuth } from '@/contexts/AuthContext';
 import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
 
 interface HeaderProps {
@@ -27,19 +24,12 @@ interface HeaderProps {
 
 export function Header({ currentCountry }: HeaderProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { clearToken } = useAuth();
 
   const handleCountryChange = (value: string | null) => {
     if (value) {
       router.push(`/trends/${value}`);
     }
-  };
-
-  const handleLogout = () => {
-    clearToken();
-    router.push('/');
   };
 
   const countryOptions = COUNTRIES_ARRAY.map((country) => ({
@@ -62,7 +52,7 @@ export function Header({ currentCountry }: HeaderProps) {
           </Text>
         </Group>
 
-        {/* Desktop: Country Selector + Theme Toggle + Logout */}
+        {/* Desktop: Country Selector + Theme Toggle */}
         <Group gap="md" visibleFrom="sm">
           <Select
             placeholder="Selecciona un país"
@@ -82,15 +72,6 @@ export function Header({ currentCountry }: HeaderProps) {
           >
             {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
           </ActionIcon>
-
-          <Button
-            variant="subtle"
-            color="red"
-            leftSection={<IconLogout size={18} />}
-            onClick={handleLogout}
-          >
-            Salir
-          </Button>
         </Group>
 
         {/* Mobile: Menu */}
@@ -121,16 +102,6 @@ export function Header({ currentCountry }: HeaderProps) {
               onClick={() => toggleColorScheme()}
             >
               {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-            </Menu.Item>
-
-            <Menu.Divider />
-
-            <Menu.Item
-              color="red"
-              leftSection={<IconLogout size={18} />}
-              onClick={handleLogout}
-            >
-              Salir
             </Menu.Item>
           </Menu.Dropdown>
           </Menu>
