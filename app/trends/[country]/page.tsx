@@ -2,13 +2,14 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { AppShell, Container } from '@mantine/core';
+import { AppShell, Container, Transition } from '@mantine/core';
 import { useTrends } from '@/hooks/useTrends';
 import { Header } from '@/components/layout/Header';
 import { TrendsList } from '@/components/trends/TrendsList';
-import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+import { ListSkeleton } from '@/components/common/ListSkeleton';
 import { ErrorState } from '@/components/common/ErrorState';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
+import { fadeSlide } from '@/lib/transitions';
 
 export default function TrendsPage() {
   const params = useParams();
@@ -45,11 +46,25 @@ export default function TrendsPage() {
 
       <AppShell.Main>
         <Container size="xl" py="xl">
-          {loading && <LoadingSkeleton />}
+          {/* Loading State */}
+          {loading && <ListSkeleton />}
 
+          {/* Error State */}
           {error && !loading && <ErrorState error={error} onRetry={refetch} />}
 
-          {data && !loading && !error && <TrendsList trends={data} country={country} />}
+          {/* Content with Transition */}
+          <Transition
+            mounted={!loading && !error && !!data}
+            transition={fadeSlide}
+            duration={300}
+            timingFunction="ease-out"
+          >
+            {(styles) => (
+              <div style={styles}>
+                {data && !loading && !error && <TrendsList trends={data} country={country} />}
+              </div>
+            )}
+          </Transition>
         </Container>
       </AppShell.Main>
     </AppShell>

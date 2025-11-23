@@ -12,18 +12,20 @@ import {
   Button,
   Box,
   SegmentedControl,
+  Transition,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { useTrends } from "@/hooks/useTrends";
 import { Header } from "@/components/layout/Header";
-import { LoadingSkeleton } from "@/components/common/LoadingSkeleton";
+import { OverviewSkeleton } from "@/components/common/OverviewSkeleton";
 import { ErrorState } from "@/components/common/ErrorState";
 import { CategoryColumn } from "@/components/trends/CategoryColumn";
 import { COUNTRIES, type SiteId } from "@/utils/constants";
 import type { TrendType } from "@/types/meli";
 import { analyzeProductDistribution } from "@/utils/productCategories";
+import { fadeSlide } from "@/lib/transitions";
 
 export default function TrendsOverviewPage() {
   const params = useParams();
@@ -127,78 +129,89 @@ export default function TrendsOverviewPage() {
           </Stack>
 
           {/* Loading State */}
-          {loading && <LoadingSkeleton />}
+          {loading && <OverviewSkeleton />}
 
           {/* Error State */}
           {error && !loading && <ErrorState error={error} onRetry={refetch} />}
 
-          {/* Content - Responsive Layout */}
-          {data && !loading && !error && (
-            <>
-              {isMobile ? (
-                // Mobile: SegmentedControl + Single Column View
-                <Stack gap="lg">
-                  <SegmentedControl
-                    value={activeTab}
-                    onChange={(value) => setActiveTab(value as TrendType)}
-                    data={segmentData}
-                    fullWidth
-                    color="meliBlue"
-                    size="md"
-                  />
+          {/* Content - Responsive Layout with Transition */}
+          <Transition
+            mounted={!loading && !error && !!data}
+            transition={fadeSlide}
+            duration={300}
+            timingFunction="ease-out"
+          >
+            {(styles) => (
+              <div style={styles}>
+                {data && !loading && !error && (
+                  <>
+                    {isMobile ? (
+                      // Mobile: SegmentedControl + Single Column View
+                      <Stack gap="lg">
+                        <SegmentedControl
+                          value={activeTab}
+                          onChange={(value) => setActiveTab(value as TrendType)}
+                          data={segmentData}
+                          fullWidth
+                          color="meliBlue"
+                          size="md"
+                        />
 
-                  {activeTab === "fastest_growing" && (
-                    <CategoryColumn
-                      trendType="fastest_growing"
-                      trends={trendsByType.fastest_growing}
-                      distribution={distributions.fastest_growing}
-                    />
-                  )}
+                        {activeTab === "fastest_growing" && (
+                          <CategoryColumn
+                            trendType="fastest_growing"
+                            trends={trendsByType.fastest_growing}
+                            distribution={distributions.fastest_growing}
+                          />
+                        )}
 
-                  {activeTab === "most_wanted" && (
-                    <CategoryColumn
-                      trendType="most_wanted"
-                      trends={trendsByType.most_wanted}
-                      distribution={distributions.most_wanted}
-                    />
-                  )}
+                        {activeTab === "most_wanted" && (
+                          <CategoryColumn
+                            trendType="most_wanted"
+                            trends={trendsByType.most_wanted}
+                            distribution={distributions.most_wanted}
+                          />
+                        )}
 
-                  {activeTab === "most_popular" && (
-                    <CategoryColumn
-                      trendType="most_popular"
-                      trends={trendsByType.most_popular}
-                      distribution={distributions.most_popular}
-                    />
-                  )}
-                </Stack>
-              ) : (
-                // Desktop: 3-Column Grid Layout
-                <SimpleGrid
-                  cols={{ base: 1, md: 3 }}
-                  spacing="lg"
-                  style={{ alignItems: "start" }}
-                >
-                  <CategoryColumn
-                    trendType="fastest_growing"
-                    trends={trendsByType.fastest_growing}
-                    distribution={distributions.fastest_growing}
-                  />
+                        {activeTab === "most_popular" && (
+                          <CategoryColumn
+                            trendType="most_popular"
+                            trends={trendsByType.most_popular}
+                            distribution={distributions.most_popular}
+                          />
+                        )}
+                      </Stack>
+                    ) : (
+                      // Desktop: 3-Column Grid Layout
+                      <SimpleGrid
+                        cols={{ base: 1, md: 3 }}
+                        spacing="lg"
+                        style={{ alignItems: "start" }}
+                      >
+                        <CategoryColumn
+                          trendType="fastest_growing"
+                          trends={trendsByType.fastest_growing}
+                          distribution={distributions.fastest_growing}
+                        />
 
-                  <CategoryColumn
-                    trendType="most_wanted"
-                    trends={trendsByType.most_wanted}
-                    distribution={distributions.most_wanted}
-                  />
+                        <CategoryColumn
+                          trendType="most_wanted"
+                          trends={trendsByType.most_wanted}
+                          distribution={distributions.most_wanted}
+                        />
 
-                  <CategoryColumn
-                    trendType="most_popular"
-                    trends={trendsByType.most_popular}
-                    distribution={distributions.most_popular}
-                  />
-                </SimpleGrid>
-              )}
-            </>
-          )}
+                        <CategoryColumn
+                          trendType="most_popular"
+                          trends={trendsByType.most_popular}
+                          distribution={distributions.most_popular}
+                        />
+                      </SimpleGrid>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </Transition>
         </Container>
       </AppShell.Main>
     </AppShell>
