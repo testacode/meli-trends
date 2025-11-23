@@ -16,11 +16,20 @@ export interface Country {
 }
 
 /**
+ * Trend type based on position in response array
+ * - fastest_growing: Elements 0-9 (highest revenue increase)
+ * - most_wanted: Elements 10-29 (highest search volume)
+ * - most_popular: Elements 30-49 (significant rise vs 2 weeks ago)
+ */
+export type TrendType = 'fastest_growing' | 'most_wanted' | 'most_popular';
+
+/**
  * Trend item from MercadoLibre Trends API
  */
 export interface TrendItem {
   keyword: string;
   url: string;
+  trend_type?: TrendType; // Added by client based on array position
 }
 
 /**
