@@ -3,12 +3,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSearchDirect } from '@/lib/searchAPI';
+import { createLogger, startTimer } from '@/lib/logger';
 import type {
   TrendItem,
   EnrichedTrendItem,
   SiteId,
   SearchResponse,
 } from '@/types/meli';
+
+const logger = createLogger('Hook:useClientEnrichedTrends');
 
 interface UseClientEnrichedTrendsOptions {
   siteId: SiteId;
@@ -216,6 +219,7 @@ export function useClientEnrichedTrends({
     }
 
     async function enrichBatches() {
+      const overallTimer = startTimer();
       setProcessing(true);
       setError(null);
 
@@ -223,17 +227,16 @@ export function useClientEnrichedTrends({
         const startIndex = enrichedTrends.length;
         const trendsToEnrich = paginatedTrends.slice(startIndex);
 
-        console.log(
-          `🔄 [CLIENT] Starting enrichment of ${trendsToEnrich.length} trends in batches of ${BATCH_SIZE}`
-        );
+        logger.info(`Starting enrichment of ${trendsToEnrich.length} trends`);
 
         for (let i = 0; i < trendsToEnrich.length; i += BATCH_SIZE) {
           const batch = trendsToEnrich.slice(i, i + BATCH_SIZE);
           const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
           const totalBatches = Math.ceil(trendsToEnrich.length / BATCH_SIZE);
+          const batchTimer = startTimer();
 
-          console.log(
-            `🔄 [CLIENT] Processing batch ${batchNumber}/${totalBatches} (${batch.length} trends)`
+          logger.info(
+            `Enriching batch ${batchNumber}/${totalBatches} (${batch.length} trends)`
           );
 
           // Process batch in parallel (within batch)
@@ -247,9 +250,9 @@ export function useClientEnrichedTrends({
                 );
                 return calculateMetrics(trend, searchData);
               } catch (err) {
-                console.error(
-                  `❌ [CLIENT] Error enriching "${trend.keyword}":`,
-                  err
+                logger.error(
+                  `Failed to enrich trend "${trend.keyword}"`,
+                  err instanceof Error ? err : new Error(String(err))
                 );
                 // Return trend with empty data instead of failing completely
                 return {
@@ -262,25 +265,37 @@ export function useClientEnrichedTrends({
             })
           );
 
+          const validCount = batchResults.filter(
+            (r) => r.products.length > 0
+          ).length;
+
+          logger.success(
+            `Batch ${batchNumber}/${totalBatches} completed: ${validCount}/${batch.length} trends enriched`,
+            batchTimer.end()
+          );
+
           // Update UI progressively after each batch
           setEnrichedTrends((prev) => [...prev, ...batchResults]);
 
           // Delay before next batch (except last)
           if (i + BATCH_SIZE < trendsToEnrich.length) {
-            console.log(
-              `⏳ [CLIENT] Waiting ${BATCH_DELAY_MS}ms before next batch...`
-            );
             await sleep(BATCH_DELAY_MS);
           }
         }
 
-        console.log(
-          `✅ [CLIENT] Enrichment complete: ${enrichedTrends.length + trendsToEnrich.length} trends`
+        const finalCount = enrichedTrends.length + trendsToEnrich.length;
+        logger.success(
+          `Enrichment complete: ${finalCount}/${paginatedTrends.length} trends enriched`,
+          overallTimer.end()
         );
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Unknown error';
-        console.error('❌ [CLIENT] Enrichment error:', errorMessage);
+        logger.error(
+          'Enrichment failed',
+          err instanceof Error ? err : new Error(errorMessage),
+          overallTimer.end()
+        );
         setError(errorMessage);
       } finally {
         setProcessing(false);
@@ -297,17 +312,20 @@ export function useClientEnrichedTrends({
       !processing &&
       cachedData === null
     ) {
-      console.log(`💾 [CLIENT] Caching ${enrichedTrends.length} enriched trends to server...`);
+      logger.info(`Caching ${enrichedTrends.length} enriched trends to server`);
       fetch(`/api/trends/${siteId}/enriched`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(enrichedTrends),
       })
         .then(() => {
-          console.log('✅ [CLIENT] Successfully cached enriched trends to server');
+          logger.success('Successfully cached enriched trends to server');
         })
         .catch((error) => {
-          console.error('❌ [CLIENT] Failed to cache enriched trends:', error);
+          logger.error(
+            'Failed to cache enriched trends',
+            error instanceof Error ? error : new Error(String(error))
+          );
         });
     }
   }, [enrichedTrends, processing, siteId, cachedData]);
@@ -318,13 +336,13 @@ export function useClientEnrichedTrends({
       return; // No more trends to load
     }
 
-    console.log(`⬇️  [CLIENT] Loading more trends from offset ${currentOffset + limit}`);
+    logger.info(`Loading more trends from offset ${currentOffset + limit}`);
     setCurrentOffset((prev) => prev + limit);
   }, [currentOffset, limit, basicTrends.length]);
 
   // Refresh function
   const refresh = useCallback(async () => {
-    console.log('🔄 [CLIENT] Refreshing trends...');
+    logger.info('Refreshing trends');
     setEnrichedTrends([]);
     setCurrentOffset(0);
     setError(null);
