@@ -286,46 +286,80 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
             </Menu.Target>
 
             <Menu.Dropdown>
-              {/* Country Section */}
-              <Menu.Label>{t('header.countries')}</Menu.Label>
-              {countryOptions.map((option) => (
-                <Menu.Item
-                  key={option.value}
-                  onClick={() => handleCountryChange(option.value)}
-                  bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
-                  rightSection={currentCountry === option.value ? <IconCheck size={16} /> : null}
-                >
-                  {option.label}
-                </Menu.Item>
-              ))}
+              {/* Country Submenu */}
+              <Menu.Sub>
+                <Menu.Sub.Target>
+                  <Menu.Sub.Item leftSection={<IconWorld size={18} />}>
+                    {t('header.countries')}
+                  </Menu.Sub.Item>
+                </Menu.Sub.Target>
+                <Menu.Sub.Dropdown>
+                  {countryOptions.map((option) => (
+                    <Menu.Item
+                      key={option.value}
+                      onClick={() => handleCountryChange(option.value)}
+                      bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                      rightSection={currentCountry === option.value ? <IconCheck size={16} /> : null}
+                    >
+                      {option.label}
+                    </Menu.Item>
+                  ))}
+                </Menu.Sub.Dropdown>
+              </Menu.Sub>
 
-              {/* Category Section - Only show if on trends page */}
+              {/* Category Submenu - Only show if on trends page */}
               {showCategoryFilter && (
-                <>
-                  <Menu.Divider />
-                  <Menu.Label>{t('header.categories')}</Menu.Label>
-                  <ScrollArea.Autosize mah={300}>
-                    {loadingCategories ? (
-                      <Menu.Item disabled>{t('header.loadingCategories')}</Menu.Item>
-                    ) : (
-                      categoryOptions.map((option) => (
-                        <Menu.Item
-                          key={option.value}
-                          onClick={() => handleCategoryChange(option.value || null)}
-                          bg={currentCategory === option.value ? 'var(--mantine-color-blue-light)' : undefined}
-                          rightSection={currentCategory === option.value ? <IconCheck size={16} /> : null}
-                        >
-                          {option.label}
-                        </Menu.Item>
-                      ))
-                    )}
-                  </ScrollArea.Autosize>
-                </>
+                <Menu.Sub>
+                  <Menu.Sub.Target>
+                    <Menu.Sub.Item leftSection={<IconCategory size={18} />}>
+                      {t('header.categories')}
+                    </Menu.Sub.Item>
+                  </Menu.Sub.Target>
+                  <Menu.Sub.Dropdown>
+                    <ScrollArea.Autosize mah={300}>
+                      {loadingCategories ? (
+                        <Menu.Item disabled>{t('header.loadingCategories')}</Menu.Item>
+                      ) : (
+                        categoryOptions.map((option) => (
+                          <Menu.Item
+                            key={option.value}
+                            onClick={() => handleCategoryChange(option.value || null)}
+                            bg={currentCategory === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                            rightSection={currentCategory === option.value ? <IconCheck size={16} /> : null}
+                          >
+                            {option.label}
+                          </Menu.Item>
+                        ))
+                      )}
+                    </ScrollArea.Autosize>
+                  </Menu.Sub.Dropdown>
+                </Menu.Sub>
               )}
+
+              {/* Language Submenu */}
+              <Menu.Sub>
+                <Menu.Sub.Target>
+                  <Menu.Sub.Item leftSection={<IconLanguage size={18} />}>
+                    {t('header.language')}
+                  </Menu.Sub.Item>
+                </Menu.Sub.Target>
+                <Menu.Sub.Dropdown>
+                  {locales.map((loc) => (
+                    <Menu.Item
+                      key={loc}
+                      component="a"
+                      href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
+                      rightSection={locale === loc ? <IconCheck size={16} /> : null}
+                    >
+                      {localeFlags[loc]} {localeNames[loc]}
+                    </Menu.Item>
+                  ))}
+                </Menu.Sub.Dropdown>
+              </Menu.Sub>
 
               <Menu.Divider />
 
-              {/* Actions */}
+              {/* Direct Actions */}
               {showOverviewToggle && (
                 <Menu.Item
                   leftSection={isOverviewPage ? <IconList size={18} /> : <IconChartBar size={18} />}
@@ -340,23 +374,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 </Menu.Item>
               )}
 
-              {/* Language Section */}
-              <Menu.Divider />
-              <Menu.Label>{t('header.language')}</Menu.Label>
-              {locales.map((loc) => (
-                <Menu.Item
-                  key={loc}
-                  component="a"
-                  href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
-                  rightSection={locale === loc ? <IconCheck size={16} /> : null}
-                >
-                  {localeFlags[loc]} {localeNames[loc]}
-                </Menu.Item>
-              ))}
-
-              <Menu.Divider />
-
-              {/* Help & Theme */}
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}
                 onClick={() => router.push('/about')}

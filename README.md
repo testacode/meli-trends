@@ -386,8 +386,6 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 
 ## 📧 Contacto
 
-Carlos Monti - [@carlosmonti](https://github.com/carlosmonti)
-
 Project Link: [https://github.com/testacode/meli-trends](https://github.com/testacode/meli-trends)
 
 ---
@@ -395,5 +393,3 @@ Project Link: [https://github.com/testacode/meli-trends](https://github.com/test
 **Nota Legal**: Esta aplicación no está afiliada ni respaldada oficialmente por MercadoLibre. Usa la API pública de MercadoLibre según sus [términos de uso](https://developers.mercadolibre.com.ar/en_us/terms-and-conditions).
 
 ---
-
-Hecho con ❤️ por Carlos Monti
