@@ -26,15 +26,14 @@ describe('searchAPI', () => {
       expect(variants[0]).toBe(keyword);
     });
 
-    it('should filter out words with 2 or fewer characters', () => {
+    it('should filter out Spanish stop words but keep short tech terms', () => {
       const keyword = 'samsung galaxy s24 de 256gb';
       const variants = getKeywordVariants(keyword);
 
       // First variant is exact keyword (includes "de")
       expect(variants[0]).toBe(keyword);
 
-      // Subsequent variants should filter out "de" (both as stop word and short word)
-      // "de" should not appear in simplified variants
+      // Subsequent variants should filter out "de" (stop word) but keep numbers/codes
       const simplifiedVariants = variants.slice(1);
       simplifiedVariants.forEach(variant => {
         const words = variant.split(/\s+/);
@@ -71,20 +70,54 @@ describe('searchAPI', () => {
       expect(variants).toContain('samsung'); // First word
     });
 
-    it('should not include first word if length <= 3 chars', () => {
+    it('should include first word regardless of length', () => {
       const keyword = 'pen usb 64gb';
       const variants = getKeywordVariants(keyword);
 
-      // "pen" has 3 chars, so should NOT be added as standalone variant
-      expect(variants.filter((v) => v === 'pen')).toHaveLength(0);
+      // First word should always be included as fallback
+      expect(variants).toContain('pen');
     });
 
-    it('should include first word if length > 3 chars', () => {
+    it('should include both first and last words as fallbacks', () => {
       const keyword = 'iphone 15 pro max';
       const variants = getKeywordVariants(keyword);
 
-      // "iphone" has > 3 chars, should be included
+      // First word should be included
       expect(variants).toContain('iphone');
+
+      // Last word should be included (> 2 chars)
+      expect(variants).toContain('max');
+    });
+
+    it('should handle keywords with short meaningful tech terms', () => {
+      const keyword = 'ai pin';
+      const variants = getKeywordVariants(keyword);
+
+      // Should include exact keyword, "ai", and "pin"
+      expect(variants).toContain('ai pin');
+      expect(variants).toContain('ai');
+      expect(variants).toContain('pin');
+    });
+
+    it('should generate variants for "tesla pi phone" correctly', () => {
+      const keyword = 'tesla pi phone';
+      const variants = getKeywordVariants(keyword);
+
+      // Should include: exact, first 2 words, first word, last word
+      expect(variants).toContain('tesla pi phone'); // Exact
+      expect(variants).toContain('tesla pi'); // First 2 words
+      expect(variants).toContain('tesla'); // First word
+      expect(variants).toContain('phone'); // Last word (fallback to find related products)
+    });
+
+    it('should generate variants for "vr ps5" correctly', () => {
+      const keyword = 'vr ps5';
+      const variants = getKeywordVariants(keyword);
+
+      // Should include: exact, first word, last word
+      expect(variants).toContain('vr ps5'); // Exact
+      expect(variants).toContain('vr'); // First word
+      expect(variants).toContain('ps5'); // Last word
     });
 
     it('should remove duplicate variants', () => {

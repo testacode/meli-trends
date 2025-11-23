@@ -19,7 +19,7 @@ export function getKeywordVariants(keyword: string): string[] {
   const words = keyword
     .toLowerCase()
     .split(/\s+/)
-    .filter((w) => w.length > 2) // Remove very short words
+    .filter((w) => w.length > 0) // Keep all non-empty words (including short tech terms like "ai", "vr", "ps")
     .filter((w) => !['de', 'la', 'el', 'los', 'las', 'con', 'para'].includes(w));
 
   // Add progressively shorter variants
@@ -30,10 +30,14 @@ export function getKeywordVariants(keyword: string): string[] {
   }
 
   if (words.length > 1) {
-    // Try first word if it's meaningful
-    const firstWord = words[0];
-    if (firstWord.length > 3) {
-      variants.push(firstWord);
+    // Try first word as fallback
+    variants.push(words[0]);
+
+    // Try last word as additional fallback (often the product category)
+    const lastWord = words[words.length - 1];
+    if (lastWord.length > 2) {
+      // Avoid very short stopwords
+      variants.push(lastWord);
     }
   }
 
