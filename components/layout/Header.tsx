@@ -143,7 +143,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
               onChange={handleCategoryChange}
               leftSection={<IconCategory size={18} />}
               clearable
-              searchable
               disabled={loadingCategories}
               comboboxProps={{ withinPortal: false }}
               styles={{ input: { minWidth: 200 } }}
