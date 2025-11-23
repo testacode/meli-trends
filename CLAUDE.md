@@ -137,6 +137,55 @@ Required variables:
 - `MELI_CLIENT_SECRET` - MercadoLibre Client Secret (private, server-side only)
 - `NEXT_PUBLIC_REDIRECT_URI` - OAuth redirect URI
 
+### Logging System
+
+The application uses Consola for development logging. Logs are automatically disabled in production and test environments.
+
+**Logger usage:**
+
+```typescript
+import { createLogger, startTimer } from '@/lib/logger';
+
+const logger = createLogger('API:myroute');
+
+export async function GET() {
+  const timer = startTimer();
+
+  logger.info('Starting operation');
+
+  try {
+    // ... do work ...
+    logger.success('Operation completed', timer.end());
+  } catch (error) {
+    logger.error('Operation failed', error, timer.end());
+  }
+}
+```
+
+**Log output format:**
+
+```
+[YYYY-MM-DD HH:mm:ss] <icon> [TAG] Message (duration)
+```
+
+**Context tags:**
+- `API:*` - Server-side API routes (cyan)
+- `Hook:*` - Client-side React hooks (green)
+- `External:*` - External API calls (yellow)
+
+**When to log:**
+- API route entry/exit with duration
+- External API calls with status
+- Enrichment batch progress
+- Errors with full context
+
+**What NOT to log:**
+- Sensitive data (tokens, secrets)
+- Full URLs with query parameters (use `sanitizeUrl()`)
+- Routine renders or state changes
+
+See `/docs/plans/2025-11-23-logging-system-design.md` for full design documentation.
+
 ## Architecture Overview
 
 ### Terminology
