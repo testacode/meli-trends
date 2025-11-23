@@ -79,7 +79,14 @@ async function fetchSearchResults(
       const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
 
       // Search API is public - no auth required!
+      // Add browser-like headers to avoid blocking
       const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json',
+          'Accept-Language': 'es-AR,es;q=0.9',
+          'Referer': 'https://www.mercadolibre.com.ar/',
+        },
         cache: 'no-store',
       });
 
