@@ -1,3 +1,5 @@
+"use client";
+
 import { BarChart } from "@mantine/charts";
 import { Stack, Text } from "@mantine/core";
 import type { CategoryDistribution } from "@/utils/productCategories";
