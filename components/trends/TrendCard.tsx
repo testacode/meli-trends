@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Text, Badge, Group, Stack, Anchor } from '@mantine/core';
+import { Card, Text, Badge, Group, Stack } from '@mantine/core';
 import { IconTrendingUp, IconExternalLink } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
 
@@ -80,17 +80,9 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
 
         {/* View Link */}
         <Group justify="flex-end">
-          <Anchor
-            size="sm"
-            fw={500}
-            c="meliBlue"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(trend.url, '_blank', 'noopener,noreferrer');
-            }}
-          >
+          <Text size="sm" fw={500} c="meliBlue">
             Ver en MercadoLibre →
-          </Anchor>
+          </Text>
         </Group>
       </Stack>
     </Card>
