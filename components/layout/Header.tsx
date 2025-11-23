@@ -15,6 +15,7 @@ import {
   IconMoon,
   IconWorld,
   IconMenu2,
+  IconInfoCircle,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
 
@@ -66,6 +67,15 @@ export function Header({ currentCountry }: HeaderProps) {
 
           <ActionIcon
             variant="subtle"
+            onClick={() => router.push('/about')}
+            size="lg"
+            aria-label="Ayuda e información"
+          >
+            <IconInfoCircle size={20} />
+          </ActionIcon>
+
+          <ActionIcon
+            variant="subtle"
             onClick={() => toggleColorScheme()}
             size="lg"
             aria-label="Toggle color scheme"
@@ -96,6 +106,13 @@ export function Header({ currentCountry }: HeaderProps) {
             ))}
 
             <Menu.Divider />
+
+            <Menu.Item
+              leftSection={<IconInfoCircle size={18} />}
+              onClick={() => router.push('/about')}
+            >
+              Ayuda e Información
+            </Menu.Item>
 
             <Menu.Item
               leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
