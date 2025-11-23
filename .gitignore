@@ -82,3 +82,4 @@ vite.config.ts.timestamp-*
 
 # claude
 .claude/
+.env*.local

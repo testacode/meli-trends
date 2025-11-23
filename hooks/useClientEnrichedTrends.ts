@@ -157,6 +157,24 @@ export function useClientEnrichedTrends({
   const [error, setError] = useState<string | null>(null);
   const [currentOffset, setCurrentOffset] = useState(0);
 
+  // Try to fetch cached enriched data first (server-side Redis cache)
+  const {
+    data: cachedData,
+    isLoading: loadingCache,
+    error: cacheError,
+  } = useQuery({
+    queryKey: ['enriched-trends-cached', siteId],
+    queryFn: async () => {
+      const response = await fetch(`/api/trends/${siteId}/enriched`);
+      if (!response.ok) {
+        return null;
+      }
+      return response.json() as Promise<EnrichedTrendItem[] | null>;
+    },
+    enabled: autoLoad,
+    staleTime: 1000 * 60 * 60, // 1 hour (matches server cache TTL)
+  });
+
   // Fetch basic trends from server (OAuth still server-side, secure ✅)
   const {
     data: trendsData,
@@ -185,8 +203,11 @@ export function useClientEnrichedTrends({
       : 0;
 
   // Enrich trends progressively in batches (CLIENT-SIDE)
+  // Only run if cache returned null (cache miss)
   useEffect(() => {
     if (
+      cachedData !== null || // Skip if we have cached data
+      loadingCache || // Wait for cache check to complete
       paginatedTrends.length === 0 ||
       processing ||
       enrichedTrends.length >= paginatedTrends.length
@@ -267,7 +288,29 @@ export function useClientEnrichedTrends({
     }
 
     enrichBatches();
-  }, [paginatedTrends, enrichedTrends.length, siteId, processing]);
+  }, [cachedData, loadingCache, paginatedTrends, enrichedTrends.length, siteId, processing]);
+
+  // POST enriched data to cache after enrichment completes
+  useEffect(() => {
+    if (
+      enrichedTrends.length > 0 &&
+      !processing &&
+      cachedData === null
+    ) {
+      console.log(`💾 [CLIENT] Caching ${enrichedTrends.length} enriched trends to server...`);
+      fetch(`/api/trends/${siteId}/enriched`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(enrichedTrends),
+      })
+        .then(() => {
+          console.log('✅ [CLIENT] Successfully cached enriched trends to server');
+        })
+        .catch((error) => {
+          console.error('❌ [CLIENT] Failed to cache enriched trends:', error);
+        });
+    }
+  }, [enrichedTrends, processing, siteId, cachedData]);
 
   // Load more function (pagination)
   const loadMore = useCallback(async () => {
@@ -289,13 +332,18 @@ export function useClientEnrichedTrends({
   }, [refetchBasicTrends]);
 
   const hasMore = currentOffset + limit < basicTrends.length;
-  const loading = loadingBasicTrends || processing;
-  const finalError = basicTrendsError
-    ? basicTrendsError.message
-    : error;
+  const loading = loadingCache || loadingBasicTrends || processing;
+  const finalError = cacheError
+    ? 'Cache error'
+    : basicTrendsError
+      ? basicTrendsError.message
+      : error;
+
+  // Return cached data if available, otherwise enriched data
+  const trends = cachedData || enrichedTrends;
 
   return {
-    trends: enrichedTrends,
+    trends,
     loading,
     error: finalError,
     hasMore,

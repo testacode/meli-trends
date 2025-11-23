@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { server } from '@/mocks/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { type PropsWithChildren } from 'react';
 import { calculateMetrics, useClientEnrichedTrends } from './useClientEnrichedTrends';
@@ -1103,6 +1105,92 @@ describe('useClientEnrichedTrends', () => {
 
       // Should only call fetchSearchDirect once
       expect(mockFetchSearchDirect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Cache integration', () => {
+    let queryClient: QueryClient;
+
+    beforeEach(() => {
+      queryClient = createTestQueryClient();
+      mockFetchSearchDirect.mockClear();
+      // Reset MSW handlers to default
+      server.resetHandlers();
+    });
+
+    it('should use cached data when available', async () => {
+      const cachedData = [
+        {
+          keyword: 'iPhone 15',
+          url: 'https://mercadolibre.com/iphone-15',
+          products: mockSearchResponse.results.slice(0, 3),
+          total_results: 100,
+          avg_price: 1000,
+          min_price: 900,
+          max_price: 1100,
+          total_sold: 200,
+          free_shipping_percentage: 50,
+          opportunity_score: 75,
+        },
+      ];
+
+      // Mock cache hit
+      server.use(
+        http.get('/api/trends/MLA/enriched', () => {
+          return HttpResponse.json(cachedData);
+        })
+      );
+
+      const { result } = renderHook(
+        () => useClientEnrichedTrends({ siteId: 'MLA' as SiteId, autoLoad: true }),
+        { wrapper: createWrapper(queryClient) }
+      );
+
+      // Should load immediately from cache
+      await waitFor(() => {
+        expect(result.current.trends).toEqual(cachedData);
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Should NOT call Search API
+      expect(mockFetchSearchDirect).toHaveBeenCalledTimes(0);
+    });
+
+    it('should enrich when cache miss and POST result', async () => {
+      let postCalled = false;
+      let postedData: unknown = null;
+
+      // Mock cache miss
+      server.use(
+        http.get('/api/trends/MLA/enriched', () => {
+          return HttpResponse.json(null);
+        }),
+        http.post('/api/trends/MLA/enriched', async ({ request }) => {
+          postCalled = true;
+          postedData = await request.json();
+          return HttpResponse.json({ success: true, cached: true });
+        })
+      );
+
+      const { result } = renderHook(
+        () => useClientEnrichedTrends({ siteId: 'MLA' as SiteId, limit: 2, autoLoad: true }),
+        { wrapper: createWrapper(queryClient) }
+      );
+
+      // Should enrich client-side
+      await waitFor(
+        () => {
+          expect(result.current.trends.length).toBe(2);
+          expect(result.current.loading).toBe(false);
+        },
+        { timeout: 10000 }
+      );
+
+      // Should POST enriched data to cache
+      await waitFor(() => {
+        expect(postCalled).toBe(true);
+        expect(postedData).toEqual(result.current.trends);
+      });
     });
   });
 });

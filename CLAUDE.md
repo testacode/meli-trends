@@ -610,3 +610,4 @@ These aren't preferences—violating them causes production failures or breaks e
 - Use `gh` or `vercel` CLI commands for GitHub and Vercel operations
 - Reference `/docs/architecture/api-cloudfront-blocking.md` for CloudFront patterns
 - Test enriched trends with small datasets first (rate limiting can occur during development)
+- Always try to use the "AskUserQuestion" tool for questions

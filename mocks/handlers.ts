@@ -23,6 +23,28 @@ export const handlers = [
   }),
 
   /**
+   * Mock /api/trends/:country/enriched endpoint (cache check)
+   * Returns null by default (cache miss) - tests can override
+   */
+  http.get('http://localhost:3000/api/trends/:country/enriched', () => {
+    return HttpResponse.json(null, {
+      status: 200,
+      headers: { 'X-Cache-Status': 'MISS' },
+    });
+  }),
+
+  /**
+   * Mock /api/trends/:country/enriched POST endpoint (cache write)
+   * Returns success response - tests can override
+   */
+  http.post('http://localhost:3000/api/trends/:country/enriched', () => {
+    return HttpResponse.json(
+      { success: true, cached: true },
+      { status: 200 }
+    );
+  }),
+
+  /**
    * Mock /api/trends/:country endpoint
    * Returns trending keywords for the specified country
    */

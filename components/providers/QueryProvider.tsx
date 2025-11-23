@@ -14,9 +14,9 @@ export default function QueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            // Data is considered fresh for 5 minutes (prevents excessive refetches)
-            staleTime: 5 * 60 * 1000,
-            // Keep unused data in cache for 24 hours (matches server cache TTL)
+            // Data is considered fresh for 1 hour (matches server-side Redis cache TTL)
+            staleTime: 60 * 60 * 1000,
+            // Keep unused data in cache for 24 hours
             gcTime: 24 * 60 * 60 * 1000,
             // Disable automatic refetch on window focus
             refetchOnWindowFocus: false,
