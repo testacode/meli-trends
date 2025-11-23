@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { EnrichedTrendsResponse, EnrichedTrendItem, SiteId } from '@/types/meli';
+import { useMemo } from 'react';
 
 interface UseEnrichedTrendsOptions {
   siteId: SiteId;
   limit?: number;
-  autoLoad?: boolean; // Auto-load first page on mount
+  autoLoad?: boolean;
 }
 
 interface UseEnrichedTrendsReturn {
@@ -21,12 +22,61 @@ interface UseEnrichedTrendsReturn {
 }
 
 /**
+ * Fetch enriched trends from API
+ */
+async function fetchEnrichedTrends({
+  siteId,
+  limit,
+  offset,
+}: {
+  siteId: SiteId;
+  limit: number;
+  offset: number;
+}): Promise<EnrichedTrendsResponse & { cacheInfo: { status: string | null; age: string | null } }> {
+  const url = `/api/trends/${siteId}/enriched?offset=${offset}&limit=${limit}`;
+  console.log(`📡 Fetching enriched trends: ${url}`);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to fetch trends');
+  }
+
+  const data: EnrichedTrendsResponse = await response.json();
+
+  // Extract cache info from headers
+  const cacheStatus = response.headers.get('X-Cache');
+  const cacheAgeSeconds = response.headers.get('X-Cache-Age');
+
+  let cacheAge: string | null = null;
+  if (cacheStatus === 'HIT' && cacheAgeSeconds) {
+    const ageMinutes = Math.round(parseInt(cacheAgeSeconds, 10) / 60);
+    cacheAge = `${ageMinutes}min ago`;
+  } else if (cacheStatus === 'MISS') {
+    cacheAge = 'fresh';
+  }
+
+  console.log(
+    `✅ Fetched ${data.trends.length} trends (total: ${data.total}, cache: ${cacheStatus || 'N/A'})`
+  );
+
+  return {
+    ...data,
+    cacheInfo: {
+      status: cacheStatus,
+      age: cacheAge,
+    },
+  };
+}
+
+/**
  * Hook for fetching enriched trends with infinite scroll support
  *
  * Features:
- * - Infinite scroll pagination
- * - Automatic deduplication
- * - Cache awareness
+ * - Infinite scroll pagination (powered by React Query)
+ * - Automatic request deduplication
+ * - Client-side caching (24h with 5min stale time)
  * - Error handling
  * - Loading states
  *
@@ -49,135 +99,81 @@ export function useEnrichedTrends({
   limit = 10,
   autoLoad = true,
 }: UseEnrichedTrendsOptions): UseEnrichedTrendsReturn {
-  const [trends, setTrends] = useState<EnrichedTrendItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
-  const [offset, setOffset] = useState(0);
-  const [cacheAge, setCacheAge] = useState<string | null>(null);
-  const loadingRef = useRef(false);
-  const initializedRef = useRef(false); // Prevent infinite loop
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['enrichedTrends', siteId, limit],
+    queryFn: ({ pageParam }) =>
+      fetchEnrichedTrends({
+        siteId,
+        limit,
+        offset: pageParam,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      // Calculate total trends fetched so far
+      const totalFetched = allPages.reduce(
+        (sum, page) => sum + page.trends.length,
+        0
+      );
 
-  const hasMore = trends.length < total && trends.length > 0;
-
-  /**
-   * Fetch trends from API
-   */
-  const fetchTrends = useCallback(
-    async (currentOffset: number, append: boolean = false) => {
-      // Prevent concurrent requests
-      if (loadingRef.current) {
-        console.log('⏸️  Skipping fetch - already loading');
-        return;
+      // If we've fetched all trends, no more pages
+      if (totalFetched >= lastPage.total || lastPage.trends.length === 0) {
+        return undefined;
       }
 
-      loadingRef.current = true;
-      setLoading(true);
-      setError(null);
-
-      try {
-        const url = `/api/trends/${siteId}/enriched?offset=${currentOffset}&limit=${limit}`;
-        console.log(`📡 Fetching enriched trends: ${url}`);
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch trends');
-        }
-
-        const data: EnrichedTrendsResponse = await response.json();
-
-        // Extract cache info from headers
-        const cacheStatus = response.headers.get('X-Cache');
-        const cacheAgeSeconds = response.headers.get('X-Cache-Age');
-
-        if (cacheStatus === 'HIT' && cacheAgeSeconds) {
-          const ageMinutes = Math.round(parseInt(cacheAgeSeconds, 10) / 60);
-          setCacheAge(`${ageMinutes}min ago`);
-        } else {
-          setCacheAge('fresh');
-        }
-
-        console.log(
-          `✅ Fetched ${data.trends.length} trends (total: ${data.total}, cache: ${cacheStatus || 'N/A'})`
-        );
-
-        // Update state
-        setTotal(data.total);
-
-        if (append) {
-          setTrends((prev) => {
-            // Deduplicate by keyword
-            const existing = new Set(prev.map((t) => t.keyword));
-            const newTrends = data.trends.filter(
-              (t) => !existing.has(t.keyword)
-            );
-            return [...prev, ...newTrends];
-          });
-        } else {
-          setTrends(data.trends);
-        }
-
-        setOffset(currentOffset + data.trends.length);
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Unknown error occurred';
-        console.error('❌ Error fetching enriched trends:', errorMessage);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-        loadingRef.current = false;
-      }
+      // Return next offset
+      return totalFetched;
     },
-    [siteId, limit]
-  );
+    enabled: autoLoad,
+  });
 
-  /**
-   * Load more trends (infinite scroll)
-   */
-  const loadMore = useCallback(async () => {
-    if (!hasMore || loading) {
+  // Flatten all pages into single array
+  const trends = useMemo(() => {
+    if (!data?.pages) return [];
+    return data.pages.flatMap((page) => page.trends);
+  }, [data?.pages]);
+
+  // Get total from first page
+  const total = data?.pages[0]?.total ?? 0;
+
+  // Get cache info from first page
+  const cacheAge = data?.pages[0]?.cacheInfo.age ?? null;
+
+  // Determine if we're loading (initial or next page)
+  const loading = isPending || isFetchingNextPage;
+
+  // Convert error to string
+  const errorMessage = isError && error ? error.message : null;
+
+  // Load more function for infinite scroll
+  const loadMore = async () => {
+    if (!hasNextPage || loading) {
       return;
     }
 
-    console.log(`⬇️  Loading more trends from offset ${offset}`);
-    await fetchTrends(offset, true);
-  }, [hasMore, loading, offset, fetchTrends]);
+    console.log(`⬇️  Loading more trends...`);
+    await fetchNextPage();
+  };
 
-  /**
-   * Refresh trends from beginning
-   */
-  const refresh = useCallback(async () => {
+  // Refresh function to invalidate and refetch
+  const refresh = async () => {
     console.log('🔄 Refreshing trends...');
-    setTrends([]);
-    setOffset(0);
-    await fetchTrends(0, false);
-  }, [fetchTrends]);
-
-  // Auto-load first page on mount
-  useEffect(() => {
-    if (autoLoad && !initializedRef.current && !loading && !error) {
-      initializedRef.current = true;
-      fetchTrends(0, false);
-    }
-  }, [autoLoad, loading, error]); // Removed fetchTrends and trends.length to prevent loop
-
-  // Reset when site changes
-  useEffect(() => {
-    setTrends([]);
-    setOffset(0);
-    setError(null);
-    setTotal(0);
-    setCacheAge(null);
-    initializedRef.current = false; // Reset initialized flag
-  }, [siteId]);
+    await refetch();
+  };
 
   return {
     trends,
     loading,
-    error,
-    hasMore,
+    error: errorMessage,
+    hasMore: hasNextPage ?? false,
     loadMore,
     refresh,
     total,

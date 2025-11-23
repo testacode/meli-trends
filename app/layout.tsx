@@ -10,6 +10,7 @@ import "./globals.css";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import { mantineTheme } from "@/lib/mantine-theme";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -99,7 +100,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={mantineTheme} defaultColorScheme="auto">
-          <AuthProvider>{children}</AuthProvider>
+          <QueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryProvider>
         </MantineProvider>
       </body>
     </html>
