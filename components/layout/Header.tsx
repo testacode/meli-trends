@@ -31,6 +31,7 @@ export function Header({ currentCountry }: HeaderProps) {
 
   // Only render theme toggle after component mounts (client-side only)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

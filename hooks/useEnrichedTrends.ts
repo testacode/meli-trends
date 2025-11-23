@@ -136,6 +136,7 @@ export function useEnrichedTrends({
   });
 
   // Flatten all pages into single array
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const trends = useMemo(() => {
     if (!data?.pages) return [];
     return data.pages.flatMap((page) => page.trends);

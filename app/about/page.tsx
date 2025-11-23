@@ -122,7 +122,7 @@ export default function AboutPage() {
                   </Title>
                   <List spacing="xs" size="sm">
                     <List.Item>
-                      <strong>Most Wanted</strong> → Para conocer qué está "caliente" ahora (alta demanda)
+                      <strong>Most Wanted</strong> → Para conocer qué está &quot;caliente&quot; ahora (alta demanda)
                     </List.Item>
                     <List.Item>
                       <strong>Fastest-Growing</strong> → Para validar que SÍ se vende (no solo se busca)
@@ -138,8 +138,8 @@ export default function AboutPage() {
                     📈 Volumen de Búsquedas vs. Conversión
                   </Title>
                   <Text size="sm" c="dimmed">
-                    Los productos con <strong>intención de compra clara</strong> (ej: "iphone 15 pro max
-                    256gb") convierten mejor que búsquedas genéricas (ej: "celular"). Busca keywords
+                    Los productos con <strong>intención de compra clara</strong> (ej: &quot;iphone 15 pro max
+                    256gb&quot;) convierten mejor que búsquedas genéricas (ej: &quot;celular&quot;). Busca keywords
                     específicas dentro de los trends para mejores resultados.
                   </Text>
                 </Box>
@@ -257,7 +257,7 @@ export default function AboutPage() {
 
                 <Accordion.Item value="difference">
                   <Accordion.Control>
-                    ¿Cuál es la diferencia entre "más buscado" y "más vendido"?
+                    ¿Cuál es la diferencia entre &quot;más buscado&quot; y &quot;más vendido&quot;?
                   </Accordion.Control>
                   <Accordion.Panel>
                     <List size="sm" spacing="xs">

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { SearchProduct } from '@/types/meli';
 
 /**
  * DEBUG endpoint - Check what Search API returns for a keyword
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       total_results: data.paging?.total || 0,
       results_count: data.results?.length || 0,
       search_url: searchUrl,
-      sample_titles: data.results?.slice(0, 3).map((r: any) => r.title) || [],
+      sample_titles: data.results?.slice(0, 3).map((r: SearchProduct) => r.title) || [],
       full_response: data,
     });
   } catch (error) {

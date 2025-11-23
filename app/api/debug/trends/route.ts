@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { TrendItem } from '@/types/meli';
 
 /**
  * DEBUG endpoint - Check what Trends API returns
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       success: true,
       siteId,
       total_trends: trends.length,
-      first_10_keywords: trends.slice(0, 10).map((t: any) => t.keyword),
+      first_10_keywords: trends.slice(0, 10).map((t: TrendItem) => t.keyword),
       full_trends: trends,
     });
   } catch (error) {
