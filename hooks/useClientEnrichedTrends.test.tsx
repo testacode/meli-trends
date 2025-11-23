@@ -4,7 +4,11 @@ import { http, HttpResponse } from 'msw';
 import { server } from '@/mocks/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { type PropsWithChildren } from 'react';
-import { calculateMetrics, useClientEnrichedTrends } from './useClientEnrichedTrends';
+import {
+  calculateMetrics,
+  useClientEnrichedTrends,
+  BATCH_DELAY_MS,
+} from './useClientEnrichedTrends';
 import { fetchSearchDirect } from '@/lib/searchAPI';
 import type { TrendItem, SearchResponse, SiteId } from '@/types/meli';
 import { mockTrends, mockSearchResponse } from '@/mocks/data';
@@ -605,13 +609,13 @@ describe('useClientEnrichedTrends', () => {
       expect(result.current.loading).toBe(true);
 
       // Advance through batch 1 (2 trends)
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(BATCH_DELAY_MS);
       await waitFor(() => {
         expect(result.current.trends.length).toBeGreaterThanOrEqual(2);
       }, { timeout: 1000 });
 
       // Advance through batch 2 (2 more trends)
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.advanceTimersByTimeAsync(BATCH_DELAY_MS);
       await waitFor(() => {
         expect(result.current.trends.length).toBeGreaterThanOrEqual(4);
       }, { timeout: 1000 });

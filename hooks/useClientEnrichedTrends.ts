@@ -32,7 +32,7 @@ interface UseClientEnrichedTrendsReturn {
 }
 
 const BATCH_SIZE = 2; // Process 2 trends at a time
-const BATCH_DELAY_MS = 1000; // 1s between batches
+export const BATCH_DELAY_MS = 1000; // 1s between batches (exported for testing)
 const PRODUCTS_PER_KEYWORD = 3;
 
 /**

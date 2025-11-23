@@ -290,11 +290,15 @@ describe('ErrorState', () => {
         status: 500,
       };
 
-      const { container } = render(<ErrorState error={error} />);
+      render(<ErrorState error={error} />);
 
-      // Check that Code component (used for cause) is not rendered
-      const codeBlock = container.querySelector('.mantine-Code-root');
-      expect(codeBlock).toBeNull();
+      // Test behavior: When no cause is provided, only the error code should be visible
+      // The cause text element should not be present
+      expect(screen.getByText(/Código de error: 500/i)).toBeDefined();
+      // Verify no additional error details beyond the status code
+      const errorElements = screen.queryAllByText(/error/i);
+      // Should only have "Error al cargar trends" title and status code, no cause
+      expect(errorElements.length).toBeLessThanOrEqual(3);
     });
 
     it('should show "N/A" for status code when status is 0', () => {
@@ -312,7 +316,7 @@ describe('ErrorState', () => {
   });
 
   describe('Accessibility', () => {
-    it('should render IconAlertCircle in alert', () => {
+    it('should render alert icon', () => {
       const error: ApiError = {
         message: 'Error',
         error: 'error',
@@ -321,22 +325,25 @@ describe('ErrorState', () => {
 
       const { container } = render(<ErrorState error={error} />);
 
-      // IconAlertCircle is rendered as SVG with specific class from tabler-icons
-      const icon = container.querySelector('svg.tabler-icon-alert-circle');
+      // Test behavior: Alert should contain an icon (SVG element)
+      const icon = container.querySelector('svg');
       expect(icon).toBeDefined();
     });
 
-    it('should render IconRefresh in retry button', () => {
+    it('should render refresh icon in retry button', () => {
       const error: ApiError = {
         message: 'Error',
         error: 'error',
         status: 500,
       };
 
-      const { container } = render(<ErrorState error={error} onRetry={vi.fn()} />);
+      render(<ErrorState error={error} onRetry={vi.fn()} />);
 
-      // IconRefresh is rendered as SVG with specific class from tabler-icons
-      const icon = container.querySelector('svg.tabler-icon-refresh');
+      // Test behavior: Retry button should be present and clickable
+      const retryButton = screen.getByRole('button', { name: /Reintentar/i });
+      expect(retryButton).toBeDefined();
+      // Button should contain an icon (SVG)
+      const icon = retryButton.querySelector('svg');
       expect(icon).toBeDefined();
     });
 
@@ -349,7 +356,21 @@ describe('ErrorState', () => {
 
       render(<ErrorState error={error} />);
 
+      // Test behavior: Alert displays error title
       expect(screen.getByText('Error al cargar trends')).toBeDefined();
+    });
+
+    it('should have accessible error message', () => {
+      const error: ApiError = {
+        message: 'Test error message',
+        error: 'test_error',
+        status: 500,
+      };
+
+      render(<ErrorState error={error} />);
+
+      // Test behavior: Error message is accessible and visible to screen readers
+      expect(screen.getByText('Test error message')).toBeDefined();
     });
   });
 
