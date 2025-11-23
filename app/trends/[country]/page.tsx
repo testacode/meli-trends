@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { AppShell, Container } from '@mantine/core';
 import { useTrends } from '@/hooks/useTrends';
 import { Header } from '@/components/layout/Header';
@@ -13,8 +13,10 @@ import { COUNTRIES, type SiteId } from '@/utils/constants';
 export default function TrendsPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const country = params.country as SiteId;
+  const selectedCategory = searchParams.get('category');
 
   // Validate country
   const isValidCountry = country && country in COUNTRIES;
@@ -22,6 +24,7 @@ export default function TrendsPage() {
   // Fetch trends (no auth required - handled server-side)
   const { data, loading, error, refetch } = useTrends({
     siteId: country,
+    categoryId: selectedCategory || undefined,
   });
 
   // Redirect to default country if invalid country
@@ -38,7 +41,7 @@ export default function TrendsPage() {
 
   return (
     <AppShell header={{ height: 60 }} padding="md">
-      <Header currentCountry={country} />
+      <Header currentCountry={country} currentCategory={selectedCategory} />
 
       <AppShell.Main>
         <Container size="xl" py="xl">

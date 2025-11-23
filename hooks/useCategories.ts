@@ -1,63 +1,50 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { SiteId, TrendsResponse, ApiError, TrendItem } from '@/types/meli';
-import { enrichTrendsWithType } from '@/utils/trends';
+import type { SiteId, Category, ApiError } from '@/types/meli';
 
-interface UseTrendsOptions {
+interface UseCategoriesOptions {
   siteId: SiteId;
-  categoryId?: string;
 }
 
-interface UseTrendsReturn {
-  data: TrendItem[] | null;
+interface UseCategoriesReturn {
+  data: Category[] | null;
   loading: boolean;
   error: ApiError | null;
   refetch: () => Promise<void>;
 }
 
 /**
- * Fetch trends from internal API and enrich with trend_type
+ * Fetch categories from internal API
  */
-async function fetchTrends({
-  siteId,
-  categoryId,
-}: {
-  siteId: SiteId;
-  categoryId?: string;
-}): Promise<TrendItem[]> {
-  const endpoint = categoryId
-    ? `/api/trends/${siteId}/${categoryId}`
-    : `/api/trends/${siteId}`;
+async function fetchCategories({ siteId }: { siteId: SiteId }): Promise<Category[]> {
+  const endpoint = `/api/categories/${siteId}`;
 
   const response = await fetch(endpoint);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw {
-      message: errorData.error || 'Failed to fetch trends',
+      message: errorData.error || 'Failed to fetch categories',
       error: 'API_ERROR',
       status: response.status,
     } as ApiError;
   }
 
-  const trends: TrendsResponse = await response.json();
-
-  // Enrich trends with trend_type based on position
-  return enrichTrendsWithType(trends);
+  return response.json();
 }
 
 /**
- * Hook to fetch trends from internal API
+ * Hook to fetch categories from internal API
  * No authentication required from user - handled server-side
  *
  * Features:
- * - Automatic caching (24h with 5min stale time)
+ * - Automatic caching (24h stale time - categories don't change often)
  * - Request deduplication
  * - Error handling
  * - Loading states
  */
-export function useTrends({ siteId, categoryId }: UseTrendsOptions): UseTrendsReturn {
+export function useCategories({ siteId }: UseCategoriesOptions): UseCategoriesReturn {
   const {
     data,
     isPending,
@@ -65,8 +52,9 @@ export function useTrends({ siteId, categoryId }: UseTrendsOptions): UseTrendsRe
     error,
     refetch,
   } = useQuery({
-    queryKey: ['trends', siteId, categoryId],
-    queryFn: () => fetchTrends({ siteId, categoryId }),
+    queryKey: ['categories', siteId],
+    queryFn: () => fetchCategories({ siteId }),
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours (categories rarely change)
   });
 
   // Convert error to ApiError format

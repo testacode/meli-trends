@@ -46,58 +46,63 @@ export default function AboutPage() {
               <Text size="lg" c="dimmed">
                 Los Trends de MercadoLibre muestran los <strong>50 productos más populares</strong> entre
                 los usuarios. Esta información se actualiza semanalmente y está disponible para 7 países de
-                Latinoamérica.
+                Latinoamérica. Los trends se clasifican automáticamente en 3 tipos según su posición, y puedes
+                filtrarlos por categoría para encontrar oportunidades específicas.
               </Text>
             </Box>
 
             {/* Three Types of Trends */}
             <Box>
               <Title order={2} mb="lg">
-                📊 Tres Tipos de Métricas
+                📊 Tres Tipos de Trends (Clasificación Automática)
               </Title>
+              <Text size="sm" c="dimmed" mb="md">
+                Los 50 trends se clasifican automáticamente según su posición en la respuesta de la API.
+                Cada trend card muestra un <strong>badge de color</strong> indicando su tipo:
+              </Text>
               <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="green" mb="md">
+                  <ThemeIcon size="xl" radius="md" variant="light" color="red" mb="md">
                     <IconChartLine size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
-                    Fastest-Growing
+                    🔴 Fastest-Growing
                   </Title>
-                  <Text size="sm" c="dimmed">
+                  <Text size="sm" c="dimmed" mb="xs">
                     Productos con <strong>mayor aumento de revenue</strong> en la última semana.
                   </Text>
-                  <Badge color="green" variant="light" mt="md">
-                    Basado en ventas
+                  <Badge color="red" variant="light" mt="md">
+                    Posiciones 1-10
                   </Badge>
                 </Card>
 
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="meliBlue" mb="md">
+                  <ThemeIcon size="xl" radius="md" variant="light" color="blue" mb="md">
                     <IconSearch size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
-                    Most Wanted
+                    🔵 Most Wanted
                   </Title>
-                  <Text size="sm" c="dimmed">
+                  <Text size="sm" c="dimmed" mb="xs">
                     Productos con <strong>mayor volumen de búsquedas</strong> durante la última semana.
                   </Text>
-                  <Badge color="meliBlue" variant="light" mt="md">
-                    Basado en búsquedas
+                  <Badge color="blue" variant="light" mt="md">
+                    Posiciones 11-30
                   </Badge>
                 </Card>
 
                 <Card shadow="sm" padding="lg" radius="md" withBorder>
-                  <ThemeIcon size="xl" radius="md" variant="light" color="yellow" mb="md">
+                  <ThemeIcon size="xl" radius="md" variant="light" color="green" mb="md">
                     <IconTrendingUp size={28} />
                   </ThemeIcon>
                   <Title order={4} mb="xs">
-                    Most Popular
+                    🟢 Most Popular
                   </Title>
-                  <Text size="sm" c="dimmed">
+                  <Text size="sm" c="dimmed" mb="xs">
                     Productos con <strong>mayor aumento de búsquedas</strong> comparado con hace 2 semanas.
                   </Text>
-                  <Badge color="yellow" variant="light" mt="md">
-                    Tendencia emergente
+                  <Badge color="green" variant="light" mt="md">
+                    Posiciones 31-50
                   </Badge>
                 </Card>
               </SimpleGrid>
@@ -198,11 +203,17 @@ export default function AboutPage() {
                 <ThemeIcon size="lg" radius="md" variant="light" color="grape">
                   <IconCategory size={24} />
                 </ThemeIcon>
-                <Title order={2}>📂 Categorías Principales (Ejemplo: Argentina)</Title>
+                <Title order={2}>📂 Filtrado por Categorías</Title>
               </Group>
 
+              <Text size="sm" mb="md">
+                <strong>¡Ahora disponible!</strong> Puedes filtrar trends por categoría específica usando el
+                dropdown en la parte superior de cualquier vista de trends. Esto te permite enfocarte en nichos
+                específicos y encontrar oportunidades menos competidas.
+              </Text>
+
               <Text size="sm" c="dimmed" mb="md">
-                La API también permite filtrar trends por categoría. Estas son algunas categorías populares:
+                Ejemplo de categorías populares en Argentina:
               </Text>
 
               <List spacing="xs" size="sm">
@@ -223,10 +234,17 @@ export default function AboutPage() {
                 </List.Item>
               </List>
 
-              <Text size="xs" c="dimmed" mt="md">
-                Nota: Cada país tiene su propio conjunto de categorías. El filtrado por categoría estará
-                disponible en futuras versiones.
-              </Text>
+              <Paper shadow="xs" p="md" radius="md" withBorder mt="md" bg="grape.0">
+                <Text size="sm" fw={500} mb="xs">
+                  💡 Tip: Combina categorías con tipos de trends
+                </Text>
+                <Text size="xs" c="dimmed">
+                  Por ejemplo, filtra por &quot;Celulares y Teléfonos&quot; y busca productos en la sección{' '}
+                  <strong>Fastest-Growing</strong> (primeros 10) para encontrar teléfonos que están vendiendo
+                  bien. O busca en <strong>Most Popular</strong> (últimos 20) para identificar tendencias
+                  emergentes en esa categoría.
+                </Text>
+              </Paper>
             </Box>
 
             {/* FAQ Section */}
