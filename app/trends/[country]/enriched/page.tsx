@@ -14,6 +14,7 @@ import {
   Group,
   Button,
   Box,
+  Accordion,
 } from '@mantine/core';
 import {
   IconAlertCircle,
@@ -109,79 +110,88 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
             </Group>
           )}
 
-          {/* Search API Warning */}
-          <Alert
-            icon={<IconAlertTriangle size={16} />}
-            title="⚠️ Funcionalidad de Enriquecimiento Temporalmente No Disponible"
-            color="yellow"
-            variant="filled"
-            mt="md"
-          >
-            <Stack gap="sm">
-              <Text size="sm">
-                MercadoLibre ha restringido el acceso a su API de Búsqueda
-                (Search API) mediante CloudFront, bloqueando todas las
-                solicitudes con errores 403. Este problema afecta a desarrolladores
-                en todo el mundo desde abril 2025.
-              </Text>
-              <Text size="sm">
-                <strong>Estado actual:</strong>
-              </Text>
-              <ul style={{ marginTop: 0, marginBottom: 0, fontSize: '0.875rem' }}>
-                <li>
-                  ✓ Los <strong>trends básicos</strong> (palabras clave) funcionan
-                  normalmente
-                </li>
-                <li>
-                  ✗ El <strong>enriquecimiento con datos de productos</strong> está
-                  bloqueado
-                </li>
-                <li>
-                  📧 Hemos contactado a MercadoLibre para resolver el problema
-                </li>
-              </ul>
-              <Text size="xs" c="dimmed" mt="xs">
-                Mientras tanto, puedes ver los trends básicos en la página
-                principal. Te notificaremos cuando la funcionalidad se
-                restablezca.
-              </Text>
-            </Stack>
-          </Alert>
+          {/* Información adicional en Accordion */}
+          <Accordion variant="contained" radius="md" mt="md" multiple>
+            <Accordion.Item value="api-status">
+              <Accordion.Control icon={<IconAlertTriangle size={16} />}>
+                <Text fw={500} c="orange">
+                  ⚠️ Estado de la API
+                </Text>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Stack gap="sm">
+                  <Text size="sm">
+                    MercadoLibre ha restringido el acceso a su API de Búsqueda
+                    (Search API) mediante CloudFront, bloqueando todas las
+                    solicitudes con errores 403. Este problema afecta a
+                    desarrolladores en todo el mundo desde abril 2025.
+                  </Text>
+                  <Text size="sm">
+                    <strong>Estado actual:</strong>
+                  </Text>
+                  <ul
+                    style={{ marginTop: 0, marginBottom: 0, fontSize: '0.875rem' }}
+                  >
+                    <li>
+                      ✓ Los <strong>trends básicos</strong> (palabras clave)
+                      funcionan normalmente
+                    </li>
+                    <li>
+                      ✗ El <strong>enriquecimiento con datos de productos</strong>{' '}
+                      está bloqueado
+                    </li>
+                    <li>
+                      📧 Hemos contactado a MercadoLibre para resolver el problema
+                    </li>
+                  </ul>
+                  <Text size="xs" c="dimmed" mt="xs">
+                    Mientras tanto, puedes ver los trends básicos en la página
+                    principal. Te notificaremos cuando la funcionalidad se
+                    restablezca.
+                  </Text>
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
 
-          {/* Info Alert */}
-          <Alert
-            icon={<IconInfoCircle size={16} />}
-            title="Cómo funciona (cuando esté disponible)"
-            color="blue"
-            variant="light"
-            mt="md"
-          >
-            Esta vista carga rápidamente los trends básicos. Para ver métricas
-            detalladas (oportunidad de negocio, precios, ventas), haz click en
-            el botón <strong>+</strong> en cada card.
-            <ul style={{ marginTop: 8, marginBottom: 0 }}>
-              <li>
-                <strong>Puntuación de oportunidad</strong>: Score 0-100 basado
-                en volumen de búsqueda, ventas, envío gratis y disponibilidad
-              </li>
-              <li>
-                <strong>Rango de precios</strong>: Precio mínimo, máximo y
-                promedio de los productos top
-              </li>
-              <li>
-                <strong>Ventas totales</strong>: Suma de unidades vendidas de
-                los productos principales
-              </li>
-              <li>
-                <strong>Envío gratis</strong>: Porcentaje de productos con envío
-                gratuito
-              </li>
-            </ul>
-            <Text size="xs" mt="xs" c="dimmed">
-              Las métricas se cargan bajo demanda para evitar bloqueos de la
-              API.
-            </Text>
-          </Alert>
+            <Accordion.Item value="how-it-works">
+              <Accordion.Control icon={<IconInfoCircle size={16} />}>
+                <Text fw={500}>ℹ️ Cómo funciona (cuando esté disponible)</Text>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Stack gap="sm">
+                  <Text size="sm">
+                    Esta vista carga rápidamente los trends básicos. Para ver
+                    métricas detalladas (oportunidad de negocio, precios,
+                    ventas), haz click en el botón <strong>+</strong> en cada
+                    card.
+                  </Text>
+                  <ul style={{ marginTop: 0, marginBottom: 0, fontSize: '0.875rem' }}>
+                    <li>
+                      <strong>Puntuación de oportunidad</strong>: Score 0-100
+                      basado en volumen de búsqueda, ventas, envío gratis y
+                      disponibilidad
+                    </li>
+                    <li>
+                      <strong>Rango de precios</strong>: Precio mínimo, máximo y
+                      promedio de los productos top
+                    </li>
+                    <li>
+                      <strong>Ventas totales</strong>: Suma de unidades vendidas
+                      de los productos principales
+                    </li>
+                    <li>
+                      <strong>Envío gratis</strong>: Porcentaje de productos con
+                      envío gratuito
+                    </li>
+                  </ul>
+                  <Text size="xs" c="dimmed" mt="xs">
+                    Las métricas se cargan bajo demanda para evitar bloqueos de
+                    la API.
+                  </Text>
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         </Box>
 
         {/* Loading first page */}
