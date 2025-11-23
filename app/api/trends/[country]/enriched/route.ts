@@ -63,11 +63,11 @@ function getKeywordVariants(keyword: string): string[] {
 
 /**
  * Fetch search results for a keyword with fallback variants
+ * NOTE: Search API is public and doesn't require authentication
  */
 async function fetchSearchResults(
   siteId: SiteId,
   keyword: string,
-  accessToken: string,
   limit: number = PRODUCTS_PER_KEYWORD
 ): Promise<SearchResponse> {
   const variants = getKeywordVariants(keyword);
@@ -78,10 +78,8 @@ async function fetchSearchResults(
       const encodedKeyword = encodeURIComponent(variant);
       const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
 
+      // Search API is public - no auth required!
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
         cache: 'no-store',
       });
 
@@ -225,7 +223,6 @@ function calculateMetrics(
 async function processEnrichedTrends(
   trends: TrendItem[],
   siteId: SiteId,
-  accessToken: string,
   offset: number = 0,
   limit: number = 10
 ): Promise<EnrichedTrendItem[]> {
@@ -245,8 +242,7 @@ async function processEnrichedTrends(
         try {
           const searchData = await fetchSearchResults(
             siteId,
-            trend.keyword,
-            accessToken
+            trend.keyword
           );
 
           return calculateMetrics(trend, searchData);
@@ -377,7 +373,6 @@ export async function GET(
     const enrichedTrends = await processEnrichedTrends(
       trends,
       siteId,
-      access_token,
       offset,
       limit
     );
