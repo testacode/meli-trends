@@ -20,11 +20,19 @@ const enrichedTrendsCache = new Map<
 // Cache TTL: 24 hours in milliseconds
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-// Number of concurrent requests
-const CONCURRENCY_LIMIT = 5;
+// Number of concurrent requests (reduced to avoid rate limiting)
+const CONCURRENCY_LIMIT = 3;
 
 // Products to fetch per keyword
 const PRODUCTS_PER_KEYWORD = 3;
+
+// Delay between batches in milliseconds (to avoid CloudFront blocking)
+const BATCH_DELAY_MS = 1500; // 1.5 seconds between batches
+
+/**
+ * Sleep utility for adding delays
+ */
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Simplify keyword for better search results
@@ -267,6 +275,10 @@ async function processEnrichedTrends(
   for (let i = 0; i < paginatedTrends.length; i += CONCURRENCY_LIMIT) {
     const chunk = paginatedTrends.slice(i, i + CONCURRENCY_LIMIT);
 
+    console.log(
+      `🔄 Processing batch ${Math.floor(i / CONCURRENCY_LIMIT) + 1}/${Math.ceil(paginatedTrends.length / CONCURRENCY_LIMIT)} (${chunk.length} trends)`
+    );
+
     const chunkResults = await Promise.all(
       chunk.map(async (trend) => {
         try {
@@ -296,7 +308,14 @@ async function processEnrichedTrends(
     // If we already have enough trends with data, stop processing
     const trendsWithData = enrichedTrends.filter((t) => t.total_results > 0);
     if (trendsWithData.length >= limit) {
+      console.log(`✅ Got enough trends with data (${trendsWithData.length}), stopping early`);
       break;
+    }
+
+    // Add delay between batches to avoid rate limiting (except for last batch)
+    if (i + CONCURRENCY_LIMIT < paginatedTrends.length) {
+      console.log(`⏳ Waiting ${BATCH_DELAY_MS}ms before next batch to avoid rate limiting...`);
+      await sleep(BATCH_DELAY_MS);
     }
   }
 
