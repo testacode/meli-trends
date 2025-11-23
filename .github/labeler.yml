@@ -1,0 +1,64 @@
+# Auto-label PRs based on changed files
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**/*'
+      - 'CLAUDE.md'
+      - 'README.md'
+
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.test.ts'
+      - '**/*.test.tsx'
+      - '**/__tests__/**/*'
+      - 'vitest.config.ts'
+
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'app/**/*'
+      - 'components/**/*'
+      - 'hooks/**/*'
+      - 'lib/mantine-theme.ts'
+      - '**/*.tsx'
+
+backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'app/api/**/*'
+      - 'lib/searchAPI.ts'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'package-lock.json'
+
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.config.*'
+      - '.github/**/*'
+      - '.husky/**/*'
+      - 'tsconfig.json'
+      - 'eslint.config.mjs'
+      - '.env.example'
+
+types:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'types/**/*'
+
+utilities:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'utils/**/*'
+      - 'lib/**/*'
+
+workflows:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**/*'
