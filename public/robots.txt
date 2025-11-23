@@ -1,0 +1,19 @@
+# robots.txt for MeLi Trends
+# https://meli-trends.carlosmonti.com
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Specific crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
+Sitemap: https://meli-trends.carlosmonti.com/sitemap.xml
+
+# Crawl-delay (optional, adjust if needed)
+# Crawl-delay: 1
