@@ -14,7 +14,7 @@ import {
   Group,
   Button,
   Box,
-  SegmentedControl,
+  Chip,
 } from '@mantine/core';
 import {
   IconAlertCircle,
@@ -123,24 +123,18 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
         {/* Trend Type Filter */}
         {trends.length > 0 && (
           <Center>
-            <SegmentedControl
+            <Chip.Group
               value={selectedType}
               onChange={(value) => setSelectedType(value as 'all' | TrendType)}
-              data={[
-                { label: 'Todos', value: 'all' },
-                { label: 'Mayor Crecimiento', value: 'fastest_growing' },
-                { label: 'Más Buscados', value: 'most_wanted' },
-                { label: 'Más Populares', value: 'most_popular' },
-              ]}
-              size="md"
-              radius="md"
-              fullWidth
-              styles={{
-                root: {
-                  maxWidth: '800px',
-                },
-              }}
-            />
+              multiple={false}
+            >
+              <Group justify="center" gap="xs">
+                <Chip value="all" variant="filled">Todos</Chip>
+                <Chip value="fastest_growing" variant="filled">Mayor Crecimiento</Chip>
+                <Chip value="most_wanted" variant="filled">Más Buscados</Chip>
+                <Chip value="most_popular" variant="filled">Más Populares</Chip>
+              </Group>
+            </Chip.Group>
           </Center>
         )}
 
