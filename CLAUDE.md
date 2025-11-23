@@ -8,8 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, Peru). Two main views:
 
-1. **Basic Trends**: Keyword trends only
-2. **Enriched Trends**: Keywords + real product data + metrics + opportunity scores
+1. **Basic Trends**: Keyword trends only ✅ **WORKING**
+2. **Enriched Trends**: Keywords + real product data + metrics + opportunity scores ⚠️ **TEMPORARILY UNAVAILABLE**
+
+### ⚠️ CRITICAL STATUS UPDATE (November 2025)
+
+**Search API is currently blocked by MercadoLibre's CloudFront (403 errors)**
+
+- **Working**: Basic trends (Trends API)
+- **Broken**: Enriched trends (Search API)
+- **Cause**: CloudFront IP-based blocking, likely requires certified integrator status
+- **Details**: See `/docs/architecture/search-api-403-investigation-2025-11.md`
+- **Action**: Contact MercadoLibre support to request certified integrator status and IP whitelisting
 
 ### Essential Commands
 

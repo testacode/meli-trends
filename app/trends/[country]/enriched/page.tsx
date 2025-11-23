@@ -19,7 +19,6 @@ import {
 import {
   IconAlertCircle,
   IconRefresh,
-  IconInfoCircle,
   IconCategory,
 } from '@tabler/icons-react';
 import { useTrends } from '@/hooks/useTrends';
@@ -149,41 +148,6 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
               </Badge>
             </Group>
           )}
-
-          {/* Info Alert */}
-          <Alert
-            icon={<IconInfoCircle size={16} />}
-            title="Cómo funciona"
-            color="blue"
-            variant="light"
-            mt="md"
-          >
-            Esta vista carga rápidamente los trends básicos. Para ver métricas
-            detalladas (oportunidad de negocio, precios, ventas), haz click en
-            el botón <strong>+</strong> en cada card.
-            <ul style={{ marginTop: 8, marginBottom: 0 }}>
-              <li>
-                <strong>Puntuación de oportunidad</strong>: Score 0-100 basado
-                en volumen de búsqueda, ventas, envío gratis y disponibilidad
-              </li>
-              <li>
-                <strong>Rango de precios</strong>: Precio mínimo, máximo y
-                promedio de los productos top
-              </li>
-              <li>
-                <strong>Ventas totales</strong>: Suma de unidades vendidas de
-                los productos principales
-              </li>
-              <li>
-                <strong>Envío gratis</strong>: Porcentaje de productos con envío
-                gratuito
-              </li>
-            </ul>
-            <Text size="xs" mt="xs" c="dimmed">
-              Las métricas se cargan bajo demanda para evitar bloqueos de la
-              API.
-            </Text>
-          </Alert>
         </Box>
 
         {/* Loading first page */}
