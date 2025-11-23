@@ -9,6 +9,7 @@ import "@mantine/core/styles.css";
 import "./globals.css";
 
 import { AuthProvider } from "@/contexts/AuthContext";
+import { I18nProvider } from "@/contexts/I18nContext";
 import { mantineTheme } from "@/lib/mantine-theme";
 import QueryProvider from "@/components/providers/QueryProvider";
 
@@ -99,11 +100,13 @@ export default function RootLayout({
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body>
-        <MantineProvider theme={mantineTheme} defaultColorScheme="auto">
-          <QueryProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </QueryProvider>
-        </MantineProvider>
+        <I18nProvider>
+          <MantineProvider theme={mantineTheme} defaultColorScheme="auto">
+            <QueryProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </QueryProvider>
+          </MantineProvider>
+        </I18nProvider>
       </body>
     </html>
   );

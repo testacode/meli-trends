@@ -1,0 +1,84 @@
+{
+  "header": {
+    "appName": "MeLi Trends",
+    "countries": "Países",
+    "categories": "Categorías",
+    "allCategories": "Todas las categorías",
+    "loadingCategories": "Cargando categorías...",
+    "help": "Ayuda e Información",
+    "language": "Idioma",
+    "selectCountry": "Selecciona un país",
+    "selectCategory": "Selecciona una categoría",
+    "theme": {
+      "toggle": "Cambiar tema",
+      "light": "Modo claro",
+      "dark": "Modo oscuro"
+    },
+    "views": {
+      "list": "Vista Lista",
+      "overview": "Vista por Categorías"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "retry": "Reintentar",
+    "noData": "No hay datos disponibles",
+    "noResults": "No se encontraron resultados"
+  },
+  "trends": {
+    "title": "Tendencias",
+    "enriched": "Tendencias Enriquecidas",
+    "basic": "Tendencias Básicas",
+    "opportunityScore": "Puntuación de Oportunidad",
+    "searchVolume": "Volumen de Búsqueda",
+    "soldQuantity": "Cantidad Vendida",
+    "priceRange": "Rango de Precios",
+    "freeShipping": "Envío Gratis",
+    "viewDetails": "Ver Detalles",
+    "expand": "Expandir",
+    "collapse": "Contraer",
+    "viewOnMeli": "Ver en MercadoLibre →",
+    "viewDetailsTooltip": "Ver detalles y métricas",
+    "opportunityTooltip": "Puntuación de oportunidad de negocio",
+    "businessOpportunity": "Oportunidad de Negocio",
+    "priceRangeLabel": "Rango de precio:",
+    "averagePrice": "Precio promedio:",
+    "totalSold": "Ventas totales:",
+    "freeShippingLabel": "Envío gratis:",
+    "searchResults": "Resultados de búsqueda:",
+    "clickToSeeMetrics": "Haz click en + para ver métricas detalladas",
+    "errorLoadingDetails": "Error al cargar detalles:",
+    "new": "Nuevo",
+    "more": "más",
+    "units": "unidades",
+    "opportunityLabels": {
+      "noData": "Sin datos",
+      "excellent": "Excelente",
+      "good": "Buena",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  },
+  "errors": {
+    "fetchFailed": "Error al cargar los datos",
+    "networkError": "Error de conexión",
+    "tryAgain": "Por favor, intenta de nuevo",
+    "somethingWentWrong": "Algo salió mal",
+    "loadingTrends": "Error al cargar trends",
+    "retry": "Reintentar",
+    "backToHome": "Volver al inicio",
+    "errorCode": "Código de error",
+    "status401": "Token inválido o expirado. Por favor, vuelve a iniciar sesión.",
+    "status403": "No tienes permiso para acceder a este recurso.",
+    "status404": "No se encontraron datos para este país o categoría.",
+    "status429": "Demasiadas solicitudes. Por favor, espera unos minutos e intenta nuevamente.",
+    "status0": "Error de conexión. Verifica tu conexión a internet.",
+    "defaultMessage": "Ocurrió un error al cargar los datos."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  }
+}

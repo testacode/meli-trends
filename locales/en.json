@@ -1,0 +1,84 @@
+{
+  "header": {
+    "appName": "MeLi Trends",
+    "countries": "Countries",
+    "categories": "Categories",
+    "allCategories": "All Categories",
+    "loadingCategories": "Loading categories...",
+    "help": "Help & Information",
+    "language": "Language",
+    "selectCountry": "Select a country",
+    "selectCategory": "Select a category",
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "views": {
+      "list": "List View",
+      "overview": "Category View"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "noData": "No data available",
+    "noResults": "No results found"
+  },
+  "trends": {
+    "title": "Trends",
+    "enriched": "Enriched Trends",
+    "basic": "Basic Trends",
+    "opportunityScore": "Opportunity Score",
+    "searchVolume": "Search Volume",
+    "soldQuantity": "Sold Quantity",
+    "priceRange": "Price Range",
+    "freeShipping": "Free Shipping",
+    "viewDetails": "View Details",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "viewOnMeli": "View on MercadoLibre →",
+    "viewDetailsTooltip": "View details and metrics",
+    "opportunityTooltip": "Business opportunity score",
+    "businessOpportunity": "Business Opportunity",
+    "priceRangeLabel": "Price range:",
+    "averagePrice": "Average price:",
+    "totalSold": "Total sold:",
+    "freeShippingLabel": "Free shipping:",
+    "searchResults": "Search results:",
+    "clickToSeeMetrics": "Click + to see detailed metrics",
+    "errorLoadingDetails": "Error loading details:",
+    "new": "New",
+    "more": "more",
+    "units": "units",
+    "opportunityLabels": {
+      "noData": "No data",
+      "excellent": "Excellent",
+      "good": "Good",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
+  "errors": {
+    "fetchFailed": "Failed to load data",
+    "networkError": "Connection error",
+    "tryAgain": "Please try again",
+    "somethingWentWrong": "Something went wrong",
+    "loadingTrends": "Error loading trends",
+    "retry": "Retry",
+    "backToHome": "Back to home",
+    "errorCode": "Error code",
+    "status401": "Invalid or expired token. Please log in again.",
+    "status403": "You don't have permission to access this resource.",
+    "status404": "No data found for this country or category.",
+    "status429": "Too many requests. Please wait a few minutes and try again.",
+    "status0": "Connection error. Please check your internet connection.",
+    "defaultMessage": "An error occurred while loading the data."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  }
+}
