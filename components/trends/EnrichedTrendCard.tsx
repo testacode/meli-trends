@@ -14,6 +14,7 @@ import {
   ActionIcon,
   Loader,
   Alert,
+  CopyButton,
 } from '@mantine/core';
 import {
   IconTrendingUp,
@@ -24,6 +25,8 @@ import {
   IconChartBar,
   IconPlus,
   IconAlertCircle,
+  IconCopy,
+  IconCheck,
 } from '@tabler/icons-react';
 import { useEnrichTrendOnDemand } from '@/hooks/useEnrichTrendOnDemand';
 import type { TrendItem, SiteId } from '@/types/meli';
@@ -155,7 +158,27 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
             >
               {trend.keyword}
             </Text>
-            <IconExternalLink size={18} style={{ opacity: 0.6, flexShrink: 0 }} />
+            <Group gap={4} wrap="nowrap">
+              <CopyButton value={trend.keyword} timeout={2000}>
+                {({ copied, copy }) => (
+                  <Tooltip label={copied ? t('trends.copiedTrend') : t('trends.copyTrend')} withArrow position="left">
+                    <ActionIcon
+                      color={copied ? 'teal' : 'gray'}
+                      variant="subtle"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        copy();
+                      }}
+                      aria-label={t('trends.copyTrend')}
+                    >
+                      {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </CopyButton>
+              <IconExternalLink size={18} style={{ opacity: 0.6, flexShrink: 0 }} />
+            </Group>
           </Group>
         </Box>
 

@@ -45,6 +45,8 @@
     "expand": "Expand",
     "collapse": "Collapse",
     "viewOnMeli": "View on MercadoLibre →",
+    "copyTrend": "Copy text",
+    "copiedTrend": "Copied",
     "viewDetailsTooltip": "View details and metrics",
     "opportunityTooltip": "Business opportunity score",
     "businessOpportunity": "Business Opportunity",
