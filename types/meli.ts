@@ -66,3 +66,93 @@ export interface OAuthTokenResponse {
   user_id: number;
   refresh_token: string;
 }
+
+/**
+ * Product from Search API
+ */
+export interface SearchProduct {
+  id: string;
+  title: string;
+  price: number;
+  currency_id: string;
+  thumbnail: string;
+  permalink: string;
+  condition: 'new' | 'used';
+  available_quantity: number;
+  sold_quantity?: number;
+  shipping?: {
+    free_shipping: boolean;
+    logistic_type?: string;
+    store_pick_up?: boolean;
+  };
+  accepts_mercadopago?: boolean;
+  original_price?: number;
+  seller?: {
+    id: number;
+    nickname?: string;
+    reputation?: {
+      level_id?: string;
+      power_seller_status?: string;
+    };
+  };
+  attributes?: Array<{
+    id: string;
+    name: string;
+    value_name: string;
+  }>;
+  installments?: {
+    quantity: number;
+    amount: number;
+    rate: number;
+  };
+}
+
+/**
+ * Search API Response
+ */
+export interface SearchResponse {
+  site_id: string;
+  query: string;
+  paging: {
+    total: number;
+    offset: number;
+    limit: number;
+    primary_results: number;
+  };
+  results: SearchProduct[];
+  sort: {
+    id: string;
+    name: string;
+  };
+  available_sorts: Array<{
+    id: string;
+    name: string;
+  }>;
+}
+
+/**
+ * Enriched Trend Item with product data
+ */
+export interface EnrichedTrendItem extends TrendItem {
+  products: SearchProduct[];
+  total_results: number;
+  avg_price?: number;
+  min_price?: number;
+  max_price?: number;
+  total_sold?: number;
+  free_shipping_percentage?: number;
+  opportunity_score?: number; // 0-100 score based on multiple factors
+}
+
+/**
+ * Enriched Trends API Response
+ */
+export interface EnrichedTrendsResponse {
+  site_id: SiteId;
+  trends: EnrichedTrendItem[];
+  total: number;
+  offset: number;
+  limit: number;
+  cached_at: string; // ISO timestamp
+  cache_ttl: number; // seconds
+}
