@@ -27,7 +27,7 @@ import {
 } from '@tabler/icons-react';
 import { useEnrichTrendOnDemand } from '@/hooks/useEnrichTrendOnDemand';
 import type { TrendItem, SiteId } from '@/types/meli';
-import { useI18n } from '@/contexts/I18nContext';
+import { useTranslations } from 'next-intl';
 
 interface EnrichedTrendCardProps {
   trend: TrendItem;
@@ -37,7 +37,7 @@ interface EnrichedTrendCardProps {
 
 export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProps) {
   const { state, enrich } = useEnrichTrendOnDemand(siteId, trend);
-  const { t } = useI18n();
+  const t = useTranslations();
 
   const getRankColor = (position: number): string => {
     if (position === 1) return 'yellow';
@@ -59,11 +59,11 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
   };
 
   const getOpportunityLabel = (score?: number): string => {
-    if (!score) return t.trends.opportunityLabels.noData;
-    if (score >= 75) return t.trends.opportunityLabels.excellent;
-    if (score >= 50) return t.trends.opportunityLabels.good;
-    if (score >= 25) return t.trends.opportunityLabels.medium;
-    return t.trends.opportunityLabels.low;
+    if (!score) return t('trends.opportunityLabels.noData');
+    if (score >= 75) return t('trends.opportunityLabels.excellent');
+    if (score >= 50) return t('trends.opportunityLabels.good');
+    if (score >= 25) return t('trends.opportunityLabels.medium');
+    return t('trends.opportunityLabels.low');
   };
 
   const enrichedData = state.status === 'success' ? state.data : null;
@@ -104,7 +104,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
 
           {/* Show Enrich Button if not enriched */}
           {!isEnriched && state.status !== 'error' && (
-            <Tooltip label={t.trends.viewDetailsTooltip}>
+            <Tooltip label={t('trends.viewDetailsTooltip')}>
               <ActionIcon
                 variant="light"
                 color="meliBlue"
@@ -119,7 +119,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
 
           {/* Show Opportunity Score if enriched */}
           {isEnriched && enrichedData && (
-            <Tooltip label={t.trends.opportunityTooltip}>
+            <Tooltip label={t('trends.opportunityTooltip')}>
               <Badge
                 size="lg"
                 variant="light"
@@ -162,7 +162,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
         {/* Error State */}
         {state.status === 'error' && (
           <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
-            {t.trends.errorLoadingDetails} {state.error}
+            {t('trends.errorLoadingDetails')} {state.error}
           </Alert>
         )}
 
@@ -174,7 +174,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
               <Box>
                 <Group justify="space-between" mb={5}>
                   <Text size="xs" c="dimmed" fw={500}>
-                    {t.trends.businessOpportunity}
+                    {t('trends.businessOpportunity')}
                   </Text>
                   <Text size="xs" fw={600}>
                     {enrichedData.opportunity_score}/100
@@ -214,14 +214,14 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                           right: -5,
                         }}
                       >
-                        {t.trends.new}
+                        {t('trends.new')}
                       </Badge>
                     )}
                   </Box>
                 ))}
                 {enrichedData.products.length > 3 && (
                   <Text size="xs" c="dimmed" fw={500}>
-                    +{enrichedData.products.length - 3} {t.trends.more}
+                    +{enrichedData.products.length - 3} {t('trends.more')}
                   </Text>
                 )}
               </Group>
@@ -235,7 +235,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                   <Group gap="xs">
                     <IconChartBar size={16} style={{ opacity: 0.6 }} />
                     <Text size="sm" fw={500} c="dimmed">
-                      {t.trends.priceRangeLabel}
+                      {t('trends.priceRangeLabel')}
                     </Text>
                   </Group>
                   <Text size="sm" fw={600}>
@@ -262,7 +262,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                   <Group gap="xs">
                     <IconChartBar size={16} style={{ opacity: 0.6 }} />
                     <Text size="sm" fw={500} c="dimmed">
-                      {t.trends.averagePrice}
+                      {t('trends.averagePrice')}
                     </Text>
                   </Group>
                   <Text size="sm" fw={700} c="blue">
@@ -282,14 +282,14 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                   <Group gap="xs">
                     <IconShoppingCart size={16} style={{ opacity: 0.6 }} />
                     <Text size="sm" fw={500} c="dimmed">
-                      {t.trends.totalSold}
+                      {t('trends.totalSold')}
                     </Text>
                   </Group>
                   <Text size="sm" fw={600} c="green">
                     <NumberFormatter
                       value={enrichedData.total_sold}
                       thousandSeparator
-                      suffix={` ${t.trends.units}`}
+                      suffix={` ${t('trends.units')}`}
                     />
                   </Text>
                 </Group>
@@ -301,7 +301,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                   <Group gap="xs">
                     <IconTruck size={16} style={{ opacity: 0.6 }} />
                     <Text size="sm" fw={500} c="dimmed">
-                      {t.trends.freeShippingLabel}
+                      {t('trends.freeShippingLabel')}
                     </Text>
                   </Group>
                   <Text size="sm" fw={600} c={enrichedData.free_shipping_percentage >= 50 ? 'green' : 'orange'}>
@@ -313,7 +313,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
               {/* Total Results */}
               <Group justify="space-between" wrap="nowrap">
                 <Text size="sm" fw={500} c="dimmed">
-                  {t.trends.searchResults}
+                  {t('trends.searchResults')}
                 </Text>
                 <Text size="sm" fw={600}>
                   <NumberFormatter value={enrichedData.total_results} thousandSeparator />
@@ -327,7 +327,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
         {!isEnriched && state.status === 'idle' && (
           <Box mt="auto" pt="md">
             <Text size="sm" c="dimmed" ta="center">
-              {t.trends.clickToSeeMetrics}
+              {t('trends.clickToSeeMetrics')}
             </Text>
           </Box>
         )}

@@ -4,7 +4,7 @@ import { Card, Text, Badge, Group, Stack } from '@mantine/core';
 import { IconTrendingUp, IconExternalLink } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
 import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
-import { useI18n } from '@/contexts/I18nContext';
+import { useTranslations } from 'next-intl';
 
 interface TrendCardProps {
   trend: TrendItem;
@@ -12,7 +12,7 @@ interface TrendCardProps {
 }
 
 export function TrendCard({ trend, rank }: TrendCardProps) {
-  const { t } = useI18n();
+  const t = useTranslations();
 
   const getRankColor = (position: number): string => {
     if (position === 1) return 'yellow';
@@ -93,7 +93,7 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
         {/* View Link */}
         <Group justify="flex-end">
           <Text size="sm" fw={500} c="meliBlue">
-            {t.trends.viewOnMeli}
+            {t('trends.viewOnMeli')}
           </Text>
         </Group>
       </Stack>
