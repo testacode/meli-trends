@@ -321,14 +321,14 @@ export default function AboutPage() {
                 <ThemeIcon size="lg" radius="md" variant="light" color="yellow">
                   <IconAlertTriangle size={24} />
                 </ThemeIcon>
-                <Title order={2}>⚠️ Estado Actual del Sistema</Title>
+                <Title order={2}>Estado Actual del Sistema</Title>
               </Group>
 
               <Accordion variant="separated">
                 <Accordion.Item value="api-status">
                   <Accordion.Control>
                     <Text fw={500} c="orange">
-                      ⚠️ Estado de la API de Búsqueda
+                      Estado de la API de Búsqueda
                     </Text>
                   </Accordion.Control>
                   <Accordion.Panel>
@@ -367,7 +367,7 @@ export default function AboutPage() {
                 <Accordion.Item value="enrichment">
                   <Accordion.Control>
                     <Text fw={500}>
-                      ℹ️ Funcionalidad de Enriquecimiento (temporalmente no disponible)
+                      Funcionalidad de Enriquecimiento (temporalmente no disponible)
                     </Text>
                   </Accordion.Control>
                   <Accordion.Panel>
