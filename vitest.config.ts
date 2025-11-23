@@ -12,6 +12,7 @@ export default defineConfig({
       '**/node_modules/**',
       '**/dist/**',
       '**/.next/**',
+      '**/mocks/**', // Exclude MSW mock configuration folder
       '**/*.mock.ts', // Exclude mock files from test runs
     ],
     coverage: {
@@ -23,6 +24,7 @@ export default defineConfig({
         '*.config.ts',
         '.next/',
         'dist/',
+        'mocks/', // Exclude MSW mock configuration folder
         '**/*.mock.ts', // Exclude mock files from coverage
       ],
     },
