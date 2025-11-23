@@ -88,7 +88,7 @@
   },
   "about": {
     "pageTitle": "O que são MeLi Trends?",
-    "pageDescription": "As Tendências do MercadoLibre mostram os {count} produtos mais populares entre os usuários. Esta informação é atualizada semanalmente e está disponível para 7 países da América Latina. As tendências são classificadas automaticamente em 3 tipos de acordo com sua posição, e você pode filtrá-las por categoria para encontrar oportunidades específicas.",
+    "pageDescription": "As Tendências do MercadoLibre mostram os 50 produtos mais populares entre os usuários. Esta informação é atualizada semanalmente e está disponível para 7 países da América Latina. As tendências são classificadas automaticamente em 3 tipos de acordo com sua posição, e você pode filtrá-las por categoria para encontrar oportunidades específicas.",
     "threeTypes": {
       "title": "Três Tipos de Tendências (Classificação Automática)",
       "description": "As 50 tendências são classificadas automaticamente de acordo com sua posição na resposta da API. Cada card de tendência mostra um {badge} indicando seu tipo:",

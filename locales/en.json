@@ -88,7 +88,7 @@
   },
   "about": {
     "pageTitle": "What are MeLi Trends?",
-    "pageDescription": "MercadoLibre Trends show the {count} most popular products among users. This information is updated weekly and is available for 7 Latin American countries. Trends are automatically classified into 3 types based on their position, and you can filter them by category to find specific opportunities.",
+    "pageDescription": "MercadoLibre Trends show the 50 most popular products among users. This information is updated weekly and is available for 7 Latin American countries. Trends are automatically classified into 3 types based on their position, and you can filter them by category to find specific opportunities.",
     "threeTypes": {
       "title": "Three Types of Trends (Automatic Classification)",
       "description": "The 50 trends are automatically classified according to their position in the API response. Each trend card shows a {badge} indicating its type:",

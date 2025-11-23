@@ -52,7 +52,7 @@ export default function AboutPage() {
                 {t('about.pageTitle')}
               </Title>
               <Text size="lg" c="dimmed">
-                {t('about.pageDescription', { count: <strong>50</strong> })}
+                {t('about.pageDescription')}
               </Text>
             </Box>
 
@@ -62,8 +62,8 @@ export default function AboutPage() {
                 📊 {t('about.threeTypes.title')}
               </Title>
               <Text size="sm" c="dimmed" mb="md">
-                {t('about.threeTypes.description', {
-                  badge: <strong>{t('about.threeTypes.badge')}</strong>
+                {t.rich('about.threeTypes.description', {
+                  badge: (chunks) => <strong>{chunks}</strong>
                 })}
               </Text>
               <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
@@ -81,8 +81,8 @@ export default function AboutPage() {
                     🔴 {t('about.threeTypes.fastestGrowing.title')}
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    {t('about.threeTypes.fastestGrowing.description', {
-                      highlight: <strong>{t('about.threeTypes.fastestGrowing.highlight')}</strong>
+                    {t.rich('about.threeTypes.fastestGrowing.description', {
+                      highlight: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Text>
                   <Badge color="red" variant="light" mt="md">
@@ -104,8 +104,8 @@ export default function AboutPage() {
                     🔵 {t('about.threeTypes.mostWanted.title')}
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    {t('about.threeTypes.mostWanted.description', {
-                      highlight: <strong>{t('about.threeTypes.mostWanted.highlight')}</strong>
+                    {t.rich('about.threeTypes.mostWanted.description', {
+                      highlight: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Text>
                   <Badge color="blue" variant="light" mt="md">
@@ -127,8 +127,8 @@ export default function AboutPage() {
                     🟢 {t('about.threeTypes.mostPopular.title')}
                   </Title>
                   <Text size="sm" c="dimmed" mb="xs">
-                    {t('about.threeTypes.mostPopular.description', {
-                      highlight: <strong>{t('about.threeTypes.mostPopular.highlight')}</strong>
+                    {t.rich('about.threeTypes.mostPopular.description', {
+                      highlight: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Text>
                   <Badge color="green" variant="light" mt="md">
@@ -158,18 +158,18 @@ export default function AboutPage() {
                   </Title>
                   <List spacing="xs" size="sm">
                     <List.Item>
-                      {t('about.businessStrategy.recommended.point1', {
-                        label: <strong>{t('about.businessStrategy.recommended.label1')}</strong>
+                      {t.rich('about.businessStrategy.recommended.point1', {
+                        label: (chunks) => <strong>{chunks}</strong>
                       })}
                     </List.Item>
                     <List.Item>
-                      {t('about.businessStrategy.recommended.point2', {
-                        label: <strong>{t('about.businessStrategy.recommended.label2')}</strong>
+                      {t.rich('about.businessStrategy.recommended.point2', {
+                        label: (chunks) => <strong>{chunks}</strong>
                       })}
                     </List.Item>
                     <List.Item>
-                      {t('about.businessStrategy.recommended.point3', {
-                        label: <strong>{t('about.businessStrategy.recommended.label3')}</strong>
+                      {t.rich('about.businessStrategy.recommended.point3', {
+                        label: (chunks) => <strong>{chunks}</strong>
                       })}
                     </List.Item>
                   </List>
@@ -180,8 +180,8 @@ export default function AboutPage() {
                     📈 {t('about.businessStrategy.searchVsConversion.title')}
                   </Title>
                   <Text size="sm" c="dimmed">
-                    {t('about.businessStrategy.searchVsConversion.description', {
-                      highlight: <strong>{t('about.businessStrategy.searchVsConversion.highlight')}</strong>
+                    {t.rich('about.businessStrategy.searchVsConversion.description', {
+                      highlight: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Text>
                 </Box>
@@ -191,12 +191,12 @@ export default function AboutPage() {
                     ⚡ {t('about.businessStrategy.emergingVsEstablished.title')}
                   </Title>
                   <Text size="sm" c="dimmed">
-                    {t('about.businessStrategy.emergingVsEstablished.emerging', {
-                      label: <strong>{t('about.businessStrategy.emergingVsEstablished.label1')}</strong>
+                    {t.rich('about.businessStrategy.emergingVsEstablished.emerging', {
+                      label: (chunks) => <strong>{chunks}</strong>
                     })}
                     <br />
-                    {t('about.businessStrategy.emergingVsEstablished.established', {
-                      label: <strong>{t('about.businessStrategy.emergingVsEstablished.label2')}</strong>
+                    {t.rich('about.businessStrategy.emergingVsEstablished.established', {
+                      label: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Text>
                 </Box>
@@ -289,9 +289,9 @@ export default function AboutPage() {
                   💡 {t('about.categories.tip.title')}
                 </Text>
                 <Text size="xs" c="dimmed">
-                  {t('about.categories.tip.description', {
-                    fastest: <strong>{t('about.categories.tip.fastest')}</strong>,
-                    popular: <strong>{t('about.categories.tip.popular')}</strong>
+                  {t.rich('about.categories.tip.description', {
+                    fastest: (chunks) => <strong>{chunks}</strong>,
+                    popular: (chunks) => <strong>{chunks}</strong>
                   })}
                 </Text>
               </Paper>
@@ -312,8 +312,8 @@ export default function AboutPage() {
                     {t('about.faq.updateFrequency.question')}
                   </Accordion.Control>
                   <Accordion.Panel>
-                    {t('about.faq.updateFrequency.answer', {
-                      frequency: <strong>{t('about.faq.updateFrequency.frequency')}</strong>
+                    {t.rich('about.faq.updateFrequency.answer', {
+                      frequency: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Accordion.Panel>
                 </Accordion.Item>
@@ -323,8 +323,8 @@ export default function AboutPage() {
                     {t('about.faq.publicData.question')}
                   </Accordion.Control>
                   <Accordion.Panel>
-                    {t('about.faq.publicData.answer', {
-                      type: <strong>{t('about.faq.publicData.type')}</strong>
+                    {t.rich('about.faq.publicData.answer', {
+                      type: (chunks) => <strong>{chunks}</strong>
                     })}
                   </Accordion.Panel>
                 </Accordion.Item>
@@ -336,13 +336,13 @@ export default function AboutPage() {
                   <Accordion.Panel>
                     <List size="sm" spacing="xs">
                       <List.Item>
-                        {t('about.faq.difference.mostWanted', {
-                          label: <strong>{t('about.faq.difference.label1')}</strong>
+                        {t.rich('about.faq.difference.mostWanted', {
+                          label: (chunks) => <strong>{chunks}</strong>
                         })}
                       </List.Item>
                       <List.Item>
-                        {t('about.faq.difference.fastestGrowing', {
-                          label: <strong>{t('about.faq.difference.label2')}</strong>
+                        {t.rich('about.faq.difference.fastestGrowing', {
+                          label: (chunks) => <strong>{chunks}</strong>
                         })}
                       </List.Item>
                     </List>
@@ -382,14 +382,14 @@ export default function AboutPage() {
                     {t('about.faq.apiSource.question')}
                   </Accordion.Control>
                   <Accordion.Panel>
-                    {t('about.faq.apiSource.answer', {
-                      link: (
+                    {t.rich('about.faq.apiSource.answer', {
+                      link: (chunks) => (
                         <Anchor
                           href="https://developers.mercadolibre.com.ar/en_us/trends"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          {t('about.faq.apiSource.linkText')}
+                          {chunks}
                           <IconExternalLink
                             size={14}
                             style={{ marginLeft: 4, verticalAlign: "middle" }}
