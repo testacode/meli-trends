@@ -340,16 +340,6 @@ export default function AboutPage() {
                     <IconExternalLink size={14} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
                   </Anchor>
                 </List.Item>
-                <List.Item>
-                  <Anchor
-                    href="https://github.com/testacode/meli-trends"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Código fuente de esta aplicación (GitHub)
-                    <IconExternalLink size={14} style={{ marginLeft: 4, verticalAlign: 'middle' }} />
-                  </Anchor>
-                </List.Item>
               </List>
             </Paper>
 
