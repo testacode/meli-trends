@@ -16,6 +16,7 @@ import {
   Box,
   Anchor,
   Paper,
+  useMantineColorScheme,
 } from '@mantine/core';
 import {
   IconTrendingUp,
@@ -32,6 +33,9 @@ import { AppShell } from '@mantine/core';
 import { Header } from '@/components/layout/Header';
 
 export default function AboutPage() {
+  const { colorScheme } = useMantineColorScheme();
+  const tipBg = colorScheme === 'dark' ? 'gray.7' : 'grape.2';
+
   return (
     <AppShell header={{ height: 60 }} padding="md">
       <Suspense fallback={<AppShell.Header />}>
@@ -237,7 +241,7 @@ export default function AboutPage() {
                 </List.Item>
               </List>
 
-              <Paper shadow="xs" p="md" radius="md" withBorder mt="md" bg="grape.0">
+              <Paper shadow="xs" p="md" radius="md" withBorder mt="md" bg={tipBg}>
                 <Text size="sm" fw={500} mb="xs">
                   💡 Tip: Combina categorías con tipos de trends
                 </Text>
