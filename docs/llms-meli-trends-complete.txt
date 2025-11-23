@@ -1,0 +1,1695 @@
+# MeLi Trends - Complete Documentation for LLMs
+
+Version: 1.0.0
+Last Updated: 2025-11-23
+Repository: https://github.com/testacode/meli-trends
+Live Demo: https://meli-trends.vercel.app
+
+This file contains comprehensive documentation for the MeLi Trends project including:
+- Complete component documentation with usage examples
+- Full demo code for every component and hook
+- API endpoint documentation with request/response examples
+- TypeScript type definitions
+- Common patterns and best practices
+- Troubleshooting guides
+
+================================================================================
+
+## PROJECT OVERVIEW
+
+MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries.
+
+**Tech Stack:**
+- Next.js 16 (App Router)
+- TypeScript 5
+- Mantine 8 (NO Tailwind CSS)
+- React 19
+- Vitest + Testing Library
+
+**Key Features:**
+- 50 trends per country with automatic classification
+- Category filtering with localStorage persistence
+- Trend type filtering (Fastest-Growing, Most Wanted, Most Popular)
+- Multi-country support (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, Peru)
+- Dark/Light mode theming
+- Mobile-first responsive design
+- PWA support
+
+================================================================================
+
+## CORE COMPONENTS
+
+### Header Component
+Package: components/layout/Header.tsx
+Description: Main navigation with country selector, category dropdown, theme toggle
+
+#### Usage
+
+```tsx
+import { Header } from '@/components/layout/Header';
+import type { SiteId } from '@/utils/constants';
+
+function Page() {
+  const currentCountry: SiteId = 'MLA';
+  const currentCategory = 'MLA1051'; // Optional
+
+  return <Header currentCountry={currentCountry} currentCategory={currentCategory} />;
+}
+```
+
+**Features:**
+- Country selector with flags
+- Category dropdown (localStorage persistence)
+- Dark/light mode toggle
+- Mobile hamburger menu
+- About page link
+
+**Props:**
+```typescript
+interface HeaderProps {
+  currentCountry?: SiteId;  // 'MLA' | 'MLB' | 'MLC' | 'MLM' | 'MCO' | 'MLU' | 'MPE'
+  currentCategory?: string | null;
+}
+```
+
+#### Example: with category filter
+
+```tsx
+// app/trends/[country]/page.tsx
+'use client';
+
+import { useParams, useSearchParams } from 'next/navigation';
+import { AppShell } from '@mantine/core';
+import { Header } from '@/components/layout/Header';
+import type { SiteId } from '@/utils/constants';
+
+export default function TrendsPage() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+
+  const country = params.country as SiteId;
+  const selectedCategory = searchParams.get('category');
+
+  return (
+    <AppShell header={{ height: 60 }} padding="md">
+      <Header currentCountry={country} currentCategory={selectedCategory} />
+      <AppShell.Main>
+        {/* Page content */}
+      </AppShell.Main>
+    </AppShell>
+  );
+}
+```
+
+================================================================================
+
+### TrendCard Component
+Package: components/trends/TrendCard.tsx
+Description: Display basic trend with keyword, rank, and trend type badge
+
+#### Usage
+
+```tsx
+import { TrendCard } from '@/components/trends/TrendCard';
+import type { TrendItem } from '@/types/meli';
+
+function TrendsList() {
+  const trend: TrendItem = {
+    keyword: 'iphone 15 pro max',
+    url: 'https://listado.mercadolibre.com.ar/iphone-15-pro-max',
+    trend_type: 'fastest_growing',
+  };
+
+  return <TrendCard trend={trend} rank={1} />;
+}
+```
+
+**Props:**
+```typescript
+interface TrendCardProps {
+  trend: TrendItem;
+  rank: number;  // Position in the list (1-50)
+}
+```
+
+**Features:**
+- Rank badge with color coding (gold/silver/bronze/blue)
+- Trend type badge (red=fastest_growing, blue=most_wanted, green=most_popular)
+- Clickable link to MercadoLibre search
+- Hover animation with transform
+
+#### Example: render list of trends
+
+```tsx
+import { SimpleGrid } from '@mantine/core';
+import { TrendCard } from '@/components/trends/TrendCard';
+import type { TrendItem } from '@/types/meli';
+
+function TrendsGrid({ trends }: { trends: TrendItem[] }) {
+  return (
+    <SimpleGrid
+      cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
+      spacing={{ base: 'md', sm: 'lg' }}
+    >
+      {trends.map((trend, index) => (
+        <TrendCard
+          key={`${trend.keyword}-${index}`}
+          trend={trend}
+          rank={index + 1}
+        />
+      ))}
+    </SimpleGrid>
+  );
+}
+```
+
+================================================================================
+
+### TrendsList Component
+Package: components/trends/TrendsList.tsx
+Description: Grid layout with SegmentedControl filter for trend types
+
+#### Usage
+
+```tsx
+import { TrendsList } from '@/components/trends/TrendsList';
+import type { TrendsResponse, SiteId } from '@/types/meli';
+
+function Page({ trends, country }: { trends: TrendsResponse; country: SiteId }) {
+  return <TrendsList trends={trends} country={country} />;
+}
+```
+
+**Props:**
+```typescript
+interface TrendsListProps {
+  trends: TrendsResponse;  // Array of TrendItem
+  country: SiteId;
+}
+```
+
+**Features:**
+- SegmentedControl filter (Todos, Mayor Crecimiento, Más Buscados, Más Populares)
+- Responsive grid (1-4 columns)
+- Dynamic count display (filtered/total)
+- Empty state with icon
+- Client-side filtering (non-persistent)
+
+#### Example: complete trends page
+
+```tsx
+'use client';
+
+import { Container } from '@mantine/core';
+import { useTrends } from '@/hooks/useTrends';
+import { TrendsList } from '@/components/trends/TrendsList';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+import { ErrorState } from '@/components/common/ErrorState';
+import type { SiteId } from '@/types/meli';
+
+export default function TrendsPage() {
+  const country: SiteId = 'MLA';
+  const { data, loading, error, refetch } = useTrends({ siteId: country });
+
+  if (loading) return <LoadingSkeleton />;
+  if (error) return <ErrorState error={error} onRetry={refetch} />;
+  if (!data) return null;
+
+  return (
+    <Container size="xl" py="xl">
+      <TrendsList trends={data} country={country} />
+    </Container>
+  );
+}
+```
+
+================================================================================
+
+### EnrichedTrendCard Component
+Package: components/trends/EnrichedTrendCard.tsx
+Description: Display trend with enriched product data and metrics
+
+#### Usage
+
+```tsx
+import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
+import type { EnrichedTrendItem, SiteId } from '@/types/meli';
+
+function EnrichedTrend() {
+  const enrichedTrend: EnrichedTrendItem = {
+    keyword: 'iphone 15 pro max',
+    url: 'https://...',
+    trend_type: 'fastest_growing',
+    products: [...],
+    metrics: {
+      total_results: 1000,
+      avg_price: 5000,
+      min_price: 4500,
+      max_price: 5500,
+      total_sold: 150,
+      free_shipping_percentage: 80,
+      avg_available_quantity: 10,
+    },
+    opportunity_score: 75,
+  };
+
+  return <EnrichedTrendCard trend={enrichedTrend} rank={1} siteId="MLA" />;
+}
+```
+
+**Props:**
+```typescript
+interface EnrichedTrendCardProps {
+  trend: EnrichedTrendItem;
+  rank: number;
+  siteId: SiteId;
+}
+```
+
+**Features:**
+- Opportunity score with circular progress (0-100)
+- Price range (min/avg/max with currency)
+- Total sold quantity
+- Free shipping percentage
+- Expandable product list
+- Loading state with skeleton
+- Product images and links
+
+================================================================================
+
+### ErrorState Component
+Package: components/common/ErrorState.tsx
+Description: Display error messages with retry button
+
+#### Usage
+
+```tsx
+import { ErrorState } from '@/components/common/ErrorState';
+
+function Page() {
+  const error = new Error('Failed to fetch trends');
+  const handleRetry = () => console.log('Retrying...');
+
+  return <ErrorState error={error} onRetry={handleRetry} />;
+}
+```
+
+**Props:**
+```typescript
+interface ErrorStateProps {
+  error: Error;
+  onRetry?: () => void;
+}
+```
+
+#### Example: with hook
+
+```tsx
+import { useTrends } from '@/hooks/useTrends';
+import { ErrorState } from '@/components/common/ErrorState';
+
+function TrendsPage() {
+  const { data, loading, error, refetch } = useTrends({ siteId: 'MLA' });
+
+  if (error && !loading) {
+    return <ErrorState error={error} onRetry={refetch} />;
+  }
+
+  return <div>{/* Success content */}</div>;
+}
+```
+
+================================================================================
+
+### LoadingSkeleton Component
+Package: components/common/LoadingSkeleton.tsx
+Description: Loading state with skeleton cards
+
+#### Usage
+
+```tsx
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+
+function Page() {
+  const loading = true;
+
+  if (loading) {
+    return <LoadingSkeleton />;
+  }
+
+  return <div>Content</div>;
+}
+```
+
+**No props required.** Displays responsive skeleton grid.
+
+================================================================================
+
+## REACT HOOKS
+
+### useTrends Hook
+Package: hooks/useTrends.ts
+Description: Fetch basic trends with automatic trend type enrichment
+
+#### Usage
+
+```tsx
+import { useTrends } from '@/hooks/useTrends';
+import type { SiteId } from '@/types/meli';
+
+function TrendsPage() {
+  const { data, loading, error, refetch } = useTrends({
+    siteId: 'MLA',
+    categoryId: 'MLA1051', // Optional
+  });
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return null;
+
+  return (
+    <div>
+      <h1>Found {data.length} trends</h1>
+      <button onClick={refetch}>Refresh</button>
+      {data.map(trend => (
+        <div key={trend.keyword}>{trend.keyword}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+**Parameters:**
+```typescript
+function useTrends(params: {
+  siteId: SiteId;
+  categoryId?: string;
+}): {
+  data: TrendItem[] | undefined;
+  loading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+```
+
+**Features:**
+- Automatic trend_type enrichment (client-side classification)
+- Error handling with retry
+- Loading states
+- 5-minute stale time
+- Fetches from /api/trends/[country] or /api/trends/[country]/[category]
+
+#### Example: with category filter
+
+```tsx
+import { useSearchParams } from 'next/navigation';
+import { useTrends } from '@/hooks/useTrends';
+
+function TrendsWithCategory() {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+
+  const { data } = useTrends({
+    siteId: 'MLA',
+    categoryId: category || undefined,
+  });
+
+  return <div>{data?.length} trends in category</div>;
+}
+```
+
+================================================================================
+
+### useCategories Hook
+Package: hooks/useCategories.ts
+Description: Fetch categories for a specific country
+
+#### Usage
+
+```tsx
+import { useCategories } from '@/hooks/useCategories';
+import { Select } from '@mantine/core';
+
+function CategorySelector() {
+  const { data: categories, loading } = useCategories({ siteId: 'MLA' });
+
+  const options = categories?.map(cat => ({
+    value: cat.id,
+    label: cat.name,
+  })) || [];
+
+  return (
+    <Select
+      label="Category"
+      placeholder="Select category"
+      data={options}
+      disabled={loading}
+    />
+  );
+}
+```
+
+**Parameters:**
+```typescript
+function useCategories(params: {
+  siteId: SiteId;
+}): {
+  data: Category[] | undefined;
+  loading: boolean;
+  error: Error | null;
+}
+```
+
+**Returns categories like:**
+```typescript
+type Category = {
+  id: string;      // e.g., 'MLA1051'
+  name: string;    // e.g., 'Celulares y Teléfonos'
+};
+```
+
+================================================================================
+
+### useClientEnrichedTrends Hook
+Package: hooks/useClientEnrichedTrends.ts
+Description: Progressive enrichment with batching (2 trends at a time)
+
+#### Usage
+
+```tsx
+import { useClientEnrichedTrends } from '@/hooks/useClientEnrichedTrends';
+import { Progress } from '@mantine/core';
+
+function EnrichedTrendsPage() {
+  const {
+    trends,
+    loading,
+    error,
+    progress,
+    isEnriching,
+  } = useClientEnrichedTrends({
+    siteId: 'MLA',
+    categoryId: undefined,
+  });
+
+  return (
+    <div>
+      {isEnriching && (
+        <Progress value={progress} label={`${progress}%`} />
+      )}
+      <div>{trends.length} trends enriched</div>
+      {trends.map(trend => (
+        <div key={trend.keyword}>
+          {trend.keyword} - Score: {trend.opportunity_score}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+**Parameters:**
+```typescript
+function useClientEnrichedTrends(params: {
+  siteId: SiteId;
+  categoryId?: string;
+}): {
+  trends: EnrichedTrendItem[];
+  loading: boolean;
+  error: Error | null;
+  progress: number;        // 0-100
+  isEnriching: boolean;
+}
+```
+
+**Features:**
+- Progressive batching (2 trends per batch)
+- 1000ms delay between batches (prevents rate limiting)
+- Progress tracking (0-100%)
+- Opportunity score calculation (0-100)
+- Filters out 0-result trends
+- Client-side Search API calls
+
+**Constants:**
+```typescript
+const BATCH_SIZE = 2;           // Trends per batch
+const BATCH_DELAY_MS = 1000;    // Delay between batches
+const PRODUCTS_PER_KEYWORD = 3; // Products to fetch per trend
+```
+
+================================================================================
+
+### useEnrichTrendOnDemand Hook
+Package: hooks/useEnrichTrendOnDemand.ts
+Description: Enrich a single trend on demand (user click)
+
+#### Usage
+
+```tsx
+import { useState } from 'react';
+import { useEnrichTrendOnDemand } from '@/hooks/useEnrichTrendOnDemand';
+import { Button } from '@mantine/core';
+import type { TrendItem, EnrichedTrendItem } from '@/types/meli';
+
+function TrendCardWithEnrich({ trend }: { trend: TrendItem }) {
+  const [enriched, setEnriched] = useState<EnrichedTrendItem | null>(null);
+  const { enrichTrend, loading } = useEnrichTrendOnDemand('MLA');
+
+  const handleEnrich = async () => {
+    const result = await enrichTrend(trend);
+    if (result) {
+      setEnriched(result);
+    }
+  };
+
+  return (
+    <div>
+      <h3>{trend.keyword}</h3>
+      {enriched ? (
+        <div>Score: {enriched.opportunity_score}</div>
+      ) : (
+        <Button onClick={handleEnrich} loading={loading}>
+          Enrich
+        </Button>
+      )}
+    </div>
+  );
+}
+```
+
+**Parameters:**
+```typescript
+function useEnrichTrendOnDemand(siteId: SiteId): {
+  enrichTrend: (trend: TrendItem) => Promise<EnrichedTrendItem | null>;
+  loading: boolean;
+  error: Error | null;
+}
+```
+
+================================================================================
+
+## UTILITIES AND CONSTANTS
+
+### Constants (utils/constants.ts)
+
+#### Countries Configuration
+
+```typescript
+import { COUNTRIES, COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
+
+// Access country by ID
+const argentina = COUNTRIES.MLA;
+console.log(argentina.name);     // 'Argentina'
+console.log(argentina.flag);     // '🇦🇷'
+console.log(argentina.currency); // 'ARS'
+
+// Iterate all countries
+COUNTRIES_ARRAY.forEach(country => {
+  console.log(`${country.flag} ${country.name}`);
+});
+
+// Create dropdown options
+const countryOptions = COUNTRIES_ARRAY.map(country => ({
+  value: country.id,
+  label: `${country.flag} ${country.name}`,
+}));
+```
+
+**Available Countries:**
+```typescript
+type SiteId = 'MLA' | 'MLB' | 'MLC' | 'MLM' | 'MCO' | 'MLU' | 'MPE';
+
+// MLA: Argentina 🇦🇷 (ARS)
+// MLB: Brasil 🇧🇷 (BRL)
+// MLC: Chile 🇨🇱 (CLP)
+// MLM: México 🇲🇽 (MXN)
+// MCO: Colombia 🇨🇴 (COP)
+// MLU: Uruguay 🇺🇾 (UYU)
+// MPE: Perú 🇵🇪 (PEN)
+```
+
+================================================================================
+
+### Trend Classification (utils/trends.ts)
+
+#### getTrendType
+
+```typescript
+import { getTrendType } from '@/utils/trends';
+
+const type = getTrendType(5);  // 'fastest_growing'
+const type2 = getTrendType(15); // 'most_wanted'
+const type3 = getTrendType(35); // 'most_popular'
+```
+
+**Logic:**
+```typescript
+function getTrendType(index: number): TrendType {
+  if (index < 10) return 'fastest_growing';  // Positions 0-9
+  if (index < 30) return 'most_wanted';      // Positions 10-29
+  return 'most_popular';                      // Positions 30-49
+}
+```
+
+#### getTrendTypeLabel
+
+```typescript
+import { getTrendTypeLabel } from '@/utils/trends';
+
+getTrendTypeLabel('fastest_growing'); // 'Mayor Crecimiento'
+getTrendTypeLabel('most_wanted');     // 'Más Buscados'
+getTrendTypeLabel('most_popular');    // 'Más Populares'
+```
+
+#### getTrendTypeColor
+
+```typescript
+import { getTrendTypeColor } from '@/utils/trends';
+
+getTrendTypeColor('fastest_growing'); // 'red'
+getTrendTypeColor('most_wanted');     // 'blue'
+getTrendTypeColor('most_popular');    // 'green'
+```
+
+#### enrichTrendsWithType
+
+```typescript
+import { enrichTrendsWithType } from '@/utils/trends';
+import type { TrendItem } from '@/types/meli';
+
+const basicTrends: TrendItem[] = [
+  { keyword: 'iphone', url: '...' },
+  { keyword: 'samsung', url: '...' },
+];
+
+const enriched = enrichTrendsWithType(basicTrends);
+// Adds trend_type to each trend based on position
+```
+
+================================================================================
+
+### LocalStorage Utilities (utils/storage.ts)
+
+#### saveSelectedCategory
+
+```typescript
+import { saveSelectedCategory } from '@/utils/storage';
+
+// Save category for Argentina
+saveSelectedCategory('MLA', 'MLA1051');
+
+// Clear category (pass null)
+saveSelectedCategory('MLA', null);
+```
+
+#### getSavedCategory
+
+```typescript
+import { getSavedCategory } from '@/utils/storage';
+
+const savedCategory = getSavedCategory('MLA');
+console.log(savedCategory); // 'MLA1051' or null
+```
+
+#### clearSavedCategories
+
+```typescript
+import { clearSavedCategories } from '@/utils/storage';
+
+// Clear all saved categories for all countries
+clearSavedCategories();
+```
+
+#### Complete example with localStorage
+
+```typescript
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { saveSelectedCategory, getSavedCategory } from '@/utils/storage';
+
+function CategoryFilter({ country }: { country: string }) {
+  const router = useRouter();
+
+  // Load saved category on mount
+  useEffect(() => {
+    const saved = getSavedCategory(country);
+    if (saved) {
+      router.push(`/trends/${country}?category=${saved}`);
+    }
+  }, [country, router]);
+
+  const handleCategoryChange = (categoryId: string | null) => {
+    // Save to localStorage
+    saveSelectedCategory(country, categoryId);
+
+    // Update URL
+    const url = categoryId
+      ? `/trends/${country}?category=${categoryId}`
+      : `/trends/${country}`;
+    router.push(url);
+  };
+
+  return (
+    <select onChange={(e) => handleCategoryChange(e.target.value || null)}>
+      <option value="">All Categories</option>
+      <option value="MLA1051">Celulares</option>
+      <option value="MLA1648">Computación</option>
+    </select>
+  );
+}
+```
+
+================================================================================
+
+### Search API (lib/searchAPI.ts)
+
+**IMPORTANT:** Client-side only. Server-side calls get 403 CloudFront errors.
+
+#### fetchSearchDirect
+
+```typescript
+import { fetchSearchDirect } from '@/lib/searchAPI';
+
+async function searchProducts() {
+  try {
+    const results = await fetchSearchDirect('iphone 15', 'MLA', 10);
+
+    console.log(`Total: ${results.paging.total}`);
+    console.log(`Results: ${results.results.length}`);
+
+    results.results.forEach(product => {
+      console.log(`${product.title} - $${product.price}`);
+    });
+  } catch (error) {
+    console.error('Search failed:', error);
+  }
+}
+```
+
+**Signature:**
+```typescript
+function fetchSearchDirect(
+  keyword: string,
+  siteId: SiteId,
+  limit?: number
+): Promise<SearchResponse>
+```
+
+**Features:**
+- Automatic keyword variant fallbacks
+- Tries: exact → simplified → first word
+- Client-side only (avoids CloudFront blocking)
+- Returns products with prices, images, sold quantity
+
+**Keyword Variants Example:**
+```typescript
+// Input: "samsung galaxy s24 ultra"
+// Tries:
+// 1. "samsung galaxy s24 ultra" (exact)
+// 2. "samsung galaxy s24" (simplified)
+// 3. "samsung" (first word)
+```
+
+================================================================================
+
+### Logger (lib/logger/index.ts)
+
+#### Usage
+
+```typescript
+import { createLogger, startTimer } from '@/lib/logger';
+
+const logger = createLogger('API:trends');
+
+export async function GET() {
+  const timer = startTimer();
+
+  logger.info('Fetching trends');
+
+  try {
+    const data = await fetchTrends();
+    logger.success('Trends fetched', timer.end());
+    return data;
+  } catch (error) {
+    logger.error('Failed to fetch trends', error, timer.end());
+    throw error;
+  }
+}
+```
+
+**Features:**
+- Disabled in production/test
+- Timestamped logs
+- Duration tracking
+- Context tags (API:*, Hook:*, External:*)
+- Color-coded output
+
+**Example output:**
+```
+[2025-11-23 10:30:45] ℹ [API:trends] Fetching trends
+[2025-11-23 10:30:46] ✓ [API:trends] Trends fetched (1250ms)
+```
+
+================================================================================
+
+## TYPESCRIPT TYPES
+
+### Core Types (types/meli.ts)
+
+```typescript
+// Country site IDs
+export type SiteId = 'MLA' | 'MLB' | 'MLC' | 'MLM' | 'MCO' | 'MLU' | 'MPE';
+
+// Trend types (classification)
+export type TrendType = 'fastest_growing' | 'most_wanted' | 'most_popular';
+
+// Country configuration
+export type Country = {
+  id: SiteId;
+  name: string;
+  flag: string;
+  currency: string;
+};
+
+// Basic trend item from Trends API
+export type TrendItem = {
+  keyword: string;
+  url: string;
+  trend_type?: TrendType; // Added client-side
+};
+
+// Array of trend items
+export type TrendsResponse = TrendItem[];
+
+// Product from Search API
+export type Product = {
+  id: string;
+  title: string;
+  price: number;
+  currency_id: string;
+  thumbnail: string;
+  permalink: string;
+  shipping?: {
+    free_shipping: boolean;
+  };
+  sold_quantity?: number;
+  available_quantity?: number;
+};
+
+// Search API response
+export type SearchResponse = {
+  site_id: string;
+  query: string;
+  results: Product[];
+  paging: {
+    total: number;
+    offset: number;
+    limit: number;
+  };
+};
+
+// Enriched trend with products and metrics
+export type EnrichedTrendItem = TrendItem & {
+  products: Product[];
+  metrics: {
+    total_results: number;
+    avg_price: number;
+    min_price: number;
+    max_price: number;
+    total_sold: number;
+    free_shipping_percentage: number;
+    avg_available_quantity: number;
+  };
+  opportunity_score: number; // 0-100
+};
+
+// Category from Categories API
+export type Category = {
+  id: string;
+  name: string;
+};
+```
+
+================================================================================
+
+## API ENDPOINTS
+
+### GET /api/token
+**Internal use only** - OAuth token acquisition
+
+```typescript
+// Server-side only
+const response = await fetch(`${origin}/api/token`);
+const { access_token } = await response.json();
+```
+
+**Response:**
+```json
+{
+  "access_token": "APP_USR-xxxx-xxxxxx"
+}
+```
+
+**Cache:** 5.5 hours in-memory
+
+================================================================================
+
+### GET /api/trends/[country]
+Fetch basic trends for a country
+
+```typescript
+const response = await fetch('/api/trends/MLA');
+const trends: TrendItem[] = await response.json();
+```
+
+**Parameters:**
+- `country` (path): SiteId ('MLA', 'MLB', etc.)
+
+**Response:**
+```json
+[
+  {
+    "keyword": "iphone 15 pro max",
+    "url": "https://listado.mercadolibre.com.ar/iphone-15-pro-max",
+    "trend_type": "fastest_growing"
+  }
+]
+```
+
+**Features:**
+- Returns 50 trends (or fewer if filtered by category)
+- trend_type added client-side based on position
+- Server-side OAuth authentication
+
+================================================================================
+
+### GET /api/trends/[country]/[category]
+Fetch trends filtered by category
+
+```typescript
+const response = await fetch('/api/trends/MLA/MLA1051');
+const trends: TrendItem[] = await response.json();
+```
+
+**Parameters:**
+- `country` (path): SiteId
+- `category` (path): Category ID (e.g., 'MLA1051')
+
+**Example categories for Argentina:**
+- MLA1051: Celulares y Teléfonos
+- MLA1648: Computación
+- MLA1144: Consolas y Videojuegos
+- MLA1039: Cámaras y Accesorios
+
+================================================================================
+
+### GET /api/categories/[country]
+Fetch all categories for a country
+
+```typescript
+const response = await fetch('/api/categories/MLA');
+const categories: Category[] = await response.json();
+```
+
+**Parameters:**
+- `country` (path): SiteId
+
+**Response:**
+```json
+[
+  {
+    "id": "MLA1051",
+    "name": "Celulares y Teléfonos"
+  },
+  {
+    "id": "MLA1648",
+    "name": "Computación"
+  }
+]
+```
+
+**Cache:** 24 hours
+
+================================================================================
+
+## COMMON CODE EXAMPLES
+
+### Creating a New Trends Page
+
+```tsx
+// app/trends/[country]/page.tsx
+'use client';
+
+import { use } from 'react';
+import { Container, AppShell } from '@mantine/core';
+import { Header } from '@/components/layout/Header';
+import { TrendsList } from '@/components/trends/TrendsList';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+import { ErrorState } from '@/components/common/ErrorState';
+import { useTrends } from '@/hooks/useTrends';
+import type { SiteId } from '@/types/meli';
+
+interface PageProps {
+  params: Promise<{ country: string }>;
+  searchParams: Promise<{ category?: string }>;
+}
+
+export default function TrendsPage({ params, searchParams }: PageProps) {
+  const { country } = use(params);
+  const { category } = use(searchParams);
+  const siteId = country as SiteId;
+
+  const { data, loading, error, refetch } = useTrends({
+    siteId,
+    categoryId: category,
+  });
+
+  return (
+    <AppShell header={{ height: 60 }} padding="md">
+      <Header currentCountry={siteId} currentCategory={category} />
+      <AppShell.Main>
+        <Container size="xl" py="xl">
+          {loading && <LoadingSkeleton />}
+          {error && !loading && <ErrorState error={error} onRetry={refetch} />}
+          {data && !loading && !error && (
+            <TrendsList trends={data} country={siteId} />
+          )}
+        </Container>
+      </AppShell.Main>
+    </AppShell>
+  );
+}
+```
+
+================================================================================
+
+### Creating a New API Route
+
+```typescript
+// app/api/example/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { createLogger, startTimer } from '@/lib/logger';
+
+const logger = createLogger('API:example');
+
+export async function GET(request: NextRequest) {
+  const timer = startTimer();
+
+  try {
+    logger.info('Processing request');
+
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const param = searchParams.get('param');
+
+    // Validate input
+    if (!param) {
+      return NextResponse.json(
+        { error: 'Missing param' },
+        { status: 400 }
+      );
+    }
+
+    // Your logic here
+    const data = { result: `Processed: ${param}` };
+
+    logger.success('Request processed', timer.end());
+    return NextResponse.json(data);
+  } catch (error) {
+    logger.error('Request failed', error, timer.end());
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+================================================================================
+
+### Creating a Custom Hook
+
+```tsx
+// hooks/useExample.ts
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export function useExample(param: string) {
+  const [data, setData] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/example?param=${param}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!cancelled) {
+          setData(result);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err : new Error('Unknown error'));
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [param]);
+
+  const refetch = () => {
+    setLoading(true);
+    // Trigger re-run by updating a dependency or state
+  };
+
+  return { data, loading, error, refetch };
+}
+```
+
+================================================================================
+
+### Opportunity Score Calculation
+
+```typescript
+// From hooks/useClientEnrichedTrends.ts
+
+function calculateMetrics(products: Product[], totalResults: number) {
+  // Calculate basic metrics
+  const avgPrice = products.reduce((sum, p) => sum + p.price, 0) / products.length;
+  const minPrice = Math.min(...products.map(p => p.price));
+  const maxPrice = Math.max(...products.map(p => p.price));
+  const totalSold = products.reduce((sum, p) => sum + (p.sold_quantity || 0), 0);
+
+  const freeShippingCount = products.filter(
+    p => p.shipping?.free_shipping
+  ).length;
+  const freeShippingPercentage = (freeShippingCount / products.length) * 100;
+
+  const avgAvailableQuantity = products.reduce(
+    (sum, p) => sum + (p.available_quantity || 0),
+    0
+  ) / products.length;
+
+  // Opportunity Score (0-100)
+  // Weights: search volume 30%, sold 25%, shipping 20%, price range 15%, availability 10%
+  const searchVolumeScore = Math.min(totalResults / 1000, 1) * 30;
+  const soldScore = Math.min(totalSold / 500, 1) * 25;
+  const freeShippingScore = (freeShippingPercentage / 100) * 20;
+  const priceRangeScore = maxPrice > minPrice
+    ? ((maxPrice - minPrice) / maxPrice) * 15
+    : 0;
+  const availabilityScore = Math.min(avgAvailableQuantity / 50, 1) * 10;
+
+  const opportunityScore = Math.round(
+    searchVolumeScore +
+    soldScore +
+    freeShippingScore +
+    priceRangeScore +
+    availabilityScore
+  );
+
+  return {
+    metrics: {
+      total_results: totalResults,
+      avg_price: avgPrice,
+      min_price: minPrice,
+      max_price: maxPrice,
+      total_sold: totalSold,
+      free_shipping_percentage: freeShippingPercentage,
+      avg_available_quantity: avgAvailableQuantity,
+    },
+    opportunity_score: opportunityScore,
+  };
+}
+```
+
+**Opportunity Score Breakdown:**
+- **30%** - Search Volume: Higher total results = more demand
+- **25%** - Sold Quantity: Historical sales performance
+- **20%** - Free Shipping: Shipping availability affects conversion
+- **15%** - Price Range: Price variation indicates market opportunity
+- **10%** - Available Stock: Current inventory levels
+
+================================================================================
+
+## MANTINE COMPONENTS USAGE
+
+### Common Layout Patterns
+
+```tsx
+import {
+  Container,
+  Stack,
+  Group,
+  Box,
+  SimpleGrid,
+  Center,
+} from '@mantine/core';
+
+// Page layout
+<Container size="xl" py="xl">
+  <Stack gap="lg">
+    {/* Vertically stacked content */}
+  </Stack>
+</Container>
+
+// Horizontal group
+<Group justify="space-between" align="center">
+  <div>Left</div>
+  <div>Right</div>
+</Group>
+
+// Responsive grid
+<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+  {items.map(item => <div key={item.id}>{item.name}</div>)}
+</SimpleGrid>
+
+// Center content
+<Center>
+  <div>Centered</div>
+</Center>
+
+// Box with padding and background
+<Box p="md" bg="blue.1" style={{ borderRadius: '8px' }}>
+  Content
+</Box>
+```
+
+### Typography
+
+```tsx
+import { Title, Text } from '@mantine/core';
+
+<Title order={1}>Main Heading</Title>
+<Title order={2}>Subheading</Title>
+<Text size="lg">Large text</Text>
+<Text size="sm" c="dimmed">Small dimmed text</Text>
+<Text fw={700}>Bold text</Text>
+```
+
+### Buttons
+
+```tsx
+import { Button, ActionIcon } from '@mantine/core';
+import { IconRefresh, IconCheck } from '@tabler/icons-react';
+
+// Basic button
+<Button onClick={handleClick}>Click Me</Button>
+
+// Button with icon
+<Button
+  variant="filled"
+  color="blue"
+  leftSection={<IconCheck size={16} />}
+  loading={isLoading}
+>
+  Save
+</Button>
+
+// Action icon button
+<ActionIcon
+  variant="subtle"
+  onClick={handleClick}
+  size="lg"
+>
+  <IconRefresh size={20} />
+</ActionIcon>
+```
+
+### Cards
+
+```tsx
+import { Card, Badge } from '@mantine/core';
+
+<Card shadow="sm" padding="lg" radius="md" withBorder>
+  <Badge color="blue" mb="xs">Label</Badge>
+  <Text fw={600} size="lg">Title</Text>
+  <Text size="sm" c="dimmed">Description</Text>
+</Card>
+```
+
+### Select Inputs
+
+```tsx
+import { Select } from '@mantine/core';
+import { IconWorld } from '@tabler/icons-react';
+
+<Select
+  label="Country"
+  placeholder="Select a country"
+  data={[
+    { value: 'MLA', label: '🇦🇷 Argentina' },
+    { value: 'MLB', label: '🇧🇷 Brasil' },
+  ]}
+  value={selectedCountry}
+  onChange={setSelectedCountry}
+  leftSection={<IconWorld size={18} />}
+  searchable
+  clearable
+/>
+```
+
+### SegmentedControl
+
+```tsx
+import { SegmentedControl } from '@mantine/core';
+
+<SegmentedControl
+  value={selectedType}
+  onChange={setSelectedType}
+  data={[
+    { label: 'Todos', value: 'all' },
+    { label: 'Mayor Crecimiento', value: 'fastest_growing' },
+    { label: 'Más Buscados', value: 'most_wanted' },
+    { label: 'Más Populares', value: 'most_popular' },
+  ]}
+  size="md"
+  radius="md"
+  fullWidth
+/>
+```
+
+### Loading States
+
+```tsx
+import { Loader, Skeleton } from '@mantine/core';
+
+// Spinner
+<Loader size="lg" />
+
+// Skeleton
+<Skeleton height={50} radius="md" />
+<Skeleton height={200} mt="md" />
+```
+
+### Alerts
+
+```tsx
+import { Alert } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+
+<Alert
+  icon={<IconAlertCircle size={16} />}
+  title="Error"
+  color="red"
+  variant="filled"
+>
+  Something went wrong. Please try again.
+</Alert>
+```
+
+### Progress Indicators
+
+```tsx
+import { Progress, RingProgress } from '@mantine/core';
+
+// Bar progress
+<Progress value={75} label="75%" />
+
+// Ring progress (for opportunity scores)
+<RingProgress
+  sections={[{ value: opportunityScore, color: 'blue' }]}
+  label={
+    <Text size="xs" ta="center">
+      {opportunityScore}
+    </Text>
+  }
+/>
+```
+
+### Menus
+
+```tsx
+import { Menu, ActionIcon } from '@mantine/core';
+import { IconMenu2, IconSettings } from '@tabler/icons-react';
+
+<Menu shadow="md" width={200}>
+  <Menu.Target>
+    <ActionIcon variant="subtle">
+      <IconMenu2 size={20} />
+    </ActionIcon>
+  </Menu.Target>
+
+  <Menu.Dropdown>
+    <Menu.Label>Application</Menu.Label>
+    <Menu.Item leftSection={<IconSettings size={14} />}>
+      Settings
+    </Menu.Item>
+    <Menu.Divider />
+    <Menu.Item color="red">Delete</Menu.Item>
+  </Menu.Dropdown>
+</Menu>
+```
+
+================================================================================
+
+## TROUBLESHOOTING
+
+### 403 Error from Search API
+
+**Cause:** CloudFront blocking datacenter IPs
+
+**Solution:** Always use client-side Search API calls
+
+```typescript
+// ❌ WRONG: Server-side
+export async function GET() {
+  const response = await fetch(
+    'https://api.mercadolibre.com/sites/MLA/search?q=iphone'
+  );
+  // Will get 403 error
+}
+
+// ✅ CORRECT: Client-side
+import { fetchSearchDirect } from '@/lib/searchAPI';
+const results = await fetchSearchDirect('iphone', 'MLA');
+```
+
+### Rate Limiting Issues
+
+**Cause:** Too many requests too quickly
+
+**Solution:** Adjust batching constants
+
+```typescript
+// hooks/useClientEnrichedTrends.ts
+const BATCH_SIZE = 1;        // Reduce from 2
+const BATCH_DELAY_MS = 2000; // Increase from 1000
+```
+
+### localStorage Not Working
+
+**Cause:** Server-side rendering
+
+**Solution:** Check for `typeof window !== 'undefined'` (already handled in utils/storage.ts)
+
+```typescript
+if (typeof window === 'undefined') return null;
+```
+
+### TypeScript Errors
+
+```bash
+# Run type check
+npm run typecheck
+
+# Common fixes:
+# 1. Missing type imports
+import type { SiteId } from '@/types/meli';
+
+# 2. Incorrect type usage
+const country: SiteId = 'MLA'; // Correct
+const country: string = 'MLA'; // Wrong
+
+# 3. Missing optional chaining
+trend.trend_type?.toLowerCase(); // Correct
+trend.trend_type.toLowerCase();  // Error if undefined
+```
+
+### Test Failures
+
+```bash
+# Run tests
+npm run test
+
+# Common issues:
+# 1. ResizeObserver not defined - Already mocked in vitest.setup.ts
+# 2. localStorage in tests - Use beforeEach to clear
+beforeEach(() => {
+  localStorage.clear();
+});
+
+# 3. Async tests not waiting
+await waitFor(() => expect(result.current.data).toBeTruthy());
+```
+
+================================================================================
+
+## BEST PRACTICES
+
+### Code Style
+
+```typescript
+// ✅ Use 'type', not 'interface'
+type User = { id: string; name: string };
+
+// ✅ Use Mantine, not Tailwind
+<Box p="md" bg="blue.1">Content</Box>
+
+// ✅ Use async/await
+async function fetch() {
+  const data = await apiCall();
+  return data;
+}
+
+// ✅ Always type component props
+type ButtonProps = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+};
+
+// ✅ Use 'use client' for interactive components
+'use client';
+import { useState } from 'react';
+```
+
+### Security
+
+```typescript
+// ✅ Secrets server-side only
+const secret = process.env.MELI_CLIENT_SECRET;
+
+// ❌ Never expose secrets
+const secret = process.env.NEXT_PUBLIC_MELI_CLIENT_SECRET;
+
+// ✅ Validate user input
+if (!country || !COUNTRIES[country as SiteId]) {
+  return NextResponse.json({ error: 'Invalid country' }, { status: 400 });
+}
+
+// ✅ Sanitize URLs in logs
+logger.info('Fetching:', sanitizeUrl(url));
+```
+
+### Performance
+
+```typescript
+// ✅ Progressive loading
+const { data: basicTrends } = useTrends({ siteId: 'MLA' });
+const { trends: enriched } = useClientEnrichedTrends({ siteId: 'MLA' });
+
+// ✅ Memoize expensive components
+import { memo } from 'react';
+export const TrendCard = memo(function TrendCard(props) {
+  return <Card>...</Card>;
+});
+
+// ✅ Batch API calls
+for (let i = 0; i < trends.length; i += BATCH_SIZE) {
+  await processBatch(trends.slice(i, i + BATCH_SIZE));
+  await delay(BATCH_DELAY_MS);
+}
+```
+
+### Testing
+
+```typescript
+// ✅ Test user interactions
+it('increments counter on click', () => {
+  render(<Counter />);
+  fireEvent.click(screen.getByRole('button'));
+  expect(screen.getByText('1')).toBeInTheDocument();
+});
+
+// ✅ Mock API calls
+server.use(
+  http.get('/api/trends/MLA', () => {
+    return HttpResponse.json([{ keyword: 'test', url: '...' }]);
+  })
+);
+
+// ✅ Test error states
+it('handles errors', async () => {
+  server.use(
+    http.get('/api/trends/MLA', () => {
+      return new HttpResponse(null, { status: 500 });
+    })
+  );
+  render(<TrendsPage />);
+  expect(await screen.findByText(/error/i)).toBeInTheDocument();
+});
+```
+
+================================================================================
+
+## DEVELOPMENT COMMANDS
+
+```bash
+# Development
+npm run dev              # Start dev server at http://localhost:3000
+npm run check            # Run all checks (typecheck + lint + tests)
+
+# Testing
+npm run test             # Run all tests
+npm run test:ui          # Run tests with UI
+npm run test:coverage    # Generate coverage report
+
+# Build
+npm run build            # Production build
+npm run start            # Start production server
+
+# Code Quality
+npm run typecheck        # TypeScript type checking
+npm run lint             # Run ESLint
+
+# Deployment
+vercel                   # Deploy to preview
+vercel --prod            # Deploy to production
+gh pr create             # Create pull request
+```
+
+================================================================================
+
+## ADDITIONAL RESOURCES
+
+**Official Documentation:**
+- Next.js: https://nextjs.org/docs
+- Mantine: https://mantine.dev/
+- TypeScript: https://www.typescriptlang.org/docs
+- Vitest: https://vitest.dev/
+
+**MercadoLibre APIs:**
+- Developer Portal: https://developers.mercadolibre.com
+- Trends API: https://developers.mercadolibre.com.ar/es_ar/tendencias
+- API Reference: https://developers.mercadolibre.com.ar/es_ar/api-docs
+
+**Project Links:**
+- Repository: https://github.com/testacode/meli-trends
+- Live Demo: https://meli-trends.vercel.app
+- Documentation: /docs/llms-meli-trends.txt (extended version)
+- Mantine Reference: /docs/llm-mantine.txt
+
+================================================================================
+
+End of LLM Documentation - MeLi Trends v1.0.0
