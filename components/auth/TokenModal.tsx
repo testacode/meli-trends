@@ -68,7 +68,7 @@ export function TokenModal({ opened, onClose }: TokenModalProps) {
       if (onClose) {
         onClose();
       }
-    } catch (err) {
+    } catch {
       setError('Error al guardar el token. Por favor, intenta nuevamente.');
     } finally {
       setIsSubmitting(false);

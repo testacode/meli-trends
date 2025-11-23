@@ -1,5 +1,4 @@
 import { createTheme, MantineColorsTuple } from '@mantine/core';
-import { MELI_COLORS } from '@/utils/constants';
 
 // Custom color tuples for Mantine theme
 const meliYellow: MantineColorsTuple = [

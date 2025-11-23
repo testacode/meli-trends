@@ -6,8 +6,10 @@ import type { SearchResponse, SiteId } from '@/types/meli';
  * - "black edition 4x4" -> "black edition 4x4" (try exact first)
  * - If no results -> "black edition" (remove last word)
  * - If still no results -> "black" (first significant word)
+ *
+ * Exported for testing purposes
  */
-function getKeywordVariants(keyword: string): string[] {
+export function getKeywordVariants(keyword: string): string[] {
   const variants: string[] = [keyword]; // Start with exact keyword
 
   // Split into words and remove common filler words

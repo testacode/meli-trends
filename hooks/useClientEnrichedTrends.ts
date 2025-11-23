@@ -35,8 +35,9 @@ const PRODUCTS_PER_KEYWORD = 3;
 /**
  * Calculate metrics for an enriched trend item
  * (Same logic as server-side version)
+ * Exported for testing purposes
  */
-function calculateMetrics(
+export function calculateMetrics(
   trendItem: TrendItem,
   searchData: SearchResponse
 ): EnrichedTrendItem {
