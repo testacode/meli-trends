@@ -45,10 +45,12 @@
     "dotenv": "^17.2.3",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "ioredis": "^5.8.2",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "recharts": "^3.4.1"
+    "recharts": "^3.4.1",
+    "redis": "^5.10.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
