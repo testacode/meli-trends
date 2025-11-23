@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SimpleGrid, Stack, Title, Text, Group, SegmentedControl, Center } from '@mantine/core';
+import { SimpleGrid, Stack, Title, Text, Group, Chip, Center } from '@mantine/core';
 import { IconTrendingUp } from '@tabler/icons-react';
 import type { TrendsResponse, TrendType } from '@/types/meli';
 import { TrendCard } from './TrendCard';
@@ -47,24 +47,18 @@ export function TrendsList({ trends, country }: TrendsListProps) {
 
       {/* Trend Type Filter */}
       <Center>
-        <SegmentedControl
+        <Chip.Group
           value={selectedType}
           onChange={(value) => setSelectedType(value as 'all' | TrendType)}
-          data={[
-            { label: 'Todos', value: 'all' },
-            { label: 'Mayor Crecimiento', value: 'fastest_growing' },
-            { label: 'Más Buscados', value: 'most_wanted' },
-            { label: 'Más Populares', value: 'most_popular' },
-          ]}
-          size="md"
-          radius="md"
-          fullWidth
-          styles={{
-            root: {
-              maxWidth: '800px',
-            },
-          }}
-        />
+          multiple={false}
+        >
+          <Group justify="center" gap="xs">
+            <Chip value="all" variant="filled">Todos</Chip>
+            <Chip value="fastest_growing" variant="filled">Mayor Crecimiento</Chip>
+            <Chip value="most_wanted" variant="filled">Más Buscados</Chip>
+            <Chip value="most_popular" variant="filled">Más Populares</Chip>
+          </Group>
+        </Chip.Group>
       </Center>
 
       {/* Grid of Trend Cards */}
