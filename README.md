@@ -10,6 +10,8 @@ Una aplicación web moderna y responsiva para visualizar productos en tendencia 
 ## 🌟 Características
 
 - **📈 Trends en Tiempo Real**: Ve los 50 productos más populares en 7 países de Latinoamérica
+- **🏷️ Clasificación Automática**: Trends clasificados en 3 tipos (Fastest-Growing, Most Wanted, Most Popular) con badges de color
+- **📂 Filtrado por Categorías**: Filtra trends por categorías específicas para encontrar nichos de mercado
 - **🌎 Soporte Multi-país**: Argentina, Brasil, Chile, México, Colombia, Uruguay y Perú
 - **📱 Diseño Mobile-First**: UI completamente responsiva que funciona en todos los dispositivos
 - **🌓 Modo Oscuro/Claro**: Alterna entre temas para una visualización cómoda
@@ -127,8 +129,10 @@ meli-trends/
 │   │   ├── layout.tsx         # Layout con metadata
 │   │   └── page.tsx           # Página about
 │   ├── api/                   # API routes (server-side)
+│   │   ├── categories/[country]/ # Endpoint de categorías
 │   │   ├── token/            # Gestión de tokens
-│   │   └── trends/[country]/ # Endpoint de trends
+│   │   ├── trends/[country]/ # Endpoint de trends
+│   │   └── trends/[country]/[category]/ # Trends por categoría
 │   ├── trends/[country]/     # Páginas dinámicas por país
 │   │   ├── metadata.ts       # Metadata dinámica por país
 │   │   └── page.tsx          # Página de trends
@@ -154,7 +158,8 @@ meli-trends/
 ├── types/                     # Definiciones TypeScript
 │   └── meli.ts               # Tipos de MercadoLibre API
 ├── utils/                     # Funciones utilitarias
-│   └── constants.ts          # Constantes y países
+│   ├── constants.ts          # Constantes y países
+│   └── trends.ts             # Utilidades de trends (clasificación)
 └── docs/                      # Documentación
     ├── architecture/         # Documentación de arquitectura
     │   └── api-cloudfront-blocking.md # Guía de CloudFront y API
@@ -283,18 +288,23 @@ Esta es una aplicación Next.js estándar y puede deployarse en cualquier plataf
 
 ## 📊 API de MercadoLibre Trends
 
-### Endpoint
+### Endpoints
 
 ```
 GET https://api.mercadolibre.com/trends/{SITE_ID}
 GET https://api.mercadolibre.com/trends/{SITE_ID}/{CATEGORY_ID}
+GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 ```
 
-### Tipos de Trends
+### Tipos de Trends (Clasificación Automática)
 
-1. **Fastest-Growing**: Productos con mayor aumento de revenue
-2. **Most Wanted**: Mayor volumen de búsquedas
-3. **Most Popular**: Mayor aumento de búsquedas vs. hace 2 semanas
+Los 50 trends se clasifican automáticamente según su posición en el array:
+
+1. **🔴 Fastest-Growing** (posiciones 1-10): Productos con mayor aumento de revenue en la última semana
+2. **🔵 Most Wanted** (posiciones 11-30): Mayor volumen de búsquedas durante la última semana
+3. **🟢 Most Popular** (posiciones 31-50): Mayor aumento de búsquedas vs. hace 2 semanas
+
+**Visualización**: Cada trend card muestra un badge de color indicando su tipo, permitiendo identificar rápidamente oportunidades de negocio.
 
 ### Response Format
 

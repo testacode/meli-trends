@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import {
   Container,
   Title,
@@ -14,6 +14,7 @@ import {
   Group,
   Button,
   Box,
+  SegmentedControl,
 } from '@mantine/core';
 import {
   IconAlertCircle,
@@ -22,18 +23,23 @@ import {
 import { useTrends } from '@/hooks/useTrends';
 import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
 import { COUNTRIES } from '@/utils/constants';
-import type { SiteId } from '@/types/meli';
+import type { SiteId, TrendType } from '@/types/meli';
 
 interface PageProps {
   params: Promise<{
     country: string;
   }>;
+  searchParams: Promise<{
+    category?: string;
+  }>;
 }
 
-export default function EnrichedTrendsPage({ params }: PageProps) {
+export default function EnrichedTrendsPage({ params, searchParams }: PageProps) {
   const { country } = use(params);
+  const { category } = use(searchParams);
   const siteId = country as SiteId;
   const countryData = COUNTRIES[siteId];
+  const [selectedType, setSelectedType] = useState<'all' | TrendType>('all');
 
   const {
     data: trendsData,
@@ -42,9 +48,15 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
     refetch,
   } = useTrends({
     siteId,
+    categoryId: category || undefined,
   });
 
   const trends = trendsData || [];
+
+  // Filter trends by selected type
+  const filteredTrends = selectedType === 'all'
+    ? trends
+    : trends.filter(trend => trend.trend_type === selectedType);
 
   if (error) {
     return (
@@ -102,11 +114,35 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
           {trends.length > 0 && (
             <Group gap="md">
               <Badge size="lg" variant="light" color="blue">
-                {trends.length} trends disponibles
+                {filteredTrends.length} de {trends.length} trends disponibles
               </Badge>
             </Group>
           )}
         </Box>
+
+        {/* Trend Type Filter */}
+        {trends.length > 0 && (
+          <Center>
+            <SegmentedControl
+              value={selectedType}
+              onChange={(value) => setSelectedType(value as 'all' | TrendType)}
+              data={[
+                { label: 'Todos', value: 'all' },
+                { label: 'Mayor Crecimiento', value: 'fastest_growing' },
+                { label: 'Más Buscados', value: 'most_wanted' },
+                { label: 'Más Populares', value: 'most_popular' },
+              ]}
+              size="md"
+              radius="md"
+              fullWidth
+              styles={{
+                root: {
+                  maxWidth: '800px',
+                },
+              }}
+            />
+          </Center>
+        )}
 
         {/* Loading first page */}
         {loading && trends.length === 0 && (
@@ -119,9 +155,9 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
         )}
 
         {/* Trends Grid */}
-        {trends.length > 0 && (
+        {filteredTrends.length > 0 && (
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-            {trends.map((trend, index) => (
+            {filteredTrends.map((trend, index) => (
               <EnrichedTrendCard
                 key={trend.keyword}
                 trend={trend}

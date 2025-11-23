@@ -3,6 +3,7 @@
 import { Card, Text, Badge, Group, Stack } from '@mantine/core';
 import { IconTrendingUp, IconExternalLink } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
+import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
 
 interface TrendCardProps {
   trend: TrendItem;
@@ -49,17 +50,28 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
       }}
     >
       <Stack gap="sm" h="100%">
-        {/* Rank Badge */}
-        <Group justify="space-between" align="flex-start">
-          <Badge
-            size="lg"
-            variant="filled"
-            color={getRankColor(rank)}
-            leftSection={<IconTrendingUp size={14} />}
-          >
-            {getRankLabel(rank)}
-          </Badge>
-          <IconExternalLink size={18} style={{ opacity: 0.6 }} />
+        {/* Rank Badge and Trend Type */}
+        <Group justify="space-between" align="flex-start" wrap="nowrap">
+          <Group gap="xs" wrap="wrap">
+            <Badge
+              size="lg"
+              variant="filled"
+              color={getRankColor(rank)}
+              leftSection={<IconTrendingUp size={14} />}
+            >
+              {getRankLabel(rank)}
+            </Badge>
+            {trend.trend_type && (
+              <Badge
+                size="sm"
+                variant="light"
+                color={getTrendTypeColor(trend.trend_type)}
+              >
+                {getTrendTypeLabel(trend.trend_type)}
+              </Badge>
+            )}
+          </Group>
+          <IconExternalLink size={18} style={{ opacity: 0.6, flexShrink: 0 }} />
         </Group>
 
         {/* Keyword */}

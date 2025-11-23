@@ -1,0 +1,350 @@
+# MeLi Trends - LLM Documentation Index
+
+Version: 1.0.0
+Repository: https://github.com/testacode/meli-trends
+Live Demo: https://meli-trends.vercel.app
+
+================================================================================
+
+## 📖 QUICK START
+
+MeLi Trends is a Next.js 16 application that visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries.
+
+**Tech Stack:** Next.js 16 + TypeScript 5 + Mantine 8 + React 19 + Vitest
+
+**Key Features:**
+- Real-time trends visualization (50 products per country)
+- Automatic trend classification (Fastest-Growing, Most Wanted, Most Popular)
+- Category & trend type filtering
+- Multi-country support (🇦🇷 🇧🇷 🇨🇱 🇲🇽 🇨🇴 🇺🇾 🇵🇪)
+- Dark/Light mode theming + PWA support
+
+================================================================================
+
+## 📚 DOCUMENTATION STRUCTURE
+
+This documentation is split into topic-specific files to minimize token consumption.
+Read ONLY the files relevant to your current task.
+
+### Main Index (You are here)
+**File:** `/llms.txt`
+**Size:** ~200 lines
+**Purpose:** Overview + navigation guide to specific documentation
+
+### Complete Reference (All-in-one)
+**File:** `/docs/llms/meli-trends.txt`
+**Size:** ~1500 lines
+**Purpose:** Complete documentation (use if you need everything)
+**When to use:** When you need comprehensive overview or multiple topics
+
+### External Reference
+**File:** `/docs/llms/external/mantine/mantine.txt`
+**Size:** 79k lines
+**Purpose:** Complete Mantine UI library documentation
+**When to use:** When user asks about Mantine components
+
+### Directory Structure
+
+```
+📁 Root
+└── llms.txt                           # 📍 Main index (this file)
+
+📁 docs/llms/
+├── README.md                          # Documentation guide
+├── meli-trends.txt                    # 📚 Complete reference
+└── external/
+    └── mantine/
+        ├── README.md                  # Mantine reference guide
+        └── mantine.txt                # 🎨 Mantine UI docs (79k lines)
+```
+
+================================================================================
+
+## 🏗️ PROJECT STRUCTURE
+
+```
+meli-trends/
+├── app/                    # Next.js App Router
+│   ├── api/               # Server-side API routes
+│   │   ├── token/        # OAuth token management
+│   │   ├── trends/       # Trends endpoints
+│   │   └── categories/   # Categories endpoints
+│   ├── trends/[country]/ # Dynamic country pages
+│   └── about/            # About page
+├── components/
+│   ├── layout/           # Layout components (Header)
+│   ├── trends/           # Trend components (TrendCard, TrendsList)
+│   └── common/           # Common components (ErrorState, LoadingSkeleton)
+├── hooks/                # React hooks
+│   ├── useTrends.ts
+│   ├── useCategories.ts
+│   ├── useClientEnrichedTrends.ts
+│   └── useEnrichTrendOnDemand.ts
+├── lib/                  # Libraries and utilities
+│   ├── logger/           # Logging system
+│   ├── searchAPI.ts      # Client-side Search API
+│   └── mantine-theme.ts  # Mantine theme config
+├── types/                # TypeScript definitions
+│   └── meli.ts           # All type definitions
+├── utils/                # Utility functions
+│   ├── constants.ts      # Countries and constants
+│   ├── storage.ts        # localStorage utilities
+│   └── trends.ts         # Trend classification utilities
+└── docs/                 # Documentation
+    ├── llms/             # Modular LLM docs (to be created)
+    ├── llms-meli-trends-complete.txt  # Complete documentation
+    ├── llm-mantine.txt   # Mantine reference
+    └── architecture/     # Architecture docs
+```
+
+================================================================================
+
+## 🚀 ESSENTIAL COMMANDS
+
+```bash
+# Development
+npm run dev              # Start dev server (http://localhost:3000)
+npm run check            # Pre-commit verification (typecheck + lint + tests)
+
+# Code Quality
+npm run typecheck        # TypeScript type checking
+npm run lint             # ESLint
+npm run test             # Run all tests
+
+# Build & Deploy
+npm run build            # Production build
+vercel --prod            # Deploy to production
+```
+
+================================================================================
+
+## 🎯 QUICK REFERENCE
+
+### Core Types
+```typescript
+type SiteId = 'MLA' | 'MLB' | 'MLC' | 'MLM' | 'MCO' | 'MLU' | 'MPE';
+type TrendType = 'fastest_growing' | 'most_wanted' | 'most_popular';
+type TrendItem = { keyword: string; url: string; trend_type?: TrendType };
+type EnrichedTrendItem = TrendItem & { products: Product[]; metrics: {...}; opportunity_score: number };
+```
+
+### Most Used Components
+```tsx
+import { Header } from '@/components/layout/Header';
+import { TrendCard } from '@/components/trends/TrendCard';
+import { TrendsList } from '@/components/trends/TrendsList';
+import { ErrorState } from '@/components/common/ErrorState';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+```
+
+### Most Used Hooks
+```tsx
+import { useTrends } from '@/hooks/useTrends';
+import { useCategories } from '@/hooks/useCategories';
+import { useClientEnrichedTrends } from '@/hooks/useClientEnrichedTrends';
+```
+
+### Most Used Utilities
+```tsx
+import { COUNTRIES, COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
+import { getTrendType, getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
+import { saveSelectedCategory, getSavedCategory } from '@/utils/storage';
+```
+
+================================================================================
+
+## ⚡ CRITICAL ARCHITECTURE RULES
+
+### 1. Search API = Client-Side ONLY
+```typescript
+// ✅ CORRECT: Client-side
+import { fetchSearchDirect } from '@/lib/searchAPI';
+const results = await fetchSearchDirect('iphone', 'MLA');
+
+// ❌ WRONG: Server-side (gets 403 CloudFront error)
+export async function GET() {
+  const res = await fetch('https://api.mercadolibre.com/sites/MLA/search...');
+}
+```
+
+**Why:** CloudFront blocks datacenter IPs. Client-side requests use end-user IPs.
+
+### 2. Secrets = Server-Side ONLY
+```typescript
+// ✅ CORRECT: Server-side only
+const secret = process.env.MELI_CLIENT_SECRET;
+
+// ❌ WRONG: Never expose to client
+const secret = process.env.NEXT_PUBLIC_MELI_CLIENT_SECRET;
+```
+
+### 3. Batching Limits
+```typescript
+// DO NOT increase these values without testing
+const BATCH_SIZE = 2;           // Max 2-3 trends per batch
+const BATCH_DELAY_MS = 1000;    // Min 1000ms delay
+```
+
+**Why:** Prevents rate limiting.
+
+### 4. Use Mantine, NOT Tailwind
+```tsx
+// ✅ CORRECT: Mantine components
+<Box p="md" bg="blue.1">Content</Box>
+
+// ❌ WRONG: Tailwind classes (not installed)
+<div className="p-4 bg-blue-100">Content</div>
+```
+
+### 5. TypeScript: Use `type`, NOT `interface`
+```typescript
+// ✅ CORRECT
+export type User = { id: string; name: string };
+
+// ❌ WRONG
+export interface User { id: string; name: string }
+```
+
+================================================================================
+
+## 📖 HOW TO USE THIS DOCUMENTATION
+
+### Scenario 1: Working with Components
+**Read:** `/docs/llms/meli-trends.txt` → Section "CORE COMPONENTS"
+**Find:** Complete examples of Header, TrendCard, TrendsList, etc.
+
+### Scenario 2: Creating API Endpoints
+**Read:** `/docs/llms/meli-trends.txt` → Section "API ENDPOINTS"
+**Find:** Request/response examples, auth patterns, error handling
+
+### Scenario 3: Using React Hooks
+**Read:** `/docs/llms/meli-trends.txt` → Section "REACT HOOKS"
+**Find:** Complete hook signatures, usage examples, return types
+
+### Scenario 4: TypeScript Types
+**Read:** `/docs/llms/meli-trends.txt` → Section "TYPESCRIPT TYPES"
+**Find:** All type definitions with examples
+
+### Scenario 5: Common Tasks (Creating pages, routes, components)
+**Read:** `/docs/llms/meli-trends.txt` → Section "COMMON CODE EXAMPLES"
+**Find:** Copy-paste ready code examples
+
+### Scenario 6: Debugging Issues
+**Read:** `/docs/llms/meli-trends.txt` → Section "TROUBLESHOOTING"
+**Find:** Common issues and solutions
+
+### Scenario 7: Mantine UI Components
+**Read:** `/docs/llms/external/mantine/mantine.txt`
+**Find:** Complete Mantine component documentation with examples
+
+================================================================================
+
+## 💡 EXAMPLE WORKFLOW
+
+**User asks:** "Help me create a new trends page for enriched data"
+
+**LLM should:**
+1. Read this index (llms.txt) first - understand project structure
+2. Read `/docs/llms/meli-trends.txt` → "COMMON CODE EXAMPLES" section
+3. Find "Creating a New Trends Page" example
+4. Adapt example to enriched data use case
+
+**Token efficiency:**
+- Index file: ~200 lines (~500 tokens)
+- Relevant section: ~100 lines (~250 tokens)
+- Total: ~750 tokens vs reading everything (~4000 tokens)
+
+================================================================================
+
+## 🔍 QUICK SEARCH GUIDE
+
+**Looking for...**
+- Component usage? → Search "CORE COMPONENTS" in complete docs
+- Hook examples? → Search "REACT HOOKS" in complete docs
+- API endpoints? → Search "API ENDPOINTS" in complete docs
+- TypeScript types? → Search "TYPESCRIPT TYPES" in complete docs
+- Code examples? → Search "COMMON CODE EXAMPLES" in complete docs
+- Fixing errors? → Search "TROUBLESHOOTING" in complete docs
+- Mantine components? → Read `/docs/llms/external/mantine/mantine.txt`
+
+================================================================================
+
+## 📝 COMMON PATTERNS (Quick Copy-Paste)
+
+### Fetch Trends Hook
+```tsx
+const { data, loading, error, refetch } = useTrends({
+  siteId: 'MLA',
+  categoryId: 'MLA1051', // optional
+});
+```
+
+### Render Trends List
+```tsx
+{loading && <LoadingSkeleton />}
+{error && !loading && <ErrorState error={error} onRetry={refetch} />}
+{data && !loading && !error && <TrendsList trends={data} country="MLA" />}
+```
+
+### Create API Route
+```typescript
+import { NextResponse } from 'next/server';
+import { createLogger, startTimer } from '@/lib/logger';
+
+const logger = createLogger('API:myroute');
+
+export async function GET() {
+  const timer = startTimer();
+  try {
+    const data = { /* ... */ };
+    logger.success('Success', timer.end());
+    return NextResponse.json(data);
+  } catch (error) {
+    logger.error('Error', error, timer.end());
+    return NextResponse.json({ error: 'Server Error' }, { status: 500 });
+  }
+}
+```
+
+### Client-Side Search
+```typescript
+import { fetchSearchDirect } from '@/lib/searchAPI';
+
+const results = await fetchSearchDirect('keyword', 'MLA', 10);
+console.log(`Found ${results.results.length} products`);
+```
+
+================================================================================
+
+## 🎯 OPTIMIZATION TIPS FOR LLMs
+
+1. **Read index first** (this file) to understand structure
+2. **Identify relevant section** based on user question
+3. **Read only that section** from complete docs
+4. **Skip unrelated sections** to save tokens
+5. **Use Mantine docs** only when user asks about UI components
+
+================================================================================
+
+## 📞 ADDITIONAL RESOURCES
+
+**Complete Documentation:**
+- `/docs/llms/meli-trends.txt` - All topics in one file
+
+**External References:**
+- `/docs/llms/external/mantine/mantine.txt` - Mantine UI library complete reference
+- `/docs/llms/README.md` - LLM documentation guide
+- `/docs/architecture/` - Architecture documentation
+- `CLAUDE.md` - Claude Code specific instructions
+- `README.md` - Project README
+
+**Official Links:**
+- Repository: https://github.com/testacode/meli-trends
+- Live Demo: https://meli-trends.vercel.app
+- Next.js Docs: https://nextjs.org/docs
+- Mantine Docs: https://mantine.dev/
+- MercadoLibre API: https://developers.mercadolibre.com
+
+================================================================================
+
+End of Index - For detailed documentation, see `/docs/llms-meli-trends-complete.txt`
