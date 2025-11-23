@@ -1,8 +1,9 @@
 'use client';
 
-import { SimpleGrid, Stack, Title, Text, Group } from '@mantine/core';
+import { useState } from 'react';
+import { SimpleGrid, Stack, Title, Text, Group, SegmentedControl, Center } from '@mantine/core';
 import { IconTrendingUp } from '@tabler/icons-react';
-import type { TrendsResponse } from '@/types/meli';
+import type { TrendsResponse, TrendType } from '@/types/meli';
 import { TrendCard } from './TrendCard';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
 
@@ -13,6 +14,7 @@ interface TrendsListProps {
 
 export function TrendsList({ trends, country }: TrendsListProps) {
   const countryData = COUNTRIES[country];
+  const [selectedType, setSelectedType] = useState<'all' | TrendType>('all');
 
   if (!trends || trends.length === 0) {
     return (
@@ -25,6 +27,11 @@ export function TrendsList({ trends, country }: TrendsListProps) {
     );
   }
 
+  // Filter trends by selected type
+  const filteredTrends = selectedType === 'all'
+    ? trends
+    : trends.filter(trend => trend.trend_type === selectedType);
+
   return (
     <Stack gap="lg">
       {/* Header */}
@@ -35,8 +42,30 @@ export function TrendsList({ trends, country }: TrendsListProps) {
       </Group>
 
       <Text size="sm" c="dimmed">
-        Mostrando los {trends.length} productos más buscados
+        Mostrando {filteredTrends.length} de {trends.length} productos más buscados
       </Text>
+
+      {/* Trend Type Filter */}
+      <Center>
+        <SegmentedControl
+          value={selectedType}
+          onChange={(value) => setSelectedType(value as 'all' | TrendType)}
+          data={[
+            { label: 'Todos', value: 'all' },
+            { label: 'Mayor Crecimiento', value: 'fastest_growing' },
+            { label: 'Más Buscados', value: 'most_wanted' },
+            { label: 'Más Populares', value: 'most_popular' },
+          ]}
+          size="md"
+          radius="md"
+          fullWidth
+          styles={{
+            root: {
+              maxWidth: '800px',
+            },
+          }}
+        />
+      </Center>
 
       {/* Grid of Trend Cards */}
       <SimpleGrid
@@ -44,7 +73,7 @@ export function TrendsList({ trends, country }: TrendsListProps) {
         spacing={{ base: 'md', sm: 'lg' }}
         verticalSpacing={{ base: 'md', sm: 'lg' }}
       >
-        {trends.map((trend, index) => (
+        {filteredTrends.map((trend, index) => (
           <TrendCard key={`${trend.keyword}-${index}`} trend={trend} rank={index + 1} />
         ))}
       </SimpleGrid>
