@@ -1,11 +1,13 @@
 'use client';
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useSearchParams, usePathname as useNextPathname } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useState, useEffect } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   AppShell,
   Group,
-  Select,
+  Button,
   ActionIcon,
   useMantineColorScheme,
   Text,
@@ -21,10 +23,14 @@ import {
   IconCategory,
   IconChartBar,
   IconList,
+  IconChevronDown,
+  IconLanguage,
+  IconCheck,
 } from '@tabler/icons-react';
-import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
+import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
 import { saveSelectedCategory, getSavedCategory } from '@/utils/storage';
+import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
 
 interface HeaderProps {
   currentCountry?: SiteId;
@@ -34,8 +40,11 @@ interface HeaderProps {
 export function Header({ currentCountry, currentCategory }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const nextPathname = useNextPathname(); // For locale switching
   const searchParams = useSearchParams();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const locale = useLocale() as Locale;
+  const t = useTranslations();
   const [mounted, setMounted] = useState(false);
 
   // Fetch categories for the current country
@@ -56,15 +65,13 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCountry]);
 
-  const handleCountryChange = (value: string | null) => {
-    if (value) {
-      // Preserve current page type (overview vs. list)
-      const isOnOverviewPage = pathname?.includes('/overview');
-      const basePath = `/trends/${value}`;
-      const targetPath = isOnOverviewPage ? `${basePath}/overview` : basePath;
+  const handleCountryChange = (value: string) => {
+    // Preserve current page type (overview vs. list)
+    const isOnOverviewPage = pathname?.includes('/overview');
+    const basePath = `/trends/${value}`;
+    const targetPath = isOnOverviewPage ? `${basePath}/overview` : basePath;
 
-      router.push(targetPath);
-    }
+    router.push(targetPath);
   };
 
   const handleCategoryChange = (value: string | null) => {
@@ -94,19 +101,29 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
   const categoryOptions = categories
     ? [
-        { value: '', label: 'Todas las categorías' },
+        { value: '', label: t('header.allCategories') },
         ...categories.map((cat) => ({
           value: cat.id,
           label: cat.name,
         })),
       ]
-    : [{ value: '', label: 'Todas las categorías' }];
+    : [{ value: '', label: t('header.allCategories') }];
 
   // Show category filter only on trends pages (but not on overview)
   const isOverviewPage = pathname?.includes('/overview');
   const isTrendsListPage = pathname?.includes('/trends/') && !isOverviewPage;
   const showCategoryFilter = currentCountry && isTrendsListPage;
   const showOverviewToggle = currentCountry && pathname?.includes('/trends/');
+
+  // Get current country display text
+  const currentCountryDisplay = currentCountry
+    ? `${COUNTRIES[currentCountry].flag} ${COUNTRIES[currentCountry].name}`
+    : t('header.selectCountry');
+
+  // Get current category display text
+  const currentCategoryDisplay = currentCategory
+    ? categories?.find((cat) => cat.id === currentCategory)?.name || t('header.allCategories')
+    : t('header.allCategories');
 
   return (
     <AppShell.Header>
@@ -123,36 +140,72 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
             fw={700}
             style={{ color: 'var(--mantine-color-meliBlue-5)' }}
           >
-            MeLi Trends
+            {t('header.appName')}
           </Text>
         </Group>
 
-        {/* Desktop: Country Selector + Category Filter + Theme Toggle */}
+        {/* Desktop: Country Menu + Category Menu + Language + Theme Toggle */}
         <Group gap="md" visibleFrom="sm">
-          <Select
-            placeholder="Selecciona un país"
-            data={countryOptions}
-            value={currentCountry || null}
-            onChange={handleCountryChange}
-            leftSection={<IconWorld size={18} />}
-            comboboxProps={{ withinPortal: false }}
-            styles={{ input: { minWidth: 180 } }}
-          />
+          {/* Country Menu */}
+          <Menu shadow="md" width={250} position="bottom-start">
+            <Menu.Target>
+              <Button
+                variant="default"
+                leftSection={<IconWorld size={18} />}
+                rightSection={<IconChevronDown size={16} />}
+              >
+                {currentCountryDisplay}
+              </Button>
+            </Menu.Target>
 
+            <Menu.Dropdown>
+              <Menu.Label>{t('header.countries')}</Menu.Label>
+              {countryOptions.map((option) => (
+                <Menu.Item
+                  key={option.value}
+                  onClick={() => handleCountryChange(option.value)}
+                  bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                  rightSection={currentCountry === option.value ? <IconCheck size={16} /> : null}
+                >
+                  {option.label}
+                </Menu.Item>
+              ))}
+            </Menu.Dropdown>
+          </Menu>
+
+          {/* Category Menu */}
           {showCategoryFilter && (
-            <Select
-              placeholder="Categoría"
-              data={categoryOptions}
-              value={currentCategory || ''}
-              onChange={handleCategoryChange}
-              leftSection={<IconCategory size={18} />}
-              clearable
-              disabled={loadingCategories}
-              comboboxProps={{ withinPortal: false }}
-              styles={{ input: { minWidth: 200 } }}
-            />
+            <Menu shadow="md" width={300} position="bottom-start">
+              <Menu.Target>
+                <Button
+                  variant="default"
+                  leftSection={<IconCategory size={18} />}
+                  rightSection={<IconChevronDown size={16} />}
+                  disabled={loadingCategories}
+                >
+                  {loadingCategories ? t('header.loadingCategories') : currentCategoryDisplay}
+                </Button>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Label>{t('header.categories')}</Menu.Label>
+                <ScrollArea.Autosize mah={400}>
+                  {categoryOptions.map((option) => (
+                    <Menu.Item
+                      key={option.value}
+                      onClick={() => handleCategoryChange(option.value || null)}
+                      bg={currentCategory === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                      rightSection={currentCategory === option.value ? <IconCheck size={16} /> : null}
+                    >
+                      {option.label}
+                    </Menu.Item>
+                  ))}
+                </ScrollArea.Autosize>
+              </Menu.Dropdown>
+            </Menu>
           )}
 
+          {/* Overview Toggle */}
           {showOverviewToggle && (
             <ActionIcon
               variant="subtle"
@@ -163,35 +216,67 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 router.push(targetPath);
               }}
               size="lg"
-              aria-label={isOverviewPage ? 'Vista lista' : 'Vista por categorías'}
-              title={isOverviewPage ? 'Vista lista' : 'Vista por categorías'}
+              aria-label={isOverviewPage ? t('header.views.list') : t('header.views.overview')}
+              title={isOverviewPage ? t('header.views.list') : t('header.views.overview')}
             >
               {isOverviewPage ? <IconList size={20} /> : <IconChartBar size={20} />}
             </ActionIcon>
           )}
 
+          {/* Language Menu */}
+          <Menu shadow="md" width={200} position="bottom-end">
+            <Menu.Target>
+              <ActionIcon
+                variant="subtle"
+                size="lg"
+                aria-label={t('header.language')}
+                title={t('header.language')}
+              >
+                <IconLanguage size={20} />
+              </ActionIcon>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>{t('header.language')}</Menu.Label>
+              {locales.map((loc) => (
+                <Menu.Item
+                  key={loc}
+                  component="a"
+                  href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
+                  rightSection={locale === loc ? <IconCheck size={16} /> : null}
+                >
+                  {localeFlags[loc]} {localeNames[loc]}
+                </Menu.Item>
+              ))}
+            </Menu.Dropdown>
+          </Menu>
+
+          {/* Help */}
           <ActionIcon
             variant="subtle"
             onClick={() => router.push('/about')}
             size="lg"
-            aria-label="Ayuda e información"
+            aria-label={t('header.help')}
+            title={t('header.help')}
           >
             <IconInfoCircle size={20} />
           </ActionIcon>
 
+          {/* Theme Toggle */}
           {mounted && (
             <ActionIcon
               variant="subtle"
               onClick={() => toggleColorScheme()}
               size="lg"
-              aria-label="Toggle color scheme"
+              aria-label={t('header.theme.toggle')}
+              title={colorScheme === 'dark' ? t('header.theme.light') : t('header.theme.dark')}
             >
               {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
             </ActionIcon>
           )}
         </Group>
 
-        {/* Mobile: Menu */}
+        {/* Mobile: Hamburger Menu */}
         <Group hiddenFrom="sm">
           <Menu shadow="md" width={280} position="bottom-end">
             <Menu.Target>
@@ -202,12 +287,13 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
 
             <Menu.Dropdown>
               {/* Country Section */}
-              <Menu.Label>País</Menu.Label>
+              <Menu.Label>{t('header.countries')}</Menu.Label>
               {countryOptions.map((option) => (
                 <Menu.Item
                   key={option.value}
                   onClick={() => handleCountryChange(option.value)}
                   bg={currentCountry === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                  rightSection={currentCountry === option.value ? <IconCheck size={16} /> : null}
                 >
                   {option.label}
                 </Menu.Item>
@@ -217,16 +303,17 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
               {showCategoryFilter && (
                 <>
                   <Menu.Divider />
-                  <Menu.Label>Categoría</Menu.Label>
+                  <Menu.Label>{t('header.categories')}</Menu.Label>
                   <ScrollArea.Autosize mah={300}>
                     {loadingCategories ? (
-                      <Menu.Item disabled>Cargando categorías...</Menu.Item>
+                      <Menu.Item disabled>{t('header.loadingCategories')}</Menu.Item>
                     ) : (
                       categoryOptions.map((option) => (
                         <Menu.Item
                           key={option.value}
                           onClick={() => handleCategoryChange(option.value || null)}
                           bg={currentCategory === option.value ? 'var(--mantine-color-blue-light)' : undefined}
+                          rightSection={currentCategory === option.value ? <IconCheck size={16} /> : null}
                         >
                           {option.label}
                         </Menu.Item>
@@ -249,15 +336,32 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                     router.push(targetPath);
                   }}
                 >
-                  {isOverviewPage ? 'Vista Lista' : 'Vista por Categorías'}
+                  {isOverviewPage ? t('header.views.list') : t('header.views.overview')}
                 </Menu.Item>
               )}
 
+              {/* Language Section */}
+              <Menu.Divider />
+              <Menu.Label>{t('header.language')}</Menu.Label>
+              {locales.map((loc) => (
+                <Menu.Item
+                  key={loc}
+                  component="a"
+                  href={`/${loc}${nextPathname.replace(/^\/(en|es|pt-BR)/, '')}`}
+                  rightSection={locale === loc ? <IconCheck size={16} /> : null}
+                >
+                  {localeFlags[loc]} {localeNames[loc]}
+                </Menu.Item>
+              ))}
+
+              <Menu.Divider />
+
+              {/* Help & Theme */}
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}
                 onClick={() => router.push('/about')}
               >
-                Ayuda e Información
+                {t('header.help')}
               </Menu.Item>
 
               {mounted && (
@@ -265,7 +369,7 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                   leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
                   onClick={() => toggleColorScheme()}
                 >
-                  {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                  {colorScheme === 'dark' ? t('header.theme.light') : t('header.theme.dark')}
                 </Menu.Item>
               )}
             </Menu.Dropdown>
