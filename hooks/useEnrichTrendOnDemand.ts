@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { fetchSearchDirect } from '@/lib/searchAPI';
+import { createLogger, startTimer } from '@/lib/logger';
 import type {
   TrendItem,
   EnrichedTrendItem,
@@ -9,6 +10,7 @@ import type {
   SearchResponse,
 } from '@/types/meli';
 
+const logger = createLogger('Hook:useEnrichTrendOnDemand');
 const PRODUCTS_PER_KEYWORD = 3;
 
 /**
@@ -126,6 +128,9 @@ export function useEnrichTrendOnDemand(siteId: SiteId, trend: TrendItem) {
       return;
     }
 
+    const timer = startTimer();
+    logger.info(`Enriching on-demand: "${trend.keyword}"`);
+
     setState({ status: 'loading' });
 
     try {
@@ -137,8 +142,19 @@ export function useEnrichTrendOnDemand(siteId: SiteId, trend: TrendItem) {
         PRODUCTS_PER_KEYWORD
       );
 
+      if (!searchData.results || searchData.results.length === 0) {
+        logger.warn(`No products found for "${trend.keyword}"`, timer.end());
+        console.log(`⚠️ [ON-DEMAND] No products found for "${trend.keyword}"`);
+        setState({ status: 'error', error: 'No se encontraron productos' });
+        return;
+      }
+
       const enrichedTrend = calculateMetrics(trend, searchData);
 
+      logger.success(
+        `Enriched "${trend.keyword}": ${searchData.results.length} products, score ${enrichedTrend.opportunity_score}`,
+        timer.end()
+      );
       console.log(
         `✅ [ON-DEMAND] Enriched "${trend.keyword}": ${enrichedTrend.total_results} results, score: ${enrichedTrend.opportunity_score}`
       );
@@ -147,6 +163,11 @@ export function useEnrichTrendOnDemand(siteId: SiteId, trend: TrendItem) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Error desconocido';
+      logger.error(
+        `Failed to enrich "${trend.keyword}"`,
+        error instanceof Error ? error : new Error(String(error)),
+        timer.end()
+      );
       console.error(`❌ [ON-DEMAND] Error enriching "${trend.keyword}":`, error);
       setState({ status: 'error', error: errorMessage });
     }
