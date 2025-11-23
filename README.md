@@ -54,8 +54,10 @@ Basic trends functionality remains fully operational using the Trends API.
   - 🔴 Fastest-Growing (positions 1-10)
   - 🔵 Most Wanted (positions 11-30)
   - 🟢 Most Popular (positions 31-50)
+- **📊 Overview Page**: Organized view by trend type with category distribution charts
 - **📂 Category Filtering**: Filter trends by specific categories to find market niches
 - **🌎 Multi-Country Support**: Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, Peru
+- **🌍 Multi-Language Support**: Spanish, English, Portuguese (Brazil)
 - **📱 Mobile-First Design**: Fully responsive UI that works on all devices
 - **🌓 Dark/Light Mode**: Theme switching for comfortable viewing
 - **🔒 Secure**: Server-side authentication with no exposed credentials
@@ -63,13 +65,14 @@ Basic trends functionality remains fully operational using the Trends API.
 - **🎨 Modern UI**: Clean interface using Mantine UI components
 - **📱 PWA**: Installable as a native app on mobile devices
 - **🔍 SEO Optimized**: Open Graph, Twitter Cards, sitemap.xml, and robots.txt
-- **ℹ️ Help Page**: Complete guide on trends and business strategies
+- **ℹ️ About Page**: Complete guide on trends and business strategies
 
 ## Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript 5](https://www.typescriptlang.org/)
 - **UI Library**: [Mantine UI 8](https://mantine.dev/)
+- **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
 - **Icons**: [Tabler Icons](https://tabler.io/icons)
 - **Testing**: [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/)
 - **API**: [MercadoLibre Trends API](https://developers.mercadolibre.com.ar/en_us/trends)
@@ -192,16 +195,24 @@ export const COUNTRIES: Record<SiteId, Country> = {
 
 ### Viewing Trends
 
-Navigate to trends for any supported country:
+Navigate to trends for any supported country (with language selection):
 
 ```
-http://localhost:3000/trends/MLA  (Argentina)
-http://localhost:3000/trends/MLB  (Brazil)
-http://localhost:3000/trends/MLC  (Chile)
-http://localhost:3000/trends/MLM  (Mexico)
-http://localhost:3000/trends/MCO  (Colombia)
-http://localhost:3000/trends/MLU  (Uruguay)
-http://localhost:3000/trends/MPE  (Peru)
+http://localhost:3000/es/trends/MLA  (Argentina - Spanish)
+http://localhost:3000/en/trends/MLB  (Brazil - English)
+http://localhost:3000/pt-BR/trends/MLB  (Brazil - Portuguese)
+http://localhost:3000/trends/MLC  (Chile - auto-detected language)
+```
+
+**Supported languages:** Spanish (`/es`), English (`/en`), Portuguese-BR (`/pt-BR`)
+
+### Viewing Overview
+
+For an organized view by trend type:
+
+```
+http://localhost:3000/es/trends/MLA/overview  (Argentina overview)
+http://localhost:3000/en/trends/MLB/overview  (Brazil overview)
 ```
 
 ### Filtering by Category
@@ -218,35 +229,63 @@ Use the category filter on any trends page to view trends specific to a market c
 
 ```
 meli-trends/
-├── app/                        # Next.js App Router
-│   ├── about/                 # Help and info page
-│   ├── api/                   # API routes (server-side)
+├── app/                             # Next.js App Router
+│   ├── [locale]/                   # i18n routes (es, en, pt-BR)
+│   │   ├── trends/[country]/      # Dynamic country pages
+│   │   │   ├── page.tsx           # Basic trends list
+│   │   │   ├── overview/          # Overview by trend type
+│   │   │   └── enriched/          # Enriched trends (unavailable)
+│   │   ├── about/                 # About page
+│   │   ├── layout.tsx             # Locale layout with i18n
+│   │   └── page.tsx               # Home page
+│   ├── api/                        # API routes (server-side)
 │   │   ├── categories/[country]/  # Categories endpoint
-│   │   ├── token/             # Token management
-│   │   └── trends/[country]/  # Trends endpoint
-│   ├── trends/[country]/      # Dynamic country pages
-│   ├── layout.tsx             # Root layout with SEO
-│   ├── page.tsx               # Home page
-│   ├── manifest.ts            # PWA manifest
-│   └── sitemap.ts             # Dynamic sitemap
-├── components/                # React components
-│   ├── common/                # Shared components
-│   ├── layout/                # Layout components
-│   └── trends/                # Trend components
-├── hooks/                     # Custom React hooks
-│   └── useTrends.ts           # Trends fetching hook
-├── lib/                       # Library configurations
-│   ├── logger.ts              # Logging system
-│   └── mantine-theme.ts       # Mantine theme
-├── types/                     # TypeScript definitions
-│   └── meli.ts                # MercadoLibre API types
-├── utils/                     # Utility functions
-│   ├── constants.ts           # Countries and constants
-│   └── trends.ts              # Trend utilities
-└── docs/                      # Documentation
-    ├── architecture/          # Architecture docs
-    ├── llms/                  # LLM-optimized docs
-    └── plans/                 # Implementation plans
+│   │   ├── token/                 # Token management
+│   │   └── trends/[country]/      # Trends endpoint
+│   ├── layout.tsx                  # Root layout with SEO
+│   ├── manifest.ts                 # PWA manifest
+│   └── sitemap.ts                  # Dynamic sitemap
+├── components/                     # React components
+│   ├── layout/                    # Layout components (Header)
+│   ├── trends/                    # Trend components
+│   │   ├── TrendCard.tsx
+│   │   ├── TrendsList.tsx
+│   │   ├── EnrichedTrendCard.tsx
+│   │   ├── CategoryColumn.tsx              # Overview column
+│   │   └── CategoryDistributionChart.tsx   # Category chart
+│   └── common/                    # Common components
+│       ├── ErrorState.tsx
+│       ├── LoadingSkeleton.tsx
+│       ├── ListSkeleton.tsx              # List loading skeleton
+│       └── OverviewSkeleton.tsx          # Overview loading skeleton
+├── hooks/                          # Custom React hooks
+│   ├── useTrends.ts
+│   ├── useCategories.ts
+│   ├── useClientEnrichedTrends.ts
+│   └── useEnrichTrendOnDemand.ts
+├── i18n/                           # Internationalization config
+│   ├── config.ts                  # next-intl setup
+│   ├── navigation.ts              # Locale-aware navigation
+│   └── request.ts                 # Server-side locale detection
+├── locales/                        # Translation files
+│   ├── es.json                    # Spanish
+│   ├── en.json                    # English
+│   └── pt-BR.json                 # Portuguese (Brazil)
+├── lib/                            # Library configurations
+│   ├── logger/                    # Logging system
+│   ├── searchAPI.ts               # Client-side Search API
+│   ├── mantine-theme.ts           # Mantine theme
+│   └── transitions.ts             # Reusable transitions
+├── types/                          # TypeScript definitions
+│   └── meli.ts                    # MercadoLibre API types
+├── utils/                          # Utility functions
+│   ├── constants.ts               # Countries and constants
+│   └── trends.ts                  # Trend utilities
+├── proxy.ts                        # Next.js 16 locale routing proxy
+└── docs/                           # Documentation
+    ├── architecture/              # Architecture docs
+    ├── llms/                      # LLM-optimized docs
+    └── plans/                     # Implementation plans
 ```
 
 ## Supported Countries
