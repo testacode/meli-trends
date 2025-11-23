@@ -15,6 +15,7 @@ import {
   Transition,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { useTranslations } from "next-intl";
 import { IconArrowLeft } from "@tabler/icons-react";
 import Link from "next/link";
 import { useTrends } from "@/hooks/useTrends";
@@ -28,6 +29,7 @@ import { analyzeProductDistribution } from "@/utils/productCategories";
 import { fadeSlide } from "@/lib/transitions";
 
 export default function TrendsOverviewPage() {
+  const t = useTranslations();
   const params = useParams();
   const router = useRouter();
   const country = params.country as SiteId;
@@ -40,9 +42,9 @@ export default function TrendsOverviewPage() {
 
   // Segment data for mobile view
   const segmentData = [
-    { label: "🚀 Rápido", value: "fastest_growing" },
-    { label: "🔍 Buscado", value: "most_wanted" },
-    { label: "⭐ Popular", value: "most_popular" },
+    { label: t('overview.segments.fast'), value: "fastest_growing" },
+    { label: t('overview.segments.wanted'), value: "most_wanted" },
+    { label: t('overview.segments.popular'), value: "most_popular" },
   ];
 
   // Validate country
@@ -113,17 +115,17 @@ export default function TrendsOverviewPage() {
                 leftSection={<IconArrowLeft size={16} />}
                 size="sm"
               >
-                Volver a vista lista
+                {t('overview.backToList')}
               </Button>
             </Box>
 
             <Stack gap="xs">
               <Title order={1}>
-                {countryData.flag} Análisis de Tendencias en{" "}
+                {countryData.flag} {t('overview.trendsAnalysis')}{" "}
                 {countryData.name}
               </Title>
               <Text size="lg" c="dimmed">
-                Vista por categorías con análisis de tipos de productos
+                {t('overview.categoryAnalysisDesc')}
               </Text>
             </Stack>
           </Stack>
