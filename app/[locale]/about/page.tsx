@@ -553,6 +553,11 @@ export default function AboutPage() {
               <br />
               No está afiliada ni respaldada oficialmente por MercadoLibre.
             </Text>
+
+            {/* Dedication */}
+            <Text size="sm" c="dimmed" ta="center" fs="italic" mt="md">
+              Dedicado a mi amigo &quot;El Chango 💪&quot;
+            </Text>
           </Stack>
         </Container>
       </AppShell.Main>
