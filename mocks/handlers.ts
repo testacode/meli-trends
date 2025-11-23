@@ -8,6 +8,21 @@ import { mockAccessToken, mockSearchResponse, mockTrends } from './data';
  */
 export const handlers = [
   /**
+   * Mock MercadoLibre OAuth token endpoint
+   * Used by server-side API route /api/token
+   */
+  http.post('https://api.mercadolibre.com/oauth/token', () => {
+    return HttpResponse.json(
+      {
+        access_token: mockAccessToken.access_token,
+        token_type: mockAccessToken.token_type,
+        expires_in: mockAccessToken.expires_in,
+      },
+      { status: 200 }
+    );
+  }),
+
+  /**
    * Mock /api/token endpoint
    * Returns a valid OAuth access token
    */
