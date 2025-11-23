@@ -455,3 +455,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Legal Notice**: This application is not affiliated with or endorsed by MercadoLibre. It uses MercadoLibre's public API in accordance with their [terms of use](https://developers.mercadolibre.com.ar/en_us/terms-and-conditions).
 
 **Project Repository**: [https://github.com/testacode/meli-trends](https://github.com/testacode/meli-trends)
+
+---
+
+_Dedicado a mi amigo "El Chango 💪"_
