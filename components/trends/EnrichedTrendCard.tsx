@@ -163,7 +163,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                 {({ copied, copy }) => (
                   <Tooltip label={copied ? t('trends.copiedTrend') : t('trends.copyTrend')} withArrow position="left">
                     <ActionIcon
-                      color={copied ? 'teal' : 'gray'}
+                      color={copied ? 'teal' : undefined}
                       variant="subtle"
                       onClick={(e) => {
                         e.preventDefault();
@@ -171,6 +171,7 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
                         copy();
                       }}
                       aria-label={t('trends.copyTrend')}
+                      style={{ opacity: copied ? 1 : 0.6 }}
                     >
                       {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
                     </ActionIcon>
