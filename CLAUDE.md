@@ -63,6 +63,87 @@ npm run build        # Production build
 
 ---
 
+## 📚 LLM-Optimized Documentation
+
+This project includes comprehensive documentation optimized for AI assistants (LLMs) following the `llms.txt` convention.
+
+### Main Documentation Files
+
+**Start here:** [`/llms.txt`](llms.txt) - Main index (~200 lines, ~500 tokens)
+
+This file provides:
+- Quick project overview
+- Navigation guide to specific topics
+- Critical architecture rules
+- Common patterns (copy-paste ready)
+- Quick reference for types, hooks, and utilities
+
+**Complete reference:** [`/docs/llms/meli-trends-complete.txt`](docs/llms/meli-trends-complete.txt) (~1500 lines, ~4000 tokens)
+
+Contains detailed documentation for:
+- All React components with usage examples
+- All React hooks with signatures and examples
+- API endpoints with request/response examples
+- TypeScript type definitions
+- Utilities & constants
+- Common code examples
+- Troubleshooting guides
+
+**External reference:** [`/docs/llms/mantine.txt`](docs/llms/mantine.txt) (79k lines)
+- Complete Mantine UI library documentation
+- Use when user asks about Mantine components
+
+### How to Use This Documentation
+
+**Token-efficient approach (recommended):**
+
+1. Read `/llms.txt` first (~500 tokens) to understand structure
+2. Identify relevant section based on user question
+3. Read only that section from complete docs (~250-500 tokens)
+4. **Total: ~750-1000 tokens** (75% savings vs reading everything)
+
+**Example workflows:**
+
+```
+User asks about components
+→ Read /llms.txt (500 tokens)
+→ Search "CORE COMPONENTS" in complete docs (300 tokens)
+→ Total: 800 tokens ✅
+
+User asks about hooks
+→ Read /llms.txt (500 tokens)
+→ Search "REACT HOOKS" in complete docs (250 tokens)
+→ Total: 750 tokens ✅
+
+User needs comprehensive overview
+→ Read /docs/llms/meli-trends-complete.txt (4000 tokens)
+→ Total: 4000 tokens (acceptable for overview) ✅
+```
+
+### When to Use Each File
+
+| Scenario | File to Read | Tokens |
+|----------|-------------|--------|
+| Quick component lookup | `/llms.txt` → "Quick Reference" | ~500 |
+| Detailed component docs | Complete docs → "CORE COMPONENTS" | ~800 |
+| Hook implementation | Complete docs → "REACT HOOKS" | ~750 |
+| API endpoint details | Complete docs → "API ENDPOINTS" | ~900 |
+| Code examples | Complete docs → "COMMON CODE EXAMPLES" | ~1000 |
+| Troubleshooting | Complete docs → "TROUBLESHOOTING" | ~800 |
+| Mantine UI components | `/docs/llms/mantine.txt` | Variable |
+| Complete overview | Complete docs (all sections) | ~4000 |
+
+### Documentation Principles
+
+- **Token efficiency:** Minimize token consumption through indexing
+- **Completeness:** Comprehensive examples with copy-paste ready code
+- **Discoverability:** Clear navigation and search guides
+- **Up-to-date:** Synchronized with codebase changes
+
+**For more details:** See [`/docs/llms/README.md`](docs/llms/README.md)
+
+---
+
 ## Development Commands
 
 ### Essential Commands

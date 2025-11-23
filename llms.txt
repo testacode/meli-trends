@@ -32,27 +32,28 @@ Read ONLY the files relevant to your current task.
 **Purpose:** Overview + navigation guide to specific documentation
 
 ### Complete Reference (All-in-one)
-**File:** `/docs/llms-meli-trends-complete.txt`
+**File:** `/docs/llms/meli-trends-complete.txt`
 **Size:** ~1500 lines
 **Purpose:** Complete documentation (use if you need everything)
 **When to use:** When you need comprehensive overview or multiple topics
 
-### Topic-Specific Files (Efficient)
-**Location:** `/docs/llms/` (To be created - Phase 2)
+### External Reference
+**File:** `/docs/llms/mantine.txt`
+**Size:** 79k lines
+**Purpose:** Complete Mantine UI library documentation
+**When to use:** When user asks about Mantine components
+
+### Directory Structure
 
 ```
+📁 Root
+└── llms.txt                           # 📍 Main index (this file)
+
 📁 docs/llms/
-├── components.txt       # React components (Header, TrendCard, etc.)
-├── hooks.txt            # React hooks (useTrends, useCategories, etc.)
-├── api.txt              # API endpoints documentation
-├── types.txt            # TypeScript type definitions
-├── utils.txt            # Utilities and constants
-├── patterns.txt         # Architecture patterns
-├── examples.txt         # Common code examples
-└── troubleshooting.txt  # Problem solving guides
+├── README.md                          # Documentation guide
+├── meli-trends-complete.txt           # 📚 Complete reference
+└── mantine.txt                        # 🎨 Mantine UI reference
 ```
-
-**For now:** All detailed documentation is in `/docs/llms-meli-trends-complete.txt`
 
 ================================================================================
 
@@ -325,10 +326,11 @@ console.log(`Found ${results.results.length} products`);
 ## 📞 ADDITIONAL RESOURCES
 
 **Complete Documentation:**
-- `/docs/llms-meli-trends-complete.txt` - All topics in one file
+- `/docs/llms/meli-trends-complete.txt` - All topics in one file
 
 **External References:**
-- `/docs/llm-mantine.txt` - Mantine UI library complete reference
+- `/docs/llms/mantine.txt` - Mantine UI library complete reference
+- `/docs/llms/README.md` - LLM documentation guide
 - `/docs/architecture/` - Architecture documentation
 - `CLAUDE.md` - Claude Code specific instructions
 - `README.md` - Project README
