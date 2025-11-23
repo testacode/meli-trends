@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   AppShell,
@@ -17,17 +17,27 @@ import {
   IconWorld,
   IconMenu2,
   IconInfoCircle,
+  IconCategory,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
+import { useCategories } from '@/hooks/useCategories';
 
 interface HeaderProps {
   currentCountry?: SiteId;
+  currentCategory?: string | null;
 }
 
-export function Header({ currentCountry }: HeaderProps) {
+export function Header({ currentCountry, currentCategory }: HeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [mounted, setMounted] = useState(false);
+
+  // Fetch categories for the current country
+  const { data: categories, loading: loadingCategories } = useCategories({
+    siteId: currentCountry || 'MLA',
+  });
 
   // Only render theme toggle after component mounts (client-side only)
   useEffect(() => {
@@ -37,14 +47,45 @@ export function Header({ currentCountry }: HeaderProps) {
 
   const handleCountryChange = (value: string | null) => {
     if (value) {
+      // Reset category when changing country
       router.push(`/trends/${value}`);
     }
+  };
+
+  const handleCategoryChange = (value: string | null) => {
+    if (!currentCountry) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value) {
+      params.set('category', value);
+    } else {
+      params.delete('category');
+    }
+
+    const queryString = params.toString();
+    const newPath = queryString ? `${pathname}?${queryString}` : pathname;
+
+    router.push(newPath);
   };
 
   const countryOptions = COUNTRIES_ARRAY.map((country) => ({
     value: country.id,
     label: `${country.flag} ${country.name}`,
   }));
+
+  const categoryOptions = categories
+    ? [
+        { value: '', label: 'Todas las categorías' },
+        ...categories.map((cat) => ({
+          value: cat.id,
+          label: cat.name,
+        })),
+      ]
+    : [{ value: '', label: 'Todas las categorías' }];
+
+  // Show category filter only on trends pages
+  const showCategoryFilter = currentCountry && pathname?.includes('/trends/');
 
   return (
     <AppShell.Header>
@@ -65,7 +106,7 @@ export function Header({ currentCountry }: HeaderProps) {
           </Text>
         </Group>
 
-        {/* Desktop: Country Selector + Theme Toggle */}
+        {/* Desktop: Country Selector + Category Filter + Theme Toggle */}
         <Group gap="md" visibleFrom="sm">
           <Select
             placeholder="Selecciona un país"
@@ -76,6 +117,21 @@ export function Header({ currentCountry }: HeaderProps) {
             comboboxProps={{ withinPortal: false }}
             styles={{ input: { minWidth: 180 } }}
           />
+
+          {showCategoryFilter && (
+            <Select
+              placeholder="Categoría"
+              data={categoryOptions}
+              value={currentCategory || ''}
+              onChange={handleCategoryChange}
+              leftSection={<IconCategory size={18} />}
+              clearable
+              searchable
+              disabled={loadingCategories}
+              comboboxProps={{ withinPortal: false }}
+              styles={{ input: { minWidth: 200 } }}
+            />
+          )}
 
           <ActionIcon
             variant="subtle"

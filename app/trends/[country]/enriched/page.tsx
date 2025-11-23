@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use } from 'react';
 import {
   Container,
   Title,
@@ -14,15 +14,12 @@ import {
   Group,
   Button,
   Box,
-  Select,
 } from '@mantine/core';
 import {
   IconAlertCircle,
   IconRefresh,
-  IconCategory,
 } from '@tabler/icons-react';
 import { useTrends } from '@/hooks/useTrends';
-import { useCategories } from '@/hooks/useCategories';
 import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
 import { COUNTRIES } from '@/utils/constants';
 import type { SiteId } from '@/types/meli';
@@ -31,18 +28,16 @@ interface PageProps {
   params: Promise<{
     country: string;
   }>;
+  searchParams: Promise<{
+    category?: string;
+  }>;
 }
 
-export default function EnrichedTrendsPage({ params }: PageProps) {
+export default function EnrichedTrendsPage({ params, searchParams }: PageProps) {
   const { country } = use(params);
+  const { category } = use(searchParams);
   const siteId = country as SiteId;
   const countryData = COUNTRIES[siteId];
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  // Fetch categories for the current country
-  const { data: categories, loading: loadingCategories } = useCategories({
-    siteId,
-  });
 
   const {
     data: trendsData,
@@ -51,21 +46,10 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
     refetch,
   } = useTrends({
     siteId,
-    categoryId: selectedCategory || undefined,
+    categoryId: category || undefined,
   });
 
   const trends = trendsData || [];
-
-  // Category options for the dropdown
-  const categoryOptions = categories
-    ? [
-        { value: '', label: 'Todas las categorías' },
-        ...categories.map((cat) => ({
-          value: cat.id,
-          label: cat.name,
-        })),
-      ]
-    : [{ value: '', label: 'Todas las categorías' }];
 
   if (error) {
     return (
@@ -117,27 +101,6 @@ export default function EnrichedTrendsPage({ params }: PageProps) {
             >
               Actualizar
             </Button>
-          </Group>
-
-          {/* Category Filter */}
-          <Group justify="space-between" align="flex-end" mb="md">
-            <Select
-              placeholder="Selecciona una categoría"
-              data={categoryOptions}
-              value={selectedCategory}
-              onChange={(value) => setSelectedCategory(value || null)}
-              leftSection={<IconCategory size={18} />}
-              clearable
-              searchable
-              disabled={loadingCategories}
-              styles={{ root: { maxWidth: 400 } }}
-              comboboxProps={{ withinPortal: true }}
-            />
-            {selectedCategory && (
-              <Text size="sm" c="dimmed">
-                Filtrando por categoría
-              </Text>
-            )}
           </Group>
 
           {/* Stats */}
