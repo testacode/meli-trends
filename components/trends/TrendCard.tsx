@@ -1,0 +1,98 @@
+'use client';
+
+import { Card, Text, Badge, Group, Stack, Anchor } from '@mantine/core';
+import { IconTrendingUp, IconExternalLink } from '@tabler/icons-react';
+import type { TrendItem } from '@/types/meli';
+
+interface TrendCardProps {
+  trend: TrendItem;
+  rank: number;
+}
+
+export function TrendCard({ trend, rank }: TrendCardProps) {
+  const getRankColor = (position: number): string => {
+    if (position === 1) return 'yellow';
+    if (position <= 3) return 'meliBlue';
+    if (position <= 10) return 'meliGreen';
+    return 'gray';
+  };
+
+  const getRankLabel = (position: number): string => {
+    if (position === 1) return '🥇';
+    if (position === 2) return '🥈';
+    if (position === 3) return '🥉';
+    return `#${position}`;
+  };
+
+  return (
+    <Card
+      shadow="sm"
+      padding="md"
+      radius="md"
+      withBorder
+      style={{
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        cursor: 'pointer',
+        height: '100%',
+      }}
+      component="a"
+      href={trend.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      styles={{
+        root: {
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: 'var(--mantine-shadow-md)',
+          },
+        },
+      }}
+    >
+      <Stack gap="sm" h="100%">
+        {/* Rank Badge */}
+        <Group justify="space-between" align="flex-start">
+          <Badge
+            size="lg"
+            variant="filled"
+            color={getRankColor(rank)}
+            leftSection={<IconTrendingUp size={14} />}
+          >
+            {getRankLabel(rank)}
+          </Badge>
+          <IconExternalLink size={18} style={{ opacity: 0.6 }} />
+        </Group>
+
+        {/* Keyword */}
+        <Text
+          fw={600}
+          size="lg"
+          style={{
+            flex: 1,
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {trend.keyword}
+        </Text>
+
+        {/* View Link */}
+        <Group justify="flex-end">
+          <Anchor
+            size="sm"
+            fw={500}
+            c="meliBlue"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(trend.url, '_blank', 'noopener,noreferrer');
+            }}
+          >
+            Ver en MercadoLibre →
+          </Anchor>
+        </Group>
+      </Stack>
+    </Card>
+  );
+}
