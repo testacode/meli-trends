@@ -2,6 +2,7 @@
 
 import { BarChart } from "@mantine/charts";
 import { Stack, Text, Box } from "@mantine/core";
+import { useTranslations } from "next-intl";
 import type { CategoryDistribution } from "@/utils/productCategories";
 
 type CategoryDistributionChartProps = {
@@ -15,10 +16,12 @@ type CategoryDistributionChartProps = {
 export function CategoryDistributionChart({
   distribution,
 }: CategoryDistributionChartProps) {
+  const t = useTranslations();
+
   if (distribution.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center" py="md">
-        No hay datos suficientes
+        {t('overview.insufficientData')}
       </Text>
     );
   }

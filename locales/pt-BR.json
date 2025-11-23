@@ -58,6 +58,15 @@
     "new": "Novo",
     "more": "mais",
     "units": "unidades",
+    "noTrendsAvailable": "Nenhuma tendência disponível no momento",
+    "trendsIn": "Tendências em",
+    "showingResults": "Mostrando {showing} de {total} produtos mais pesquisados",
+    "filters": {
+      "all": "Todos",
+      "fastestGrowing": "Maior Crescimento",
+      "mostWanted": "Mais Procurados",
+      "mostPopular": "Mais Populares"
+    },
     "opportunityLabels": {
       "noData": "Sem dados",
       "excellent": "Excelente",
@@ -65,6 +74,168 @@
       "medium": "Média",
       "low": "Baixa"
     }
+  },
+  "overview": {
+    "segments": {
+      "fast": "🚀 Rápido",
+      "wanted": "🔍 Procurado",
+      "popular": "⭐ Popular"
+    },
+    "backToList": "Voltar para visualização em lista",
+    "trendsAnalysis": "Análise de Tendências em",
+    "categoryAnalysisDesc": "Visualização por categorias com análise de tipos de produtos",
+    "insufficientData": "Dados insuficientes"
+  },
+  "about": {
+    "pageTitle": "O que são MeLi Trends?",
+    "pageDescription": "As Tendências do MercadoLibre mostram os {count} produtos mais populares entre os usuários. Esta informação é atualizada semanalmente e está disponível para 7 países da América Latina. As tendências são classificadas automaticamente em 3 tipos de acordo com sua posição, e você pode filtrá-las por categoria para encontrar oportunidades específicas.",
+    "threeTypes": {
+      "title": "Três Tipos de Tendências (Classificação Automática)",
+      "description": "As 50 tendências são classificadas automaticamente de acordo com sua posição na resposta da API. Cada card de tendência mostra um {badge} indicando seu tipo:",
+      "badge": "badge colorido",
+      "fastestGrowing": {
+        "title": "Fastest-Growing",
+        "description": "Produtos com o {highlight} na última semana.",
+        "highlight": "maior aumento de receita",
+        "positions": "Posições 1-10"
+      },
+      "mostWanted": {
+        "title": "Most Wanted",
+        "description": "Produtos com o {highlight} durante a última semana.",
+        "highlight": "maior volume de pesquisas",
+        "positions": "Posições 11-30"
+      },
+      "mostPopular": {
+        "title": "Most Popular",
+        "description": "Produtos com o {highlight} comparado a 2 semanas atrás.",
+        "highlight": "maior aumento de pesquisas",
+        "positions": "Posições 31-50"
+      }
+    },
+    "businessStrategy": {
+      "title": "Estratégia de Negócios",
+      "question": "Qual é a melhor abordagem para um negócio bem-sucedido?",
+      "recommended": {
+        "title": "Estratégia Recomendada: Combinar Métricas",
+        "point1": "{label} → Para saber o que está \"quente\" agora (alta demanda)",
+        "point2": "{label} → Para validar que realmente vende (não apenas pesquisado)",
+        "point3": "{label} → Para encontrar nichos menos competitivos",
+        "label1": "Most Wanted",
+        "label2": "Fastest-Growing",
+        "label3": "Categorias específicas"
+      },
+      "searchVsConversion": {
+        "title": "Volume de Pesquisas vs. Conversão",
+        "description": "Produtos com {highlight} (ex: \"iphone 15 pro max 256gb\") convertem melhor que pesquisas genéricas (ex: \"celular\"). Procure palavras-chave específicas nas tendências para melhores resultados.",
+        "highlight": "intenção de compra clara"
+      },
+      "emergingVsEstablished": {
+        "title": "Produtos Emergentes vs. Estabelecidos",
+        "emerging": "{label} (emergentes) = Menos competição, maior risco",
+        "established": "{label} (estabelecidos) = Mais competição, validados com vendas",
+        "label1": "Most Popular",
+        "label2": "Fastest-Growing"
+      }
+    },
+    "countries": {
+      "title": "Países Disponíveis",
+      "argentina": "Argentina (MLA)",
+      "brazil": "Brasil (MLB)",
+      "chile": "Chile (MLC)",
+      "mexico": "México (MLM)",
+      "colombia": "Colômbia (MCO)",
+      "uruguay": "Uruguai (MLU)",
+      "peru": "Peru (MPE)"
+    },
+    "categories": {
+      "title": "Filtrar por Categorias",
+      "available": "Já disponível! Você pode filtrar tendências por categoria específica usando o dropdown no topo de qualquer visualização de tendências. Isso permite que você se concentre em nichos específicos e encontre oportunidades menos competitivas.",
+      "exampleTitle": "Exemplo de categorias populares na Argentina:",
+      "tip": {
+        "title": "Dica: Combine categorias com tipos de tendências",
+        "description": "Por exemplo, filtre por \"Celulares\" e procure produtos na seção {fastest} (top 10) para encontrar telefones que estão vendendo bem. Ou procure em {popular} (últimos 20) para identificar tendências emergentes nessa categoria.",
+        "fastest": "Fastest-Growing",
+        "popular": "Most Popular"
+      },
+      "examples": {
+        "phones": "Celulares",
+        "computers": "Computação",
+        "electronics": "Eletrônica, Áudio e Vídeo",
+        "gaming": "Consoles e Videogames",
+        "cameras": "Câmeras e Acessórios"
+      }
+    },
+    "faq": {
+      "title": "Perguntas Frequentes",
+      "updateFrequency": {
+        "question": "Com que frequência as tendências são atualizadas?",
+        "answer": "As tendências são atualizadas {frequency} pelo MercadoLibre. Nossa aplicação mostra os dados mais recentes disponíveis na API oficial.",
+        "frequency": "semanalmente"
+      },
+      "publicData": {
+        "question": "As tendências são dados públicos ou privados?",
+        "answer": "As tendências são {type} do MercadoLibre. Elas mostram os mesmos produtos populares para todos os usuários, não são personalizadas e não requerem login de usuário.",
+        "type": "dados públicos/gerais"
+      },
+      "difference": {
+        "question": "Qual é a diferença entre \"mais procurado\" e \"mais vendido\"?",
+        "mostWanted": "{label} - Reflete o volume de pesquisas, o que as pessoas estão procurando",
+        "fastestGrowing": "{label} - Reflete o crescimento de receita, o que realmente está sendo comprado",
+        "conclusion": "Um produto pode ter muitas pesquisas mas poucas vendas, ou vice-versa.",
+        "label1": "Most Wanted (mais procurado)",
+        "label2": "Fastest-Growing (mais vendido)"
+      },
+      "business": {
+        "question": "Como posso usar essas informações para meu negócio?",
+        "point1": "Identifique produtos com alta demanda em seu país/categoria",
+        "point2": "Descubra tendências emergentes antes de sua concorrência",
+        "point3": "Valide ideias de produtos vendo se elas têm tração real (vendas)",
+        "point4": "Otimize seu inventário baseado em demanda real",
+        "point5": "Encontre nichos específicos com menos competição usando categorias"
+      },
+      "apiSource": {
+        "question": "De onde vêm esses dados?",
+        "answer": "Todos os dados vêm da {link}. A autenticação é tratada de forma segura em nosso servidor, sem expor credenciais.",
+        "linkText": "API oficial de Tendências do MercadoLibre"
+      }
+    },
+    "systemStatus": {
+      "title": "Status Atual do Sistema",
+      "apiStatus": {
+        "title": "Status da API de Busca",
+        "description": "O MercadoLibre restringiu o acesso à sua API de Busca (Search API) através do CloudFront, bloqueando todas as solicitações com erros 403. Este problema afeta desenvolvedores em todo o mundo desde {date}.",
+        "date": "abril de 2025",
+        "currentStatus": "Status atual:",
+        "basicWorking": "As {label} (palavras-chave) estão funcionando normalmente",
+        "enrichmentBlocked": "O {label} está bloqueado",
+        "contacted": "Entramos em contato com o MercadoLibre para resolver o problema",
+        "note": "Enquanto isso, você pode visualizar as tendências básicas na página principal. Notificaremos você quando a funcionalidade for restaurada.",
+        "label1": "tendências básicas",
+        "label2": "enriquecimento com dados de produtos"
+      },
+      "enrichment": {
+        "title": "Funcionalidade de Enriquecimento (temporariamente indisponível)",
+        "description": "A visualização de tendências enriquecidas carrega rapidamente as tendências básicas. Para ver métricas detalhadas (oportunidade de negócio, preços, vendas), clique no botão {button} em cada card quando a funcionalidade estiver disponível.",
+        "button": "+",
+        "metricsTitle": "Métricas incluídas:",
+        "opportunityScore": "{label} - Pontuação de 0-100 baseada em volume de pesquisa, vendas, frete grátis e disponibilidade",
+        "priceRange": "{label} - Preço mínimo, máximo e médio dos produtos top",
+        "totalSold": "{label} - Soma de unidades vendidas dos produtos principais",
+        "freeShipping": "{label} - Porcentagem de produtos com frete grátis",
+        "note": "As métricas são carregadas sob demanda para evitar bloqueios da API.",
+        "label1": "Pontuação de oportunidade",
+        "label2": "Faixa de preço",
+        "label3": "Total de vendas",
+        "label4": "Frete grátis"
+      }
+    },
+    "resources": {
+      "title": "Recursos Úteis",
+      "trendsApi": "Documentação Oficial da API de Tendências do MercadoLibre",
+      "categoriesApi": "Categorias e Atributos do MercadoLibre"
+    },
+    "footer": "Esta aplicação foi criada para visualizar tendências públicas do MercadoLibre.",
+    "disclaimer": "Não é afiliada nem oficialmente endossada pelo MercadoLibre."
   },
   "errors": {
     "fetchFailed": "Falha ao carregar dados",

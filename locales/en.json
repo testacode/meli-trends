@@ -58,6 +58,15 @@
     "new": "New",
     "more": "more",
     "units": "units",
+    "noTrendsAvailable": "No trends available at this time",
+    "trendsIn": "Trends in",
+    "showingResults": "Showing {showing} of {total} most searched products",
+    "filters": {
+      "all": "All",
+      "fastestGrowing": "Fastest Growing",
+      "mostWanted": "Most Wanted",
+      "mostPopular": "Most Popular"
+    },
     "opportunityLabels": {
       "noData": "No data",
       "excellent": "Excellent",
@@ -65,6 +74,168 @@
       "medium": "Medium",
       "low": "Low"
     }
+  },
+  "overview": {
+    "segments": {
+      "fast": "🚀 Fast",
+      "wanted": "🔍 Wanted",
+      "popular": "⭐ Popular"
+    },
+    "backToList": "Back to list view",
+    "trendsAnalysis": "Trends Analysis in",
+    "categoryAnalysisDesc": "Category view with product type analysis",
+    "insufficientData": "Insufficient data"
+  },
+  "about": {
+    "pageTitle": "What are MeLi Trends?",
+    "pageDescription": "MercadoLibre Trends show the {count} most popular products among users. This information is updated weekly and is available for 7 Latin American countries. Trends are automatically classified into 3 types based on their position, and you can filter them by category to find specific opportunities.",
+    "threeTypes": {
+      "title": "Three Types of Trends (Automatic Classification)",
+      "description": "The 50 trends are automatically classified according to their position in the API response. Each trend card shows a {badge} indicating its type:",
+      "badge": "colored badge",
+      "fastestGrowing": {
+        "title": "Fastest-Growing",
+        "description": "Products with the {highlight} in the last week.",
+        "highlight": "highest revenue growth",
+        "positions": "Positions 1-10"
+      },
+      "mostWanted": {
+        "title": "Most Wanted",
+        "description": "Products with the {highlight} during the last week.",
+        "highlight": "highest search volume",
+        "positions": "Positions 11-30"
+      },
+      "mostPopular": {
+        "title": "Most Popular",
+        "description": "Products with the {highlight} compared to 2 weeks ago.",
+        "highlight": "highest search growth",
+        "positions": "Positions 31-50"
+      }
+    },
+    "businessStrategy": {
+      "title": "Business Strategy",
+      "question": "What's the best approach for a successful business?",
+      "recommended": {
+        "title": "Recommended Strategy: Combine Metrics",
+        "point1": "{label} → To know what's \"hot\" right now (high demand)",
+        "point2": "{label} → To validate that it actually sells (not just searched)",
+        "point3": "{label} → To find less competitive niches",
+        "label1": "Most Wanted",
+        "label2": "Fastest-Growing",
+        "label3": "Specific categories"
+      },
+      "searchVsConversion": {
+        "title": "Search Volume vs. Conversion",
+        "description": "Products with {highlight} (e.g., \"iphone 15 pro max 256gb\") convert better than generic searches (e.g., \"phone\"). Look for specific keywords within trends for better results.",
+        "highlight": "clear purchase intent"
+      },
+      "emergingVsEstablished": {
+        "title": "Emerging vs. Established Products",
+        "emerging": "{label} (emerging) = Less competition, higher risk",
+        "established": "{label} (established) = More competition, validated with sales",
+        "label1": "Most Popular",
+        "label2": "Fastest-Growing"
+      }
+    },
+    "countries": {
+      "title": "Available Countries",
+      "argentina": "Argentina (MLA)",
+      "brazil": "Brazil (MLB)",
+      "chile": "Chile (MLC)",
+      "mexico": "Mexico (MLM)",
+      "colombia": "Colombia (MCO)",
+      "uruguay": "Uruguay (MLU)",
+      "peru": "Peru (MPE)"
+    },
+    "categories": {
+      "title": "Filter by Categories",
+      "available": "Now available! You can filter trends by specific category using the dropdown at the top of any trends view. This allows you to focus on specific niches and find less competitive opportunities.",
+      "exampleTitle": "Example of popular categories in Argentina:",
+      "tip": {
+        "title": "Tip: Combine categories with trend types",
+        "description": "For example, filter by \"Cell Phones\" and look for products in the {fastest} section (top 10) to find phones that are selling well. Or look in {popular} (last 20) to identify emerging trends in that category.",
+        "fastest": "Fastest-Growing",
+        "popular": "Most Popular"
+      },
+      "examples": {
+        "phones": "Cell Phones",
+        "computers": "Computing",
+        "electronics": "Electronics, Audio & Video",
+        "gaming": "Gaming Consoles & Video Games",
+        "cameras": "Cameras & Accessories"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "updateFrequency": {
+        "question": "How often are trends updated?",
+        "answer": "Trends are updated {frequency} by MercadoLibre. Our application shows the most recent data available in the official API.",
+        "frequency": "weekly"
+      },
+      "publicData": {
+        "question": "Are trends public or private data?",
+        "answer": "Trends are {type} from MercadoLibre. They show the same popular products for all users, they are not personalized and do not require user login.",
+        "type": "public/general data"
+      },
+      "difference": {
+        "question": "What's the difference between \"most wanted\" and \"most sold\"?",
+        "mostWanted": "{label} - Reflects search volume, what people are looking for",
+        "fastestGrowing": "{label} - Reflects revenue growth, what's actually being bought",
+        "conclusion": "A product can have many searches but few sales, or vice versa.",
+        "label1": "Most Wanted (most searched)",
+        "label2": "Fastest-Growing (most sold)"
+      },
+      "business": {
+        "question": "How can I use this information for my business?",
+        "point1": "Identify products with high demand in your country/category",
+        "point2": "Discover emerging trends before your competition",
+        "point3": "Validate product ideas by seeing if they have real traction (sales)",
+        "point4": "Optimize your inventory based on real demand",
+        "point5": "Find specific niches with less competition using categories"
+      },
+      "apiSource": {
+        "question": "Where does this data come from?",
+        "answer": "All data comes from the {link}. Authentication is handled securely on our server, without exposing credentials.",
+        "linkText": "official MercadoLibre Trends API"
+      }
+    },
+    "systemStatus": {
+      "title": "Current System Status",
+      "apiStatus": {
+        "title": "Search API Status",
+        "description": "MercadoLibre has restricted access to its Search API through CloudFront, blocking all requests with 403 errors. This issue affects developers worldwide since {date}.",
+        "date": "April 2025",
+        "currentStatus": "Current status:",
+        "basicWorking": "{label} (keywords) are working normally",
+        "enrichmentBlocked": "{label} is blocked",
+        "contacted": "We have contacted MercadoLibre to resolve the issue",
+        "note": "In the meantime, you can view basic trends on the main page. We will notify you when the functionality is restored.",
+        "label1": "Basic trends",
+        "label2": "Enrichment with product data"
+      },
+      "enrichment": {
+        "title": "Enrichment Functionality (temporarily unavailable)",
+        "description": "The enriched trends view quickly loads basic trends. To see detailed metrics (business opportunity, prices, sales), click the {button} button on each card when the functionality becomes available.",
+        "button": "+",
+        "metricsTitle": "Metrics included:",
+        "opportunityScore": "{label} - Score 0-100 based on search volume, sales, free shipping and availability",
+        "priceRange": "{label} - Minimum, maximum and average price of top products",
+        "totalSold": "{label} - Sum of units sold of main products",
+        "freeShipping": "{label} - Percentage of products with free shipping",
+        "note": "Metrics are loaded on demand to avoid API blocks.",
+        "label1": "Opportunity score",
+        "label2": "Price range",
+        "label3": "Total sales",
+        "label4": "Free shipping"
+      }
+    },
+    "resources": {
+      "title": "Useful Resources",
+      "trendsApi": "Official MercadoLibre Trends API Documentation",
+      "categoriesApi": "MercadoLibre Categories and Attributes"
+    },
+    "footer": "This application was created to visualize public MercadoLibre trends.",
+    "disclaimer": "It is not affiliated with or officially endorsed by MercadoLibre."
   },
   "errors": {
     "fetchFailed": "Failed to load data",
