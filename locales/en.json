@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "MeLi Trends - MercadoLibre Trends in Real Time",
+    "titleTemplate": "%s | MeLi Trends",
+    "description": "Discover the 50 most searched and sold products on MercadoLibre. Trends updated weekly for Argentina, Brazil, Chile, Mexico, Colombia, Uruguay and Peru."
+  },
   "header": {
     "appName": "MeLi Trends",
     "countries": "Countries",

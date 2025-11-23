@@ -3,7 +3,7 @@
 import { Stack, Text, Button, Alert, Code } from '@mantine/core';
 import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import type { ApiError } from '@/types/meli';
-import { useI18n } from '@/contexts/I18nContext';
+import { useTranslations } from 'next-intl';
 
 interface ErrorStateProps {
   error: ApiError;
@@ -11,25 +11,25 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
-  const { t } = useI18n();
+  const t = useTranslations();
 
   const getErrorMessage = (error: ApiError): string => {
     if (error.status === 401) {
-      return t.errors.status401;
+      return t('errors.status401');
     }
     if (error.status === 403) {
-      return t.errors.status403;
+      return t('errors.status403');
     }
     if (error.status === 404) {
-      return t.errors.status404;
+      return t('errors.status404');
     }
     if (error.status === 429) {
-      return t.errors.status429;
+      return t('errors.status429');
     }
     if (error.status === 0) {
-      return t.errors.status0;
+      return t('errors.status0');
     }
-    return error.message || t.errors.defaultMessage;
+    return error.message || t('errors.defaultMessage');
   };
 
   const showDetails = error.status !== 401 && error.status !== 403;
@@ -38,7 +38,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
     <Stack align="center" justify="center" mih={400} gap="lg" p="xl">
       <Alert
         icon={<IconAlertCircle size={24} />}
-        title={t.errors.loadingTrends}
+        title={t('errors.loadingTrends')}
         color="red"
         variant="light"
         maw={600}
@@ -54,7 +54,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
 
           {showDetails && (
             <Text size="xs" c="dimmed">
-              {t.errors.errorCode}: {error.status || 'N/A'}
+              {t('errors.errorCode')}: {error.status || 'N/A'}
             </Text>
           )}
         </Stack>
@@ -67,7 +67,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
           variant="light"
           color="meliBlue"
         >
-          {t.errors.retry}
+          {t('errors.retry')}
         </Button>
       )}
 
@@ -78,7 +78,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
           variant="filled"
           color="meliBlue"
         >
-          {t.errors.backToHome}
+          {t('errors.backToHome')}
         </Button>
       )}
     </Stack>
