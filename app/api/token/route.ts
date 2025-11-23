@@ -1,22 +1,22 @@
 import { NextResponse } from 'next/server';
+import { kv } from '@vercel/kv';
 
 /**
  * Internal API route to obtain MercadoLibre access token
  * This uses the app's credentials (server-side only)
  * NEVER exposes CLIENT_SECRET to the client
+ *
+ * Token is cached in Vercel KV (Redis) for 5.5 hours
+ * This ensures cache persists across serverless deployments/regions
  */
-
-let cachedToken: {
-  access_token: string;
-  expires_at: number;
-} | null = null;
 
 export async function GET() {
   try {
-    // Check if we have a valid cached token
-    if (cachedToken && Date.now() < cachedToken.expires_at) {
+    // Check if we have a valid cached token in KV
+    const cachedToken = await kv.get<string>('meli_access_token');
+    if (cachedToken) {
       return NextResponse.json({
-        access_token: cachedToken.access_token,
+        access_token: cachedToken,
       });
     }
 
@@ -58,14 +58,12 @@ export async function GET() {
 
     const tokenData = await tokenResponse.json();
 
-    // Cache token (expires in 21600 seconds = 6 hours, cache for 5.5 hours to be safe)
-    cachedToken = {
-      access_token: tokenData.access_token,
-      expires_at: Date.now() + 5.5 * 60 * 60 * 1000, // 5.5 hours
-    };
+    // Cache token in KV with TTL (expires in 21600 seconds = 6 hours, cache for 5.5 hours to be safe)
+    const ttlSeconds = 5.5 * 60 * 60; // 19800 seconds
+    await kv.set('meli_access_token', tokenData.access_token, { ex: ttlSeconds });
 
     return NextResponse.json({
-      access_token: cachedToken.access_token,
+      access_token: tokenData.access_token,
     });
   } catch (error) {
     console.error('Error getting MercadoLibre token:', error);

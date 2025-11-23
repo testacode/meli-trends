@@ -24,7 +24,7 @@ export async function GET(
     // Get access token from our internal API
     const tokenResponse = await fetch(
       `${request.nextUrl.origin}/api/token`,
-      { cache: 'no-store' }
+      { next: { revalidate: 3600 } } // Cache for 1 hour
     );
 
     if (!tokenResponse.ok) {
@@ -43,7 +43,7 @@ export async function GET(
         headers: {
           'Authorization': `Bearer ${access_token}`,
         },
-        cache: 'no-store',
+        next: { revalidate: 300 }, // Cache for 5 minutes (aligns with client-side staleTime)
       }
     );
 
