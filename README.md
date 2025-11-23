@@ -1,294 +1,271 @@
-# MeLi Trends 📊
+# MeLi Trends
 
-Una aplicación web moderna y responsiva para visualizar productos en tendencia de MercadoLibre en toda Latinoamérica.
+> A modern, responsive web application for visualizing trending products from MercadoLibre across Latin America.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Mantine](https://img.shields.io/badge/Mantine-8-339af0)](https://mantine.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## 🌟 Características
+## Table of Contents
 
-- **📈 Trends en Tiempo Real**: Ve los 50 productos más populares en 7 países de Latinoamérica
-- **🏷️ Clasificación Automática**: Trends clasificados en 3 tipos (Fastest-Growing, Most Wanted, Most Popular) con badges de color
-- **📂 Filtrado por Categorías**: Filtra trends por categorías específicas para encontrar nichos de mercado
-- **🌎 Soporte Multi-país**: Argentina, Brasil, Chile, México, Colombia, Uruguay y Perú
-- **📱 Diseño Mobile-First**: UI completamente responsiva que funciona en todos los dispositivos
-- **🌓 Modo Oscuro/Claro**: Alterna entre temas para una visualización cómoda
-- **🔒 Seguro**: Autenticación server-side - sin credenciales expuestas al cliente
-- **⚡ Rápido**: Construido con Next.js 16 y optimizado para performance
-- **🎨 UI Moderna**: Interfaz limpia usando componentes Mantine UI
-- **📱 PWA**: Instalable como aplicación nativa en dispositivos móviles
-- **🔍 SEO Optimizado**: Open Graph, Twitter Cards, sitemap.xml y robots.txt
-- **ℹ️ Página de Ayuda**: Guía completa sobre trends y estrategias de negocio
+- [Overview](#overview)
+- [⚠️ Important Notice](#️-important-notice)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Supported Countries](#supported-countries)
+- [API Integration](#api-integration)
+- [Development](#development)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
-## 🚀 Demo en Vivo
+## Overview
 
-Visita [https://meli-trends.carlosmonti.com](https://meli-trends.carlosmonti.com)
+MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, and Peru). The application provides two main views:
 
-## 🏗️ Stack Tecnológico
+1. **Basic Trends**: Keyword trends with automatic classification (Fastest-Growing, Most Wanted, Most Popular)
+2. **Enriched Trends** ⚠️ _Currently unavailable_: Keywords enhanced with real product data, metrics, and opportunity scores
+
+## ⚠️ Important Notice
+
+**Search API Status (November 2025)**
+
+The MercadoLibre Search API is currently blocked by CloudFront (403 errors). This affects enriched trends functionality:
+
+- ✅ **Working**: Basic trends (Trends API)
+- ❌ **Unavailable**: Enriched trends (Search API)
+- **Cause**: CloudFront IP-based blocking
+- **Details**: See [Search API Investigation](docs/architecture/search-api-403-investigation-2025-11.md)
+
+Basic trends functionality remains fully operational using the Trends API.
+
+## Features
+
+- **📈 Real-Time Trends**: View the 50 most popular products across 7 Latin American countries
+- **🏷️ Automatic Classification**: Trends categorized into 3 types with color-coded badges
+  - 🔴 Fastest-Growing (positions 1-10)
+  - 🔵 Most Wanted (positions 11-30)
+  - 🟢 Most Popular (positions 31-50)
+- **📂 Category Filtering**: Filter trends by specific categories to find market niches
+- **🌎 Multi-Country Support**: Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, Peru
+- **📱 Mobile-First Design**: Fully responsive UI that works on all devices
+- **🌓 Dark/Light Mode**: Theme switching for comfortable viewing
+- **🔒 Secure**: Server-side authentication with no exposed credentials
+- **⚡ Fast**: Built with Next.js 16 and optimized for performance
+- **🎨 Modern UI**: Clean interface using Mantine UI components
+- **📱 PWA**: Installable as a native app on mobile devices
+- **🔍 SEO Optimized**: Open Graph, Twitter Cards, sitemap.xml, and robots.txt
+- **ℹ️ Help Page**: Complete guide on trends and business strategies
+
+## Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Lenguaje**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Language**: [TypeScript 5](https://www.typescriptlang.org/)
 - **UI Library**: [Mantine UI 8](https://mantine.dev/)
-- **Iconos**: [Tabler Icons](https://tabler-icons.io/)
+- **Icons**: [Tabler Icons](https://tabler.io/icons)
+- **Testing**: [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/)
 - **API**: [MercadoLibre Trends API](https://developers.mercadolibre.com.ar/en_us/trends)
 - **Deployment**: [Vercel](https://vercel.com)
 
-## 📋 Prerequisitos
+## Prerequisites
 
-Antes de comenzar, asegúrate de tener instalado:
+- Node.js 20+ (with npm, yarn, pnpm, or bun)
+- A MercadoLibre Developer account
 
-- Node.js 20+ (con npm, yarn, pnpm o bun)
-- Una cuenta de MercadoLibre Developer
+## Installation
 
-## 🛠️ Instalación
-
-### 1. Clonar el repositorio
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/testacode/meli-trends.git
 cd meli-trends
 ```
 
-### 2. Usar la versión correcta de Node.js
+### 2. Use the correct Node.js version
 
-Si usas nvm (Node Version Manager):
+If using nvm (Node Version Manager):
 
 ```bash
 nvm use
-# Automáticamente usará Node.js 20 desde .nvmrc
+# Automatically uses Node.js 20 from .nvmrc
 ```
 
-### 3. Instalar dependencias
+### 3. Install dependencies
 
 ```bash
 npm install
-# o
+# or
 yarn install
-# o
+# or
 pnpm install
 ```
 
-### 4. Configurar variables de entorno
+### 4. Set up environment variables
 
-Copia el archivo `.env.example` a `.env.local`:
+Copy `.env.example` to `.env.local`:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Luego edita `.env.local` con tus credenciales de MercadoLibre:
+Edit `.env.local` with your MercadoLibre credentials:
 
 ```env
-# Público - Puede exponerse en el navegador
+# Public - Can be exposed in the browser
 NEXT_PUBLIC_MELI_APP_ID=your_app_id_here
 
-# Privado - Solo server-side (¡NUNCA lo commitees!)
+# Private - Server-side only (NEVER commit this!)
 MELI_CLIENT_SECRET=your_client_secret_here
 
 # OAuth Redirect URI
 NEXT_PUBLIC_REDIRECT_URI=http://localhost:3000/api/auth/callback
 ```
 
-> ⚠️ **Importante**: Nunca commitees tu archivo `.env.local`. Ya está en `.gitignore`.
+> ⚠️ **Important**: Never commit your `.env.local` file. It's already in `.gitignore`.
 
-### 5. Ejecutar el servidor de desarrollo
+### 5. Run the development server
 
 ```bash
 npm run dev
-# o
+# or
 yarn dev
-# o
+# or
 pnpm dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🔑 Obtener Credenciales de la API de MercadoLibre
+## Configuration
 
-Para ejecutar este proyecto, necesitas crear una aplicación en MercadoLibre Developers:
+### Obtaining MercadoLibre API Credentials
 
-1. Ve a [MercadoLibre Developers](https://developers.mercadolibre.com.ar/)
-2. Inicia sesión con tu cuenta de MercadoLibre
-3. Navega a **Mis Aplicaciones** → **Crear Aplicación**
-4. Completa la información requerida:
-   - **Nombre**: Nombre de tu app (ej: "MeLi Trends")
-   - **Nombre corto**: Un identificador corto
-   - **Redirect URI**: `http://localhost:3000/api/auth/callback` (para desarrollo)
-5. Después de crear la app, recibirás:
-   - **APP_ID**: Úsalo para `NEXT_PUBLIC_MELI_APP_ID`
-   - **CLIENT_SECRET**: Úsalo para `MELI_CLIENT_SECRET`
+1. Go to [MercadoLibre Developers](https://developers.mercadolibre.com.ar/)
+2. Sign in with your MercadoLibre account
+3. Navigate to **My Applications** → **Create Application**
+4. Fill in the required information:
+   - **Name**: Your app name (e.g., "MeLi Trends")
+   - **Short name**: A short identifier
+   - **Redirect URI**: `http://localhost:3000/api/auth/callback` (for development)
+5. After creating the app, you'll receive:
+   - **APP_ID**: Use for `NEXT_PUBLIC_MELI_APP_ID`
+   - **CLIENT_SECRET**: Use for `MELI_CLIENT_SECRET`
 
-## 📁 Estructura del Proyecto
+### Customizing the Theme
+
+Mantine theme can be customized in `lib/mantine-theme.ts`:
+
+```typescript
+export const mantineTheme = createTheme({
+  colors: {
+    meliBlue: [...],
+    meliYellow: [...],
+  },
+  // ... other theme options
+});
+```
+
+### Adding/Modifying Countries
+
+Edit `utils/constants.ts`:
+
+```typescript
+export const COUNTRIES: Record<SiteId, Country> = {
+  MLA: {
+    id: 'MLA',
+    name: 'Argentina',
+    flag: '🇦🇷',
+    currency: 'ARS',
+  },
+  // ... add more countries
+};
+```
+
+## Usage
+
+### Viewing Trends
+
+Navigate to trends for any supported country:
+
+```
+http://localhost:3000/trends/MLA  (Argentina)
+http://localhost:3000/trends/MLB  (Brazil)
+http://localhost:3000/trends/MLC  (Chile)
+http://localhost:3000/trends/MLM  (Mexico)
+http://localhost:3000/trends/MCO  (Colombia)
+http://localhost:3000/trends/MLU  (Uruguay)
+http://localhost:3000/trends/MPE  (Peru)
+```
+
+### Filtering by Category
+
+Use the category filter on any trends page to view trends specific to a market category.
+
+### Understanding Trend Types
+
+- **🔴 Fastest-Growing** (1-10): Products with highest revenue increase in the last week
+- **🔵 Most Wanted** (11-30): Highest search volume during the last week
+- **🟢 Most Popular** (31-50): Largest search increase vs. 2 weeks ago
+
+## Project Structure
 
 ```
 meli-trends/
 ├── app/                        # Next.js App Router
-│   ├── about/                 # Página de ayuda e información
-│   │   ├── layout.tsx         # Layout con metadata
-│   │   └── page.tsx           # Página about
+│   ├── about/                 # Help and info page
 │   ├── api/                   # API routes (server-side)
-│   │   ├── categories/[country]/ # Endpoint de categorías
-│   │   ├── token/            # Gestión de tokens
-│   │   ├── trends/[country]/ # Endpoint de trends
-│   │   └── trends/[country]/[category]/ # Trends por categoría
-│   ├── trends/[country]/     # Páginas dinámicas por país
-│   │   ├── metadata.ts       # Metadata dinámica por país
-│   │   └── page.tsx          # Página de trends
-│   ├── layout.tsx            # Layout root con SEO
-│   ├── page.tsx              # Home page
-│   ├── manifest.ts           # PWA manifest
-│   └── sitemap.ts            # Sitemap dinámico
-├── components/                # Componentes React
-│   ├── common/               # Componentes compartidos
-│   ├── layout/               # Componentes de layout
-│   │   └── Header.tsx        # Header con navegación
-│   └── trends/               # Componentes de trends
-│       ├── TrendCard.tsx     # Card de trend individual
-│       └── TrendsList.tsx    # Lista de trends
-├── contexts/                  # Contexts de React
-│   └── AuthContext.tsx       # Context de autenticación
+│   │   ├── categories/[country]/  # Categories endpoint
+│   │   ├── token/             # Token management
+│   │   └── trends/[country]/  # Trends endpoint
+│   ├── trends/[country]/      # Dynamic country pages
+│   ├── layout.tsx             # Root layout with SEO
+│   ├── page.tsx               # Home page
+│   ├── manifest.ts            # PWA manifest
+│   └── sitemap.ts             # Dynamic sitemap
+├── components/                # React components
+│   ├── common/                # Shared components
+│   ├── layout/                # Layout components
+│   └── trends/                # Trend components
 ├── hooks/                     # Custom React hooks
-│   └── useTrends.ts          # Hook para fetch trends
-├── lib/                       # Configuraciones de librerías
-│   └── mantine-theme.ts      # Tema de Mantine
-├── public/                    # Archivos estáticos
-│   └── robots.txt            # Configuración de crawlers
-├── types/                     # Definiciones TypeScript
-│   └── meli.ts               # Tipos de MercadoLibre API
-├── utils/                     # Funciones utilitarias
-│   ├── constants.ts          # Constantes y países
-│   └── trends.ts             # Utilidades de trends (clasificación)
-└── docs/                      # Documentación
-    ├── architecture/         # Documentación de arquitectura
-    │   └── api-cloudfront-blocking.md # Guía de CloudFront y API
-    ├── authentication/       # Docs de autenticación
-    └── SECURITY_AUDIT_REPORT.md # Reporte de auditoría
+│   └── useTrends.ts           # Trends fetching hook
+├── lib/                       # Library configurations
+│   ├── logger.ts              # Logging system
+│   └── mantine-theme.ts       # Mantine theme
+├── types/                     # TypeScript definitions
+│   └── meli.ts                # MercadoLibre API types
+├── utils/                     # Utility functions
+│   ├── constants.ts           # Countries and constants
+│   └── trends.ts              # Trend utilities
+└── docs/                      # Documentation
+    ├── architecture/          # Architecture docs
+    ├── llms/                  # LLM-optimized docs
+    └── plans/                 # Implementation plans
 ```
 
-## 🌍 Países Soportados
+## Supported Countries
 
-| País | Site ID | Bandera | Currency |
-|------|---------|---------|----------|
-| Argentina | `MLA` | 🇦🇷 | ARS |
-| Brasil | `MLB` | 🇧🇷 | BRL |
-| Chile | `MLC` | 🇨🇱 | CLP |
-| México | `MLM` | 🇲🇽 | MXN |
-| Colombia | `MCO` | 🇨🇴 | COP |
-| Uruguay | `MLU` | 🇺🇾 | UYU |
-| Perú | `MPE` | 🇵🇪 | PEN |
+| Country   | Site ID | Flag | Currency |
+| --------- | ------- | ---- | -------- |
+| Argentina | `MLA`   | 🇦🇷   | ARS      |
+| Brazil    | `MLB`   | 🇧🇷   | BRL      |
+| Chile     | `MLC`   | 🇨🇱   | CLP      |
+| Mexico    | `MLM`   | 🇲🇽   | MXN      |
+| Colombia  | `MCO`   | 🇨🇴   | COP      |
+| Uruguay   | `MLU`   | 🇺🇾   | UYU      |
+| Peru      | `MPE`   | 🇵🇪   | PEN      |
 
-## 🔒 Seguridad
+## API Integration
 
-Este proyecto implementa las mejores prácticas de seguridad:
+### MercadoLibre Trends API
 
-- ✅ **Sin credenciales en el código**: Todos los datos sensibles están en variables de entorno
-- ✅ **Autenticación server-side**: CLIENT_SECRET nunca se expone al cliente
-- ✅ **Token caching**: Los access tokens se cachean server-side para minimizar llamadas a la API
-- ✅ **Repositorio público seguro**: No hay datos sensibles commiteados en git
-- ✅ **Auditoría completa**: Ver [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md)
-- ✅ **Variables de entorno validadas**: Verificación en tiempo de ejecución
-- ✅ **HTTPS en producción**: Obligatorio para OAuth
-
-### Auditoría de Seguridad
-
-Se realizó una auditoría completa de seguridad (2025-11-23):
-- **Puntuación**: 9.3/10 ⭐⭐⭐⭐⭐
-- **Vulnerabilidades**: 0 activas
-- **Reporte completo**: [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md)
-
-## 📱 PWA (Progressive Web App)
-
-La aplicación es instalable en dispositivos móviles:
-
-1. Visita el sitio en tu móvil
-2. Tap en "Agregar a pantalla de inicio" (iOS) o "Instalar app" (Android)
-3. Úsala como una app nativa
-
-Configuración en `app/manifest.ts`
-
-## 🔍 SEO y Metadata
-
-### Open Graph y Twitter Cards
-
-Todas las páginas incluyen metadata completa para compartir en redes sociales:
-- Facebook
-- Twitter/X
-- WhatsApp
-- LinkedIn
-
-### Sitemap.xml
-
-Sitemap dinámico generado automáticamente:
-- URL: `https://meli-trends.carlosmonti.com/sitemap.xml`
-- Incluye todas las páginas de países
-- Actualizado automáticamente
-
-### robots.txt
-
-Control de crawlers:
-- Permite indexación de Google/Bing
-- Bloquea `/api/*` (no necesario indexar)
-
-### Metadata Dinámica
-
-Cada página de país tiene metadata específica:
-- Title: "Tendencias en Argentina 🇦🇷 | MeLi Trends"
-- Description personalizada
-- Open Graph images (próximamente)
-
-## 🧪 Scripts Disponibles
-
-```bash
-# Desarrollo
-npm run dev          # Iniciar servidor de desarrollo
-
-# Producción
-npm run build        # Build para producción
-npm run start        # Iniciar servidor de producción
-
-# Calidad de Código
-npm run lint         # Ejecutar ESLint
-npm run typecheck    # Verificar tipos TypeScript
-npm run check        # Ejecutar typecheck + lint + tests
-
-# Testing
-npm run test         # Ejecutar tests con Vitest
-npm run test:ui      # Ejecutar tests con UI interactiva
-npm run test:coverage # Ejecutar tests con coverage report
-```
-
-## 🚀 Deployment
-
-### Vercel (Recomendado)
-
-1. Push tu código a GitHub
-2. Importa el proyecto en [Vercel](https://vercel.com)
-3. Agrega las variables de entorno:
-   - `NEXT_PUBLIC_MELI_APP_ID`
-   - `MELI_CLIENT_SECRET`
-   - `NEXT_PUBLIC_REDIRECT_URI` (usa tu URL de producción)
-4. ¡Deploy!
-
-**Post-deployment:**
-- Actualiza el Redirect URI en tu app de MercadoLibre con la URL de producción
-- Verifica el sitemap en Google Search Console
-- Prueba Open Graph con [Facebook Debugger](https://developers.facebook.com/tools/debug/)
-
-### Otras Plataformas
-
-Esta es una aplicación Next.js estándar y puede deployarse en cualquier plataforma compatible:
-
-- AWS Amplify
-- Netlify
-- Railway
-- Fly.io
-- Docker
-
-## 📊 API de MercadoLibre Trends
-
-### Endpoints
+**Endpoints**:
 
 ```
 GET https://api.mercadolibre.com/trends/{SITE_ID}
@@ -296,17 +273,7 @@ GET https://api.mercadolibre.com/trends/{SITE_ID}/{CATEGORY_ID}
 GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 ```
 
-### Tipos de Trends (Clasificación Automática)
-
-Los 50 trends se clasifican automáticamente según su posición en el array:
-
-1. **🔴 Fastest-Growing** (posiciones 1-10): Productos con mayor aumento de revenue en la última semana
-2. **🔵 Most Wanted** (posiciones 11-30): Mayor volumen de búsquedas durante la última semana
-3. **🟢 Most Popular** (posiciones 31-50): Mayor aumento de búsquedas vs. hace 2 semanas
-
-**Visualización**: Cada trend card muestra un badge de color indicando su tipo, permitiendo identificar rápidamente oportunidades de negocio.
-
-### Response Format
+**Response Format**:
 
 ```json
 [
@@ -317,83 +284,174 @@ Los 50 trends se clasifican automáticamente según su posición en el array:
 ]
 ```
 
-### Limitaciones
+**Limitations**:
 
-- Actualización: Semanal
-- Cantidad: 50 productos por país
-- Autenticación: Requerida (OAuth 2.0)
+- Update frequency: Weekly
+- Results per country: 50 products
+- Authentication: Required (OAuth 2.0)
 
-## 🎨 Personalización
+### Security Implementation
 
-### Tema
+- ✅ No credentials in code: All sensitive data in environment variables
+- ✅ Server-side authentication: CLIENT_SECRET never exposed to client
+- ✅ Token caching: Access tokens cached server-side for 5.5 hours
+- ✅ Secure repository: No sensitive data committed to git
+- ✅ HTTPS required: Production uses secure connections
 
-El tema de Mantine puede personalizarse en `lib/mantine-theme.ts`:
+For detailed security audit, see [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md).
 
-```typescript
-export const mantineTheme = createTheme({
-  colors: {
-    meliBlue: [...],
-    meliYellow: [...],
-  },
-  // ...
-});
+## Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server
+
+# Production
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run typecheck    # TypeScript type checking
+npm run check        # Run typecheck + lint + tests
+
+# Testing
+npm run test         # Run tests with Vitest
+npm run test:ui      # Run tests with UI
+npm run test:coverage # Run tests with coverage report
 ```
 
-### Países
+### Logging System
 
-Para agregar/modificar países, edita `utils/constants.ts`:
+The application uses Consola for development logging. Logs are automatically disabled in production and test environments.
+
+**Usage**:
 
 ```typescript
-export const COUNTRIES: Record<SiteId, Country> = {
-  MLA: {
-    id: 'MLA',
-    name: 'Argentina',
-    flag: '🇦🇷',
-    currency: 'ARS',
-  },
-  // ...
-};
+import { createLogger, startTimer } from "@/lib/logger";
+
+const logger = createLogger("API:myroute");
+const timer = startTimer();
+
+logger.info("Starting operation");
+logger.success("Operation completed", timer.end());
 ```
 
-## 🤝 Contribuir
+See [Logging System Design](docs/plans/2025-11-23-logging-system-design.md) for details.
 
-¡Las contribuciones son bienvenidas! Por favor sigue estos pasos:
+### Pre-commit Hooks
 
-1. Fork el repositorio
-2. Crea una rama de feature (`git checkout -b feature/amazing-feature`)
-3. Commit tus cambios (`git commit -m 'Add amazing feature'`)
-4. Push a la rama (`git push origin feature/amazing-feature`)
-5. Abre un Pull Request
+Run quality checks before committing:
 
-### Guías de Contribución
+```bash
+npm run check
+```
 
-- Usa TypeScript para todo el código nuevo
-- Sigue las convenciones de código existentes
-- Escribe tests si es posible
-- Actualiza la documentación si es necesario
-- Ejecuta `npm run check` antes de commitear
+This runs:
 
-## 📄 Licencia
+- TypeScript type checking
+- ESLint linting
+- Vitest tests
 
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
+## Testing
 
-## 🙏 Agradecimientos
+### Running Tests
 
-- [MercadoLibre](https://www.mercadolibre.com/) por proveer la Trends API
-- [Mantine](https://mantine.dev/) por los excelentes componentes UI
-- [Next.js](https://nextjs.org/) por el increíble framework React
-- [Vercel](https://vercel.com) por el hosting
+```bash
+# Run all tests
+npm run test
 
-## 📧 Contacto
+# Run tests in watch mode
+npm run test:watch
 
-Carlos Monti - [@carlosmonti](https://github.com/carlosmonti)
+# Run tests with UI
+npm run test:ui
 
-Project Link: [https://github.com/testacode/meli-trends](https://github.com/testacode/meli-trends)
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Test Structure
+
+- Unit tests: `*.test.ts` or `*.test.tsx` next to source files
+- Framework: Vitest with Testing Library
+- Mocking: MSW (Mock Service Worker) for API mocking
+
+See [TESTING.md](docs/TESTING.md) for comprehensive testing documentation.
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import the project in [Vercel](https://vercel.com)
+3. Add environment variables:
+   - `NEXT_PUBLIC_MELI_APP_ID`
+   - `MELI_CLIENT_SECRET`
+   - `NEXT_PUBLIC_REDIRECT_URI` (use your production URL)
+4. Deploy!
+
+**Post-deployment**:
+
+- Update Redirect URI in your MercadoLibre app with production URL
+- Verify sitemap in Google Search Console
+- Test Open Graph with [Facebook Debugger](https://developers.facebook.com/tools/debug/)
+
+### Other Platforms
+
+This is a standard Next.js application and can be deployed on:
+
+- AWS Amplify
+- Netlify
+- Railway
+- Fly.io
+- Docker
+
+Ensure environment variables are configured on your chosen platform.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+
+- Use TypeScript for all new code
+- Follow existing code conventions
+- Write tests when possible
+- Update documentation as needed
+- Run `npm run check` before committing
+- Use `type` instead of `interface` for TypeScript definitions
+- Follow the architecture constraints in [CLAUDE.md](CLAUDE.md)
+
+### Development Documentation
+
+For detailed development guidance:
+
+- [CLAUDE.md](CLAUDE.md) - Development guide for AI assistants
+- [Architecture Documentation](docs/architecture/) - System architecture details
+- [LLM Documentation](docs/llms/) - LLM-optimized project documentation
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [MercadoLibre](https://www.mercadolibre.com/) for providing the Trends API
+- [Mantine](https://mantine.dev/) for excellent UI components
+- [Next.js](https://nextjs.org/) for the powerful React framework
+- [Vercel](https://vercel.com) for hosting infrastructure
 
 ---
 
-**Nota Legal**: Esta aplicación no está afiliada ni respaldada oficialmente por MercadoLibre. Usa la API pública de MercadoLibre según sus [términos de uso](https://developers.mercadolibre.com.ar/en_us/terms-and-conditions).
+**Legal Notice**: This application is not affiliated with or endorsed by MercadoLibre. It uses MercadoLibre's public API in accordance with their [terms of use](https://developers.mercadolibre.com.ar/en_us/terms-and-conditions).
 
----
-
-Hecho con ❤️ por Carlos Monti
+**Project Repository**: [https://github.com/testacode/meli-trends](https://github.com/testacode/meli-trends)
