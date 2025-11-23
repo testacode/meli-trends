@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import {
   AppShell,
   Group,
@@ -26,6 +27,12 @@ interface HeaderProps {
 export function Header({ currentCountry }: HeaderProps) {
   const router = useRouter();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Only render theme toggle after component mounts (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleCountryChange = (value: string | null) => {
     if (value) {
@@ -42,7 +49,11 @@ export function Header({ currentCountry }: HeaderProps) {
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
         {/* Logo */}
-        <Group gap="xs">
+        <Group
+          gap="xs"
+          style={{ cursor: 'pointer' }}
+          onClick={() => router.push('/')}
+        >
           <IconWorld size={28} style={{ color: 'var(--mantine-color-meliBlue-5)' }} />
           <Text
             size="xl"
@@ -74,15 +85,16 @@ export function Header({ currentCountry }: HeaderProps) {
             <IconInfoCircle size={20} />
           </ActionIcon>
 
-          <ActionIcon
-            variant="subtle"
-            onClick={() => toggleColorScheme()}
-            size="lg"
-            aria-label="Toggle color scheme"
-            suppressHydrationWarning
-          >
-            {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
-          </ActionIcon>
+          {mounted && (
+            <ActionIcon
+              variant="subtle"
+              onClick={() => toggleColorScheme()}
+              size="lg"
+              aria-label="Toggle color scheme"
+            >
+              {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+            </ActionIcon>
+          )}
         </Group>
 
         {/* Mobile: Menu */}
@@ -115,13 +127,14 @@ export function Header({ currentCountry }: HeaderProps) {
               Ayuda e Información
             </Menu.Item>
 
-            <Menu.Item
-              leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
-              onClick={() => toggleColorScheme()}
-              suppressHydrationWarning
-            >
-              {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-            </Menu.Item>
+            {mounted && (
+              <Menu.Item
+                leftSection={colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+                onClick={() => toggleColorScheme()}
+              >
+                {colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
           </Menu>
         </Group>
