@@ -98,7 +98,7 @@ describe('EnrichedTrendCard', () => {
 
       render(<EnrichedTrendCard trend={mockTrend} rank={1} siteId="MLA" />);
 
-      const badge = screen.getByText('🥇');
+      const badge = screen.getByText('#1');
       expect(badge).toBeDefined();
       expect(badge.closest('.mantine-Badge-root')).toBeDefined();
     });
@@ -357,7 +357,7 @@ describe('EnrichedTrendCard', () => {
   });
 
   describe('Rank Display', () => {
-    it('should show 🥈 medal for rank 2', () => {
+    it('should show "#2" medal for rank 2', () => {
       vi.mocked(useEnrichTrendOnDemand).mockReturnValue({
         state: { status: 'idle' },
         enrich: mockEnrich,
@@ -365,11 +365,11 @@ describe('EnrichedTrendCard', () => {
 
       render(<EnrichedTrendCard trend={mockTrend} rank={2} siteId="MLA" />);
 
-      const badge = screen.getByText('🥈');
+      const badge = screen.getByText('#2');
       expect(badge).toBeDefined();
     });
 
-    it('should show 🥉 medal for rank 3', () => {
+    it('should show "#3" medal for rank 3', () => {
       vi.mocked(useEnrichTrendOnDemand).mockReturnValue({
         state: { status: 'idle' },
         enrich: mockEnrich,
@@ -377,7 +377,7 @@ describe('EnrichedTrendCard', () => {
 
       render(<EnrichedTrendCard trend={mockTrend} rank={3} siteId="MLA" />);
 
-      const badge = screen.getByText('🥉');
+      const badge = screen.getByText('#3');
       expect(badge).toBeDefined();
     });
 

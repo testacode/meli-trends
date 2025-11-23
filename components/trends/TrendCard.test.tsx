@@ -39,33 +39,33 @@ describe('TrendCard', () => {
   });
 
   describe('Rank Display', () => {
-    it('should show 🥇 medal for rank 1 (yellow badge)', () => {
+    it('should show "#1" for rank 1 (yellow badge)', () => {
       render(<TrendCard trend={mockTrend} rank={1} />);
 
-      // Check for gold medal emoji
-      const badge = screen.getByText('🥇');
+      // Check for numeric rank
+      const badge = screen.getByText('#1');
       expect(badge).toBeDefined();
 
       // Verify badge is rendered (getRankColor returns 'yellow' for rank 1)
       expect(badge.closest('.mantine-Badge-root')).toBeDefined();
     });
 
-    it('should show 🥈 medal for rank 2 (meliBlue badge)', () => {
+    it('should show "#2" for rank 2 (meliBlue badge)', () => {
       render(<TrendCard trend={mockTrend} rank={2} />);
 
-      // Check for silver medal emoji
-      const badge = screen.getByText('🥈');
+      // Check for numeric rank
+      const badge = screen.getByText('#2');
       expect(badge).toBeDefined();
 
       // Verify badge is rendered (getRankColor returns 'meliBlue' for rank 2-3)
       expect(badge.closest('.mantine-Badge-root')).toBeDefined();
     });
 
-    it('should show 🥉 medal for rank 3 (meliBlue badge)', () => {
+    it('should show "#3" for rank 3 (meliBlue badge)', () => {
       render(<TrendCard trend={mockTrend} rank={3} />);
 
-      // Check for bronze medal emoji
-      const badge = screen.getByText('🥉');
+      // Check for numeric rank
+      const badge = screen.getByText('#3');
       expect(badge).toBeDefined();
 
       // Verify badge is rendered (getRankColor returns 'meliBlue' for rank 2-3)
