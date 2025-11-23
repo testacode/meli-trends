@@ -15,8 +15,9 @@ MeLi Trends is a Next.js 16 application that visualizes trending products from M
 **Key Features:**
 - Real-time trends visualization (50 products per country)
 - Automatic trend classification (Fastest-Growing, Most Wanted, Most Popular)
-- Category & trend type filtering
+- Category & trend type filtering + Overview page by trend type
 - Multi-country support (🇦🇷 🇧🇷 🇨🇱 🇲🇽 🇨🇴 🇺🇾 🇵🇪)
+- Multi-language support (🇪🇸 ES, 🇬🇧 EN, 🇧🇷 PT-BR)
 - Dark/Light mode theming + PWA support
 
 ================================================================================
@@ -64,37 +65,62 @@ Read ONLY the files relevant to your current task.
 
 ```
 meli-trends/
-├── app/                    # Next.js App Router
-│   ├── api/               # Server-side API routes
-│   │   ├── token/        # OAuth token management
-│   │   ├── trends/       # Trends endpoints
-│   │   └── categories/   # Categories endpoints
-│   ├── trends/[country]/ # Dynamic country pages
-│   └── about/            # About page
+├── app/                         # Next.js App Router
+│   ├── [locale]/               # i18n routes (es, en, pt-BR)
+│   │   ├── trends/[country]/  # Dynamic country pages
+│   │   │   ├── page.tsx       # Basic trends list
+│   │   │   ├── overview/      # Overview by trend type
+│   │   │   └── enriched/      # Enriched trends (unavailable)
+│   │   ├── about/             # About page
+│   │   ├── layout.tsx         # Locale layout with i18n
+│   │   └── page.tsx           # Home page
+│   └── api/                    # Server-side API routes
+│       ├── token/             # OAuth token management
+│       ├── trends/            # Trends endpoints
+│       └── categories/        # Categories endpoints
 ├── components/
-│   ├── layout/           # Layout components (Header)
-│   ├── trends/           # Trend components (TrendCard, TrendsList)
-│   └── common/           # Common components (ErrorState, LoadingSkeleton)
-├── hooks/                # React hooks
+│   ├── layout/                # Layout components
+│   │   └── Header.tsx        # Nav + country/language selector + settings
+│   ├── trends/                # Trend components
+│   │   ├── TrendCard.tsx
+│   │   ├── TrendsList.tsx
+│   │   ├── EnrichedTrendCard.tsx
+│   │   ├── CategoryColumn.tsx              # Overview page column
+│   │   └── CategoryDistributionChart.tsx   # Category chart
+│   └── common/                # Common components
+│       ├── ErrorState.tsx
+│       ├── LoadingSkeleton.tsx
+│       ├── ListSkeleton.tsx               # List loading with transitions
+│       └── OverviewSkeleton.tsx           # Overview loading (3-column)
+├── hooks/                     # React hooks
 │   ├── useTrends.ts
 │   ├── useCategories.ts
 │   ├── useClientEnrichedTrends.ts
 │   └── useEnrichTrendOnDemand.ts
-├── lib/                  # Libraries and utilities
-│   ├── logger/           # Logging system
-│   ├── searchAPI.ts      # Client-side Search API
-│   └── mantine-theme.ts  # Mantine theme config
-├── types/                # TypeScript definitions
-│   └── meli.ts           # All type definitions
-├── utils/                # Utility functions
-│   ├── constants.ts      # Countries and constants
-│   ├── storage.ts        # localStorage utilities
-│   └── trends.ts         # Trend classification utilities
-└── docs/                 # Documentation
-    ├── llms/             # Modular LLM docs (to be created)
-    ├── llms-meli-trends-complete.txt  # Complete documentation
-    ├── llm-mantine.txt   # Mantine reference
-    └── architecture/     # Architecture docs
+├── i18n/                      # Internationalization config
+│   ├── config.ts             # next-intl setup (es, en, pt-BR)
+│   ├── navigation.ts         # Locale-aware navigation
+│   └── request.ts            # Server-side locale detection
+├── locales/                   # Translation files
+│   ├── es.json               # Spanish
+│   ├── en.json               # English
+│   └── pt-BR.json            # Portuguese (Brazil)
+├── lib/                       # Libraries and utilities
+│   ├── logger/               # Logging system
+│   ├── searchAPI.ts          # Client-side Search API
+│   ├── mantine-theme.ts      # Mantine theme config
+│   └── transitions.ts        # Reusable Mantine transitions
+├── types/                     # TypeScript definitions
+│   └── meli.ts               # All type definitions
+├── utils/                     # Utility functions
+│   ├── constants.ts          # Countries and constants
+│   ├── storage.ts            # localStorage utilities
+│   └── trends.ts             # Trend classification utilities
+├── proxy.ts                   # Next.js 16 locale routing proxy
+└── docs/                      # Documentation
+    ├── llms/                 # LLM-optimized docs
+    ├── architecture/         # Architecture docs
+    └── plans/                # Implementation plans
 ```
 
 ================================================================================

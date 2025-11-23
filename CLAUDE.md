@@ -49,14 +49,18 @@ npm run build        # Production build
 ### Key Files by Task
 
 - **Add country**: `types/meli.ts` → `utils/constants.ts` → `app/sitemap.ts`
+- **Add translation**: `locales/es.json`, `locales/en.json`, `locales/pt-BR.json`
+- **Add new page**: Create under `app/[locale]/` (not `app/` directly)
 - **Fix trends fetch**: `hooks/useTrends.ts` → `lib/searchAPI.ts`
 - **Adjust metrics**: `hooks/useClientEnrichedTrends.ts` or `hooks/useEnrichTrendOnDemand.ts` → `calculateMetrics()`
+- **Overview page customization**: `app/[locale]/trends/[country]/overview/page.tsx` → `components/trends/CategoryColumn.tsx`
 - **OAuth/tokens**: `app/api/token/route.ts`
 
 ### Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **UI**: Mantine 8 (no Tailwind)
+- **i18n**: next-intl (ES, EN, PT-BR)
 - **Testing**: Vitest + Testing Library
 - **TypeScript**: Use `type`, not `interface`
 - **APIs**: MercadoLibre Trends API (server-side OAuth) + Search API (client-side direct calls)
@@ -308,10 +312,14 @@ To avoid confusion, here's how key terms are used throughout this codebase:
 
 ### Core Concept
 
-MeLi Trends is a Next.js 16 App Router application that visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries. The app features two main views:
+MeLi Trends is a Next.js 16 App Router application that visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries. The app features:
 
-1. **Basic Trends** (`/trends/[country]`): Shows keyword trends only
-2. **Enriched Trends** (`/trends/[country]/enriched`): Keywords + real product data + metrics + opportunity scores
+**Main Views**:
+1. **Basic Trends** (`/[locale]/trends/[country]`): Shows keyword trends only
+2. **Overview** (`/[locale]/trends/[country]/overview`): Organized view by trend type (Fastest-Growing, Most Wanted, Most Popular)
+3. **Enriched Trends** (`/[locale]/trends/[country]/enriched`): Keywords + real product data + metrics + opportunity scores ⚠️ _Currently unavailable_
+
+**Internationalization**: Supports 3 languages (Spanish, English, Portuguese-BR) via next-intl with locale-based routing (`/es`, `/en`, `/pt-BR`)
 
 ### Critical Architectural Pattern: Client-Side Search API Calls
 
@@ -455,14 +463,18 @@ Located in `types/meli.ts`:
 ```
 components/
 ├── layout/
-│   └── Header.tsx        # Navigation + country selector + theme toggle
+│   └── Header.tsx        # Navigation + country selector + language selector + theme toggle + settings menu
 ├── trends/
 │   ├── TrendsList.tsx    # Basic trends grid
 │   ├── TrendCard.tsx     # Basic trend card
-│   └── EnrichedTrendCard.tsx  # Enriched trend with metrics
+│   ├── EnrichedTrendCard.tsx  # Enriched trend with metrics
+│   ├── CategoryColumn.tsx     # Overview page column by trend type
+│   └── CategoryDistributionChart.tsx  # Category distribution visualization
 └── common/
-    ├── LoadingSkeleton.tsx
-    └── ErrorState.tsx
+    ├── LoadingSkeleton.tsx    # Basic loading skeleton
+    ├── ListSkeleton.tsx       # List view loading skeleton with smooth transitions
+    ├── OverviewSkeleton.tsx   # Overview page loading skeleton
+    └── ErrorState.tsx         # Error display component
 ```
 
 **Styling**: PostCSS with Mantine's preset (no Tailwind, no CSS modules)
@@ -635,6 +647,34 @@ Files are organized by the task domain they relate to. Use this as a quick refer
   - **Use case**: Lazy loading individual trends
   - **Contains**: Same `calculateMetrics()` logic as batch hook
 
+### Internationalization (i18n)
+
+- `i18n/config.ts`
+
+  - **Purpose**: next-intl configuration
+  - **Locales**: ES (Spanish), EN (English), PT-BR (Portuguese-BR)
+  - **Default locale**: ES
+
+- `i18n/navigation.ts`
+
+  - **Purpose**: Locale-aware navigation utilities
+  - **Exports**: `Link`, `redirect`, `usePathname`, `useRouter`
+
+- `i18n/request.ts`
+
+  - **Purpose**: Server-side locale detection and setup
+  - **Used by**: App layout and middleware
+
+- `locales/[locale].json`
+
+  - **Purpose**: Translation files for each supported language
+  - **Files**: `es.json`, `en.json`, `pt-BR.json`
+  - **Format**: Nested JSON with translation keys
+
+- `proxy.ts`
+  - **Purpose**: Next.js 16 proxy setup for locale routing
+  - **Migration**: Replaces deprecated middleware convention
+
 ### Type Definitions & Configuration
 
 - `types/meli.ts`
@@ -648,14 +688,20 @@ Files are organized by the task domain they relate to. Use this as a quick refer
   - **Exports**: `COUNTRIES` object (Record<SiteId, Country>)
 
 - `lib/mantine-theme.ts`
+
   - **Purpose**: Mantine UI theme configuration
   - **Custom colors**: `meliBlue`, `meliYellow` palettes
+
+- `lib/transitions.ts`
+  - **Purpose**: Reusable Mantine transition configurations
+  - **Exports**: `fadeSlide` transition for smooth animations
 
 ### UI Components
 
 - `components/layout/Header.tsx`
 
-  - **Purpose**: Navigation, country selector, theme toggle
+  - **Purpose**: Navigation, country selector, language selector, theme toggle, settings menu
+  - **Features**: Mobile-responsive with hierarchical menu system
 
 - `components/trends/TrendsList.tsx`
 
@@ -669,8 +715,29 @@ Files are organized by the task domain they relate to. Use this as a quick refer
 
   - **Purpose**: Enriched trend card with products, metrics, opportunity score
 
-- `components/common/LoadingSkeleton.tsx` & `ErrorState.tsx`
-  - **Purpose**: Reusable loading and error UI states
+- `components/trends/CategoryColumn.tsx`
+
+  - **Purpose**: Overview page column displaying trends by type
+  - **Used in**: `/[locale]/trends/[country]/overview`
+
+- `components/trends/CategoryDistributionChart.tsx`
+
+  - **Purpose**: Visual chart showing category distribution for trends
+
+- `components/common/LoadingSkeleton.tsx`
+
+  - **Purpose**: Basic loading skeleton for simple lists
+
+- `components/common/ListSkeleton.tsx`
+
+  - **Purpose**: Advanced list loading skeleton with smooth fade transitions
+
+- `components/common/OverviewSkeleton.tsx`
+
+  - **Purpose**: Loading skeleton for overview page (3-column layout)
+
+- `components/common/ErrorState.tsx`
+  - **Purpose**: Reusable error display component
 
 ### Documentation & Architecture
 
