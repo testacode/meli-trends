@@ -21,10 +21,13 @@ This project follows the `llms.txt` convention - a standardized format for LLM-o
 
 📁 docs/llms/
 ├── README.md                             # This file (Documentation guide)
-├── meli-trends-complete.txt              # 📚 Complete reference (~4000 tokens)
+├── meli-trends.txt                       # 📚 Complete reference (~4000 tokens)
 │                                         # All components, hooks, API, types
 │                                         # Use when you need comprehensive info
-└── mantine.txt                           # 🎨 Mantine UI library reference
+└── external/
+    └── mantine/
+        ├── README.md                     # Mantine reference guide
+        └── mantine.txt                   # 🎨 Mantine UI library reference
                                           # External reference (79k lines)
 ```
 
@@ -35,7 +38,7 @@ This project follows the `llms.txt` convention - a standardized format for LLM-o
    - Identify relevant sections
    - Find critical architecture rules
 
-2. **Read specific sections:** `/docs/llms/meli-trends-complete.txt`
+2. **Read specific sections:** `/docs/llms/meli-trends.txt`
    - Only read sections relevant to your task
    - ~75% token reduction vs reading everything
 
@@ -57,7 +60,7 @@ This project follows the `llms.txt` convention - a standardized format for LLM-o
 - Total: **750 tokens** ✅
 
 **User asks for overview:**
-- Read: `/docs/llms-meli-trends-complete.txt` (4000 tokens)
+- Read: `/docs/llms/meli-trends.txt` (4000 tokens)
 - Total: **4000 tokens** (acceptable for comprehensive overview)
 
 ### For Human Developers
@@ -89,8 +92,8 @@ The `llms.txt` file follows an emerging industry standard for AI-readable docume
 ### File Naming
 
 - `llms.txt` - Index file (root directory)
-- `llms-[project]-complete.txt` - Complete documentation
-- `llm-[library].txt` - External library references
+- `[project].txt` - Complete project documentation
+- `external/[library]/[library].txt` - External library references
 
 ### Documentation Principles
 
@@ -104,9 +107,19 @@ The `llms.txt` file follows an emerging industry standard for AI-readable docume
 When adding new features, update:
 
 1. **`/llms.txt`** - Add to quick reference if it's a common pattern
-2. **`/docs/llms-meli-trends-complete.txt`** - Add detailed documentation in relevant section
+2. **`/docs/llms/meli-trends.txt`** - Add detailed documentation in relevant section
 3. **`CLAUDE.md`** - Update if it affects Claude Code workflow
 4. **This README** - If adding new documentation files
+
+### Adding External References
+
+When adding documentation for external libraries:
+
+1. Create subdirectory: `/docs/llms/external/[library-name]/`
+2. Add library docs: `[library-name].txt`
+3. Create README: Explain source, purpose, and integration
+4. Update `/llms.txt`: Add reference in "External Reference" section
+5. Update this README: Document the new external reference
 
 ## 📖 Additional Resources
 

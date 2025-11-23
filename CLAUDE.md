@@ -78,7 +78,7 @@ This file provides:
 - Common patterns (copy-paste ready)
 - Quick reference for types, hooks, and utilities
 
-**Complete reference:** [`/docs/llms/meli-trends-complete.txt`](docs/llms/meli-trends-complete.txt) (~1500 lines, ~4000 tokens)
+**Complete reference:** [`/docs/llms/meli-trends.txt`](docs/llms/meli-trends.txt) (~1500 lines, ~4000 tokens)
 
 Contains detailed documentation for:
 - All React components with usage examples
@@ -89,7 +89,7 @@ Contains detailed documentation for:
 - Common code examples
 - Troubleshooting guides
 
-**External reference:** [`/docs/llms/mantine.txt`](docs/llms/mantine.txt) (79k lines)
+**External reference:** [`/docs/llms/external/mantine/mantine.txt`](docs/llms/external/mantine/mantine.txt) (79k lines)
 - Complete Mantine UI library documentation
 - Use when user asks about Mantine components
 
@@ -116,7 +116,7 @@ User asks about hooks
 → Total: 750 tokens ✅
 
 User needs comprehensive overview
-→ Read /docs/llms/meli-trends-complete.txt (4000 tokens)
+→ Read /docs/llms/meli-trends.txt (4000 tokens)
 → Total: 4000 tokens (acceptable for overview) ✅
 ```
 
@@ -130,7 +130,7 @@ User needs comprehensive overview
 | API endpoint details | Complete docs → "API ENDPOINTS" | ~900 |
 | Code examples | Complete docs → "COMMON CODE EXAMPLES" | ~1000 |
 | Troubleshooting | Complete docs → "TROUBLESHOOTING" | ~800 |
-| Mantine UI components | `/docs/llms/mantine.txt` | Variable |
+| Mantine UI components | `/docs/llms/external/mantine/mantine.txt` | Variable |
 | Complete overview | Complete docs (all sections) | ~4000 |
 
 ### Documentation Principles

@@ -32,13 +32,13 @@ Read ONLY the files relevant to your current task.
 **Purpose:** Overview + navigation guide to specific documentation
 
 ### Complete Reference (All-in-one)
-**File:** `/docs/llms/meli-trends-complete.txt`
+**File:** `/docs/llms/meli-trends.txt`
 **Size:** ~1500 lines
 **Purpose:** Complete documentation (use if you need everything)
 **When to use:** When you need comprehensive overview or multiple topics
 
 ### External Reference
-**File:** `/docs/llms/mantine.txt`
+**File:** `/docs/llms/external/mantine/mantine.txt`
 **Size:** 79k lines
 **Purpose:** Complete Mantine UI library documentation
 **When to use:** When user asks about Mantine components
@@ -51,8 +51,11 @@ Read ONLY the files relevant to your current task.
 
 📁 docs/llms/
 ├── README.md                          # Documentation guide
-├── meli-trends-complete.txt           # 📚 Complete reference
-└── mantine.txt                        # 🎨 Mantine UI reference
+├── meli-trends.txt                    # 📚 Complete reference
+└── external/
+    └── mantine/
+        ├── README.md                  # Mantine reference guide
+        └── mantine.txt                # 🎨 Mantine UI docs (79k lines)
 ```
 
 ================================================================================
@@ -207,31 +210,31 @@ export interface User { id: string; name: string }
 ## 📖 HOW TO USE THIS DOCUMENTATION
 
 ### Scenario 1: Working with Components
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "CORE COMPONENTS"
+**Read:** `/docs/llms/meli-trends.txt` → Section "CORE COMPONENTS"
 **Find:** Complete examples of Header, TrendCard, TrendsList, etc.
 
 ### Scenario 2: Creating API Endpoints
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "API ENDPOINTS"
+**Read:** `/docs/llms/meli-trends.txt` → Section "API ENDPOINTS"
 **Find:** Request/response examples, auth patterns, error handling
 
 ### Scenario 3: Using React Hooks
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "REACT HOOKS"
+**Read:** `/docs/llms/meli-trends.txt` → Section "REACT HOOKS"
 **Find:** Complete hook signatures, usage examples, return types
 
 ### Scenario 4: TypeScript Types
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "TYPESCRIPT TYPES"
+**Read:** `/docs/llms/meli-trends.txt` → Section "TYPESCRIPT TYPES"
 **Find:** All type definitions with examples
 
 ### Scenario 5: Common Tasks (Creating pages, routes, components)
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "COMMON CODE EXAMPLES"
+**Read:** `/docs/llms/meli-trends.txt` → Section "COMMON CODE EXAMPLES"
 **Find:** Copy-paste ready code examples
 
 ### Scenario 6: Debugging Issues
-**Read:** `/docs/llms-meli-trends-complete.txt` → Section "TROUBLESHOOTING"
+**Read:** `/docs/llms/meli-trends.txt` → Section "TROUBLESHOOTING"
 **Find:** Common issues and solutions
 
 ### Scenario 7: Mantine UI Components
-**Read:** `/docs/llm-mantine.txt`
+**Read:** `/docs/llms/external/mantine/mantine.txt`
 **Find:** Complete Mantine component documentation with examples
 
 ================================================================================
@@ -242,7 +245,7 @@ export interface User { id: string; name: string }
 
 **LLM should:**
 1. Read this index (llms.txt) first - understand project structure
-2. Read `/docs/llms-meli-trends-complete.txt` → "COMMON CODE EXAMPLES" section
+2. Read `/docs/llms/meli-trends.txt` → "COMMON CODE EXAMPLES" section
 3. Find "Creating a New Trends Page" example
 4. Adapt example to enriched data use case
 
@@ -262,7 +265,7 @@ export interface User { id: string; name: string }
 - TypeScript types? → Search "TYPESCRIPT TYPES" in complete docs
 - Code examples? → Search "COMMON CODE EXAMPLES" in complete docs
 - Fixing errors? → Search "TROUBLESHOOTING" in complete docs
-- Mantine components? → Read `/docs/llm-mantine.txt`
+- Mantine components? → Read `/docs/llms/external/mantine/mantine.txt`
 
 ================================================================================
 
@@ -326,10 +329,10 @@ console.log(`Found ${results.results.length} products`);
 ## 📞 ADDITIONAL RESOURCES
 
 **Complete Documentation:**
-- `/docs/llms/meli-trends-complete.txt` - All topics in one file
+- `/docs/llms/meli-trends.txt` - All topics in one file
 
 **External References:**
-- `/docs/llms/mantine.txt` - Mantine UI library complete reference
+- `/docs/llms/external/mantine/mantine.txt` - Mantine UI library complete reference
 - `/docs/llms/README.md` - LLM documentation guide
 - `/docs/architecture/` - Architecture documentation
 - `CLAUDE.md` - Claude Code specific instructions
