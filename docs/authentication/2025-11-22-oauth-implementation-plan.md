@@ -74,8 +74,8 @@ Actualmente, los usuarios deben pegar manualmente su access token de MercadoLibr
 
 ```env
 # MercadoLibre OAuth Credentials
-NEXT_PUBLIC_MELI_APP_ID=8365283660980845
-MELI_CLIENT_SECRET=aE3RiCcBoYSCwW9ovyOjrBU4ElnOFC9W
+NEXT_PUBLIC_MELI_APP_ID=your_app_id_here
+MELI_CLIENT_SECRET=your_client_secret_here
 
 # OAuth Redirect URI (debe coincidir EXACTAMENTE con la config en MercadoLibre)
 NEXT_PUBLIC_REDIRECT_URI=http://localhost:3000/api/auth/callback
@@ -471,7 +471,7 @@ const refreshAccessToken = useCallback(async () => {
 ### Pasos para configurar la app:
 
 1. Ir a [developers.mercadolibre.com.ar](https://developers.mercadolibre.com.ar)
-2. Acceder a tu aplicación (APP_ID: 8365283660980845)
+2. Acceder a tu aplicación
 3. Configurar **Redirect URI**:
    - Desarrollo: `http://localhost:3000/api/auth/callback`
    - Producción: `https://tu-dominio.com/api/auth/callback`
