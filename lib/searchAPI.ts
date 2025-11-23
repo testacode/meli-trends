@@ -1,4 +1,7 @@
 import type { SearchResponse, SiteId } from '@/types/meli';
+import { createLogger, startTimer, sanitizeUrl } from '@/lib/logger';
+
+const logger = createLogger('External:SearchAPI');
 
 /**
  * Simplify keyword for better search results
@@ -51,56 +54,101 @@ export async function fetchSearchDirect(
   keyword: string,
   limit: number = 3
 ): Promise<SearchResponse> {
+  const timer = startTimer();
   const variants = getKeywordVariants(keyword);
 
+  logger.info(`Searching for "${keyword}" (${variants.length} variants to try)`);
+
   // Try each variant until we get results
-  for (const variant of variants) {
+  for (let i = 0; i < variants.length; i++) {
+    const variant = variants[i];
+    const isLastVariant = i === variants.length - 1;
+
+    logger.info(`Trying variant ${i + 1}/${variants.length}: "${variant}"`);
+
+    const encodedKeyword = encodeURIComponent(variant);
+    const searchUrl = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
+
     try {
-      const encodedKeyword = encodeURIComponent(variant);
-      const url = `https://api.mercadolibre.com/sites/${siteId}/search?q=${encodedKeyword}&limit=${limit}`;
-
-      console.log(`🔍 [CLIENT] Fetching Search API: ${url}`);
-
+      const fetchTimer = startTimer();
       // Direct fetch from browser - no auth needed!
-      const response = await fetch(url, {
+      const response = await fetch(searchUrl, {
         headers: {
           'Accept': 'application/json',
         },
       });
 
-      if (!response.ok) {
-        console.error(
-          `❌ [CLIENT] Search API error for "${variant}":`,
-          response.status
+      if (response.status === 429) {
+        logger.warn(
+          `Rate limited (429) on variant "${variant}"`,
+          fetchTimer.end()
         );
-        continue; // Try next variant
+        // Continue to next variant
+        continue;
+      }
+
+      if (response.status === 403) {
+        const cacheHeader = response.headers.get('x-cache');
+        logger.error(
+          `CloudFront blocking detected (403)`,
+          undefined,
+          {
+            variant,
+            'x-cache': cacheHeader,
+            url: sanitizeUrl(searchUrl),
+            ...fetchTimer.end(),
+          }
+        );
+        // Continue to next variant
+        continue;
+      }
+
+      if (!response.ok) {
+        logger.error(
+          `Search API failed with status ${response.status}`,
+          undefined,
+          { variant, url: sanitizeUrl(searchUrl), ...fetchTimer.end() }
+        );
+
+        if (isLastVariant) {
+          throw new Error(
+            `Search API failed for all variants: ${response.status} ${response.statusText}`
+          );
+        }
+        continue;
       }
 
       const data: SearchResponse = await response.json();
 
       // If we got results, return them
       if (data.paging.total > 0) {
-        if (variant !== keyword) {
-          console.log(
-            `✅ [CLIENT] Found results for "${keyword}" using variant "${variant}" (${data.paging.total} results)`
-          );
-        } else {
-          console.log(
-            `✅ [CLIENT] Found ${data.paging.total} results for "${keyword}"`
-          );
-        }
+        logger.success(
+          `Search completed: ${data.paging.total} products (variant: "${variant}")`,
+          { ...timer.end(), fetchDuration: fetchTimer.end().formatted }
+        );
         return data;
       }
 
-      console.log(`⚠️  [CLIENT] No results for variant "${variant}", trying next...`);
+      logger.warn(`No results for variant "${variant}", trying next`);
     } catch (error) {
-      console.error(`❌ [CLIENT] Error with variant "${variant}":`, error);
-      continue;
+      logger.error(
+        `Search request failed for variant "${variant}"`,
+        error instanceof Error ? error : new Error(String(error)),
+        { url: sanitizeUrl(searchUrl) }
+      );
+
+      if (isLastVariant) {
+        throw error;
+      }
     }
   }
 
   // No variants worked, return empty response
-  console.log(`❌ [CLIENT] No results found for "${keyword}" with any variant`);
+  logger.warn(
+    `All ${variants.length} variants exhausted, returning empty results`,
+    timer.end()
+  );
+
   return {
     site_id: siteId,
     query: keyword,
