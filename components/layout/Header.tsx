@@ -19,6 +19,8 @@ import {
   IconMenu2,
   IconInfoCircle,
   IconCategory,
+  IconChartBar,
+  IconList,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
@@ -96,8 +98,11 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
       ]
     : [{ value: '', label: 'Todas las categorías' }];
 
-  // Show category filter only on trends pages
-  const showCategoryFilter = currentCountry && pathname?.includes('/trends/');
+  // Show category filter only on trends pages (but not on overview)
+  const isOverviewPage = pathname?.includes('/overview');
+  const isTrendsListPage = pathname?.includes('/trends/') && !isOverviewPage;
+  const showCategoryFilter = currentCountry && isTrendsListPage;
+  const showOverviewToggle = currentCountry && pathname?.includes('/trends/');
 
   return (
     <AppShell.Header>
@@ -143,6 +148,23 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
               comboboxProps={{ withinPortal: false }}
               styles={{ input: { minWidth: 200 } }}
             />
+          )}
+
+          {showOverviewToggle && (
+            <ActionIcon
+              variant="subtle"
+              onClick={() => {
+                const targetPath = isOverviewPage
+                  ? `/trends/${currentCountry}`
+                  : `/trends/${currentCountry}/overview`;
+                router.push(targetPath);
+              }}
+              size="lg"
+              aria-label={isOverviewPage ? 'Vista lista' : 'Vista por categorías'}
+              title={isOverviewPage ? 'Vista lista' : 'Vista por categorías'}
+            >
+              {isOverviewPage ? <IconList size={20} /> : <IconChartBar size={20} />}
+            </ActionIcon>
           )}
 
           <ActionIcon
@@ -214,6 +236,20 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
               <Menu.Divider />
 
               {/* Actions */}
+              {showOverviewToggle && (
+                <Menu.Item
+                  leftSection={isOverviewPage ? <IconList size={18} /> : <IconChartBar size={18} />}
+                  onClick={() => {
+                    const targetPath = isOverviewPage
+                      ? `/trends/${currentCountry}`
+                      : `/trends/${currentCountry}/overview`;
+                    router.push(targetPath);
+                  }}
+                >
+                  {isOverviewPage ? 'Vista Lista' : 'Vista por Categorías'}
+                </Menu.Item>
+              )}
+
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}
                 onClick={() => router.push('/about')}
