@@ -25,6 +25,7 @@ import {
   IconCategory,
   IconWorld,
   IconExternalLink,
+  IconAlertTriangle,
 } from '@tabler/icons-react';
 import { AppShell } from '@mantine/core';
 import { Header } from '@/components/layout/Header';
@@ -313,6 +314,99 @@ export default function AboutPage() {
                 </Accordion.Item>
               </Accordion>
             </Box>
+
+            {/* System Status Section */}
+            <Paper shadow="xs" p="xl" radius="md" withBorder>
+              <Group mb="md">
+                <ThemeIcon size="lg" radius="md" variant="light" color="yellow">
+                  <IconAlertTriangle size={24} />
+                </ThemeIcon>
+                <Title order={2}>⚠️ Estado Actual del Sistema</Title>
+              </Group>
+
+              <Accordion variant="separated">
+                <Accordion.Item value="api-status">
+                  <Accordion.Control>
+                    <Text fw={500} c="orange">
+                      ⚠️ Estado de la API de Búsqueda
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Stack gap="sm">
+                      <Text size="sm">
+                        MercadoLibre ha restringido el acceso a su API de Búsqueda
+                        (Search API) mediante CloudFront, bloqueando todas las
+                        solicitudes con errores 403. Este problema afecta a
+                        desarrolladores en todo el mundo desde <strong>abril 2025</strong>.
+                      </Text>
+                      <Text size="sm">
+                        <strong>Estado actual:</strong>
+                      </Text>
+                      <List size="sm" spacing="xs">
+                        <List.Item>
+                          ✅ Los <strong>trends básicos</strong> (palabras clave) funcionan
+                          normalmente
+                        </List.Item>
+                        <List.Item>
+                          ❌ El <strong>enriquecimiento con datos de productos</strong> está
+                          bloqueado
+                        </List.Item>
+                        <List.Item>
+                          📧 Hemos contactado a MercadoLibre para resolver el problema
+                        </List.Item>
+                      </List>
+                      <Text size="xs" c="dimmed" mt="xs">
+                        Mientras tanto, puedes ver los trends básicos en la página
+                        principal. Te notificaremos cuando la funcionalidad se
+                        restablezca.
+                      </Text>
+                    </Stack>
+                  </Accordion.Panel>
+                </Accordion.Item>
+
+                <Accordion.Item value="enrichment">
+                  <Accordion.Control>
+                    <Text fw={500}>
+                      ℹ️ Funcionalidad de Enriquecimiento (temporalmente no disponible)
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Stack gap="sm">
+                      <Text size="sm">
+                        La vista de trends enriquecidos carga rápidamente los trends básicos.
+                        Para ver métricas detalladas (oportunidad de negocio, precios,
+                        ventas), haz click en el botón <strong>+</strong> en cada card
+                        cuando la funcionalidad esté disponible.
+                      </Text>
+                      <Text size="sm" fw={500}>
+                        Métricas incluidas:
+                      </Text>
+                      <List size="sm" spacing="xs">
+                        <List.Item>
+                          <strong>Puntuación de oportunidad</strong> - Score 0-100 basado en
+                          volumen de búsqueda, ventas, envío gratis y disponibilidad
+                        </List.Item>
+                        <List.Item>
+                          <strong>Rango de precios</strong> - Precio mínimo, máximo y promedio
+                          de los productos top
+                        </List.Item>
+                        <List.Item>
+                          <strong>Ventas totales</strong> - Suma de unidades vendidas de los
+                          productos principales
+                        </List.Item>
+                        <List.Item>
+                          <strong>Envío gratis</strong> - Porcentaje de productos con envío
+                          gratuito
+                        </List.Item>
+                      </List>
+                      <Text size="xs" c="dimmed" mt="xs">
+                        Las métricas se cargan bajo demanda para evitar bloqueos de la API.
+                      </Text>
+                    </Stack>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
+            </Paper>
 
             {/* Resources Section */}
             <Paper shadow="xs" p="lg" radius="md" withBorder>
