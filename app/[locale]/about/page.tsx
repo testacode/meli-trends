@@ -443,6 +443,11 @@ export default function AboutPage() {
               <br />
               {t('about.disclaimer')}
             </Text>
+
+            {/* Dedication */}
+            <Text size="sm" c="dimmed" ta="center" fs="italic" mt="md">
+              Dedicado a mi amigo &quot;El Chango 💪&quot;
+            </Text>
           </Stack>
         </Container>
       </AppShell.Main>
