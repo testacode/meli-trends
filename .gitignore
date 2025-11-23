@@ -1,0 +1,84 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+jspm_packages/
+
+# testing
+/coverage
+*.lcov
+.nyc_output
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+dist
+
+# misc
+.DS_Store
+*.pem
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# caches
+.npm
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+
+# optional REPL history
+.node_repl_history
+
+# package manager output
+*.tgz
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode-test
+
+# serverless
+.serverless/
+
+# vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# claude
+.claude/
