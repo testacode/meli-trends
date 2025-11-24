@@ -9,3 +9,22 @@ export const fadeSlide: MantineTransition = {
   out: { opacity: 0, transform: "translateY(-10px)" },
   transitionProperty: "opacity, transform",
 };
+
+/**
+ * Custom transition for the Toasty easter egg
+ * Slides in from bottom-right corner and slides out the same way
+ */
+export const toastySlide: MantineTransition = {
+  in: {
+    opacity: 1,
+    transform: "translate(0, 0)",
+  },
+  out: {
+    opacity: 0,
+    transform: "translate(100%, 100%)",
+  },
+  common: {
+    transformOrigin: "bottom right",
+  },
+  transitionProperty: "opacity, transform",
+};
