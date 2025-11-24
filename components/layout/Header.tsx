@@ -31,7 +31,7 @@ import {
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
-import { saveSelectedCategory, getSavedCategory, saveViewMode, getViewMode, type ViewMode, saveBadgeStyle, getBadgeStyle, type BadgeStyle } from '@/utils/storage';
+import { saveSelectedCategory, getSavedCategory, saveViewMode, getViewMode, type ViewMode } from '@/utils/storage';
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
 
 interface HeaderProps {
@@ -49,24 +49,19 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('gallery');
-  const [badgeStyle, setBadgeStyle] = useState<BadgeStyle>('gradient');
 
   // Fetch categories for the current country
   const { data: categories, loading: loadingCategories } = useCategories({
     siteId: currentCountry || 'MLA',
   });
 
-  // Load saved category, view mode, and badge style from localStorage on mount
+  // Load saved category and view mode from localStorage on mount
   useEffect(() => {
     setMounted(true);
 
     // Load saved view mode
     const savedViewMode = getViewMode();
     setViewMode(savedViewMode);
-
-    // Load saved badge style
-    const savedBadgeStyle = getBadgeStyle();
-    setBadgeStyle(savedBadgeStyle);
 
     if (currentCountry && !currentCategory) {
       const savedCategory = getSavedCategory(currentCountry);
@@ -109,13 +104,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     saveViewMode(mode);
-    // Trigger a re-render by forcing the page to reload
-    window.location.reload();
-  };
-
-  const handleBadgeStyleChange = (style: BadgeStyle) => {
-    setBadgeStyle(style);
-    saveBadgeStyle(style);
     // Trigger a re-render by forcing the page to reload
     window.location.reload();
   };
@@ -302,20 +290,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                     >
                       {t('header.viewMode.table')}
                     </Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Label>{t('header.badgeStyle.title')}</Menu.Label>
-                    <Menu.Item
-                      onClick={() => handleBadgeStyleChange('gradient')}
-                      rightSection={badgeStyle === 'gradient' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.badgeStyle.gradient')}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => handleBadgeStyleChange('flat')}
-                      rightSection={badgeStyle === 'flat' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.badgeStyle.flat')}
-                    </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>
               )}
@@ -442,20 +416,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                       rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
                     >
                       {t('header.viewMode.table')}
-                    </Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Label>{t('header.badgeStyle.title')}</Menu.Label>
-                    <Menu.Item
-                      onClick={() => handleBadgeStyleChange('gradient')}
-                      rightSection={badgeStyle === 'gradient' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.badgeStyle.gradient')}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => handleBadgeStyleChange('flat')}
-                      rightSection={badgeStyle === 'flat' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.badgeStyle.flat')}
                     </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>

@@ -51,43 +51,17 @@ export function getCategoryColor(categoryName: string): string {
 
 /**
  * Get a consistent rank badge color based on position
- * Supports both gradient (default) and flat styles
  */
-export function getRankBadgeColor(
-  position: number,
-  style: 'gradient' | 'flat' = 'gradient'
-): string {
-  if (style === 'flat') {
-    // Flat style - simple color based on position ranges
-    if (position === 1) return 'yellow';
-    if (position <= 3) return 'meliBlue';
-    if (position <= 10) return 'meliGreen';
-    return 'gray';
-  }
-
-  // Gradient style - more sophisticated coloring
+export function getRankBadgeColor(position: number): string {
   if (position === 1) return 'yellow';
-  if (position === 2) return 'orange';
-  if (position === 3) return 'meliBlue';
-  if (position <= 5) return 'cyan';
+  if (position <= 3) return 'meliBlue';
   if (position <= 10) return 'meliGreen';
-  if (position <= 20) return 'teal';
   return 'gray';
 }
 
 /**
- * Get rank badge variant based on style
+ * Get rank badge variant (always filled for flat style)
  */
-export function getRankBadgeVariant(
-  position: number,
-  style: 'gradient' | 'flat' = 'gradient'
-): 'gradient' | 'filled' | 'light' {
-  if (style === 'flat') {
-    return 'filled';
-  }
-
-  // Gradient style - use gradient for top positions
-  if (position <= 3) return 'gradient';
-  if (position <= 10) return 'filled';
-  return 'light';
+export function getRankBadgeVariant(): 'filled' {
+  return 'filled';
 }

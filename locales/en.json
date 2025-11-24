@@ -28,11 +28,6 @@
       "title": "View Layout",
       "gallery": "Cards (default)",
       "table": "Compact Table (beta)"
-    },
-    "badgeStyle": {
-      "title": "Badge Style",
-      "gradient": "🏆 Gradient (default)",
-      "flat": "Flat & Minimal"
     }
   },
   "common": {
