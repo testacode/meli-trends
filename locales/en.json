@@ -25,10 +25,12 @@
       "list": "List View",
       "overview": "Category View"
     },
-    "viewMode": {
-      "title": "View Layout",
+    "betaTesting": {
+      "title": "Beta Testing",
       "gallery": "Cards (default)",
-      "table": "Compact Table (beta)"
+      "table": "Compact Table",
+      "enriched": "Enriched Trends (blocked)",
+      "prototype": "Best Sellers (blocked)"
     }
   },
   "common": {
@@ -44,6 +46,9 @@
   },
   "trends": {
     "title": "Trends",
+    "subtitle": "Discover the most searched products in",
+    "description": "Trends updated weekly with real data from MercadoLibre.",
+    "enrichedTitle": "Enriched Trends",
     "enriched": "Enriched Trends",
     "basic": "Basic Trends",
     "opportunityScore": "Opportunity Score",
@@ -59,6 +64,7 @@
     "copiedTrend": "Copied",
     "viewDetailsTooltip": "View details and metrics",
     "opportunityTooltip": "Business opportunity score",
+    "totalSoldTooltip": "Sum of units sold of main products",
     "businessOpportunity": "Business Opportunity",
     "priceRangeLabel": "Price range:",
     "averagePrice": "Average price:",
@@ -70,6 +76,7 @@
     "new": "New",
     "more": "more",
     "units": "units",
+    "sold": "sold",
     "noTrendsAvailable": "No trends available at this time",
     "trendsIn": "Trends in",
     "showingResults": "Showing {showing} of {total} most searched products",
@@ -99,6 +106,8 @@
     }
   },
   "overview": {
+    "title": "Category View",
+    "description": "Trends organized by growth type for a complete overview",
     "segments": {
       "fast": "Fast",
       "wanted": "Wanted",

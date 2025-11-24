@@ -11,7 +11,6 @@ import {
   Badge,
   Group,
   Alert,
-  Button,
   Table,
   Anchor,
   Code,
@@ -138,19 +137,9 @@ export default function BestSellersPrototypePage() {
             color="red"
             variant="filled"
           >
-            <Text size="sm" mb="md">
+            <Text size="sm">
               {t("cloudFrontDetails")}
             </Text>
-            <Button
-              component="a"
-              href="/docs/architecture/search-api-403-investigation-2025-11.md"
-              target="_blank"
-              size="xs"
-              variant="white"
-              color="red"
-            >
-              View Documentation
-            </Button>
           </Alert>
         )}
 

@@ -134,34 +134,76 @@ The existing **Search API** and **Items API** include `sold_quantity` field in r
 
 ## Recommendations
 
-### Option 1: Implement Highlights API (RECOMMENDED WITH CAUTION)
+### Option 1: Implement Highlights API ⛔ **NOT VIABLE - BLOCKED**
 
-⚠️ **CRITICAL WARNING: CloudFront Blocking Risk**
+🔴 **CONFIRMED: CloudFront Blocking on Highlights API**
 
-Before implementing, we need to verify that the Highlights API doesn't suffer from the same CloudFront blocking issue as the Search API.
+**Testing Results** (November 24, 2025):
+- ❌ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **CONFIRMED BLOCKED server-side**
+- Response: `403 Forbidden` with `x-cache: Error from cloudfront`
+- Tested on: Local development (localhost:3000)
+- Category tested: `MLA1051` (Celulares y Teléfonos)
 
 **Known CloudFront Behavior**:
 - ✅ **Trends API** (`/trends/{SITE_ID}`) - Works server-side without issues
 - ✅ **OAuth Token API** - Works server-side without issues
 - ❌ **Search API** (`/sites/{SITE_ID}/search`) - **BLOCKED server-side** (403 from CloudFront)
-- ❓ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **UNKNOWN, NEEDS TESTING**
+- ❌ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **CONFIRMED BLOCKED server-side** (403 from CloudFront)
 
-**Why This Matters**:
-MercadoLibre's Search API uses CloudFront with aggressive bot detection that blocks datacenter IPs (Vercel, AWS). Server-side requests from these IPs get 403 errors (`x-cache: Error from cloudfront`).
+**Root Cause Analysis**:
 
-See: `/docs/architecture/search-api-403-investigation-2025-11.md` for full details.
+MercadoLibre uses AWS CloudFront + WAF to protect their APIs from malicious traffic. According to [AWS Architecture Blog](https://aws.amazon.com/blogs/architecture/mercado-libre-how-to-block-malicious-traffic-in-a-dynamic-environment/):
+- MercadoLibre processes ~2.2M requests/second through CloudFront
+- Their WAF creates IPSets to block IPs that source malicious traffic
+- Datacenter IPs (Vercel, AWS, Azure) are classified as "hosting provider IPs" and frequently blocked
 
-**Verification Steps Required**:
-1. Test Highlights API from server-side route in development
-2. Test from Vercel deployment (production datacenter IPs)
-3. Monitor for `x-cache: Error from cloudfront` in response headers
-4. If blocked, implement client-side fallback similar to Search API
+**Why Highlights API Gets Blocked**:
+1. **Datacenter IP Blocking**: Server-side requests from Vercel/AWS use datacenter IPs, which CloudFront/WAF flags as potential bots
+2. **Residential IPs Work**: Browser requests from end-users (residential IPs) bypass CloudFront blocking
+3. **Official Pattern**: Other developers reported [same issue on Search API](https://github.com/mercadolibre/golang-restclient/issues/9)
 
-**If CloudFront blocks Highlights API**:
-- Need to implement client-side calls (browser → API direct)
-- Add to `lib/searchAPI.ts` or create `lib/salesAPI.ts`
-- Use batching and delays to prevent rate limiting
-- Update implementation plan below accordingly
+**Critical Discovery: CORS Limitation**
+
+⚠️ **The Highlights API faces TWO blocking mechanisms simultaneously**:
+
+1. ❌ **Server-side calls**: Blocked by CloudFront (403 from datacenter IPs)
+2. ❌ **Client-side calls**: Blocked by CORS (no `Access-Control-Allow-Origin` header)
+
+According to [Stack Overflow reports](https://stackoverflow.com/questions/60098805/trying-to-get-json-from-mercadolibre-api-but-always-gets-the-same-cors-error), MercadoLibre APIs **do NOT support CORS**. Direct browser fetch calls fail with:
+```
+Response to preflight request doesn't pass access control check:
+It does not have HTTP ok status
+```
+
+**Alternative Workarounds Evaluated**:
+
+1. ❌ **JSONP**: MercadoLibre supports JSONP (`?callback=functionName`), but:
+   - Cannot send custom headers (no Bearer token support)
+   - Highlights API requires `Authorization: Bearer` header
+   - Not viable for authenticated endpoints
+
+2. ❌ **CORS Proxy**: Third-party proxy services could work, but:
+   - Security risk: Exposes OAuth token to third party
+   - Not recommended for production
+   - Unreliable (proxies can go down)
+
+3. ❌ **Residential IP Proxy**: Using residential proxies could bypass CloudFront, but:
+   - Against MercadoLibre Terms of Service
+   - Expensive and unreliable
+   - Not a sustainable solution
+
+**Conclusion: Dead End**
+
+The Highlights API is effectively **inaccessible** for web applications due to:
+- CloudFront blocking server-side requests (datacenter IPs)
+- CORS blocking client-side requests (no CORS headers)
+- No Bearer token support in JSONP (only workaround available)
+
+**Recommended Action**: Contact MercadoLibre support to:
+1. Request **certified integrator status**
+2. Request **IP whitelisting** for production servers
+3. Request **CORS header support** for Highlights API
+4. Or request alternative API endpoint for best-seller data
 
 ---
 
@@ -224,55 +266,66 @@ See: `/docs/architecture/search-api-403-investigation-2025-11.md` for full detai
 
 ---
 
-### Option 2: Enhance Current Enrichment with Sold Quantity
+### Option 2: Enhance Current Enrichment with Sold Quantity ✅ **IMPLEMENTED**
 
-**Use Case**: Improve existing enriched trends by emphasizing `sold_quantity` data.
+**Status**: Implemented on November 24, 2025
 
-**Implementation Plan:**
+**Implementation Summary:**
 
-1. **Update Opportunity Score Weights** (in `calculateMetrics()` function):
+1. ✅ **Updated Opportunity Score Weights** (in both `useClientEnrichedTrends.ts` and `useEnrichTrendOnDemand.ts`):
    ```typescript
-   // Current weights:
-   const weights = {
-     searchVolume: 0.30,  // 30%
-     soldQuantity: 0.25,  // 25% - INCREASE THIS
-     freeShipping: 0.20,  // 20%
-     priceRange: 0.15,    // 15%
-     availableStock: 0.10 // 10%
-   };
+   // Previous weights:
+   // - Search volume: 30%
+   // - Sold quantity: 25%
+   // - Free shipping: 20%
+   // - Price range: 15%
+   // - Available stock: 10%
 
-   // Suggested new weights:
+   // NEW weights (Nov 2025):
    const weights = {
-     soldQuantity: 0.35,  // 35% - emphasize actual sales
-     searchVolume: 0.25,  // 25%
-     freeShipping: 0.20,  // 20%
-     priceRange: 0.10,    // 10%
-     availableStock: 0.10 // 10%
+     soldQuantity: 0.35,  // 35% ⬆️ +10% (increased from 25%)
+     searchVolume: 0.25,  // 25% ⬇️ -5% (decreased from 30%)
+     freeShipping: 0.20,  // 20% (unchanged)
+     priceRange: 0.10,    // 10% ⬇️ -5% (decreased from 15%)
+     availableStock: 0.10 // 10% (unchanged)
    };
    ```
 
-2. **Add Sold Quantity Display** in `EnrichedTrendCard.tsx`:
-   ```tsx
-   <Badge leftSection={<IconShoppingCart size={14} />}>
-     {item.metrics.total_sold.toLocaleString()} vendidos
-   </Badge>
-   ```
+2. ✅ **Added Prominent Sold Quantity Badge** in `EnrichedTrendCard.tsx`:
+   - Green badge in card header showing total sold units
+   - Format: "1,234 vendidos" / "1,234 sold" / "1,234 vendidos"
+   - Displayed next to rank badge when trend is enriched
+   - Includes tooltip: "Suma de unidades vendidas de los productos principales"
 
-3. **Add Sorting by Sold Quantity** in trends lists:
-   ```typescript
-   const sortedTrends = trends.sort((a, b) =>
-     b.metrics.total_sold - a.metrics.total_sold
-   );
-   ```
+3. ✅ **Added i18n Translations** (ES, EN, PT-BR):
+   - `trends.sold`: "vendidos" / "sold" / "vendidos"
+   - `trends.totalSoldTooltip`: Tooltip text for sold quantity badge
+
+4. ⏳ **Sorting by Sold Quantity**: Not implemented yet
+   - Current architecture uses on-demand enrichment (one-by-one)
+   - Sorting requires architectural changes to batch-enrich all trends first
+   - Documented as future enhancement (see "Future Enhancements" section below)
+
+**Files Modified:**
+- `hooks/useClientEnrichedTrends.ts` - Updated weights in `calculateMetrics()`
+- `hooks/useEnrichTrendOnDemand.ts` - Updated weights in `calculateMetrics()`
+- `components/trends/EnrichedTrendCard.tsx` - Added sold quantity badge to header
+- `locales/es.json`, `locales/en.json`, `locales/pt-BR.json` - Added translations
+
+**Impact:**
+- Opportunity scores now prioritize products with proven sales history
+- Users can immediately see sales volume for trending products
+- More accurate reflection of actual market performance vs. search interest
 
 **Pros:**
 - ✅ No new API integration needed
 - ✅ Immediate implementation
 - ✅ Leverages existing data
+- ✅ Emphasizes actual sales over search trends
 
 **Cons:**
-- ⚠️ `sold_quantity` is referential for public searches
-- ⚠️ Not as accurate as Highlights API
+- ⚠️ `sold_quantity` is referential for public searches (not 100% accurate)
+- ⚠️ Not as accurate as official Highlights API (which is blocked)
 - ⚠️ Doesn't provide official "best seller" rankings
 
 ---
@@ -287,20 +340,63 @@ See: `/docs/architecture/search-api-403-investigation-2025-11.md` for full detai
 
 ---
 
-## Next Steps
+## Implementation Status
 
 1. ✅ **Research completed** - APIs identified and documented
-2. 🔴 **PRIORITY: Test CloudFront blocking** - Verify Highlights API doesn't get blocked server-side
-   - Create test endpoint in development
-   - Monitor response headers for `x-cache: Error from cloudfront`
-   - Test from Vercel deployment (production environment)
-   - Document findings in `/docs/architecture/search-api-403-investigation-2025-11.md`
-3. ⏳ **Decision needed**: Which option to implement? (depends on CloudFront testing)
-   - Option 1: New "Best Sellers" feature (Highlights API) - only if server-side works
-   - Option 2: Enhance existing enrichment - safe fallback if Highlights is blocked
-   - Option 3: Combine both
-4. ⏳ **Get category IDs**: If using Highlights API, need to map categories per country
-5. ⏳ **Test authentication**: Verify Highlights API works with current OAuth setup
+2. ✅ **CloudFront blocking confirmed** - Highlights API blocked server-side (403 from CloudFront)
+3. ✅ **CORS limitation confirmed** - Highlights API does not support CORS for client-side calls
+4. ✅ **Prototype created** - `/prototype/best-sellers` page demonstrates CloudFront blocking behavior
+5. ✅ **External investigation completed** - Confirmed other developers face same issue
+6. ✅ **Option 2 implemented** (Nov 24, 2025) - Enhanced enrichment with sold_quantity emphasis
+   - Updated opportunity score weights (sold_quantity: 25% → 35%)
+   - Added prominent sold quantity badge to enriched trend cards
+   - Added i18n translations (ES, EN, PT-BR)
+
+## Next Steps
+
+1. 🔴 **Contact MercadoLibre support**: Request access to Highlights API
+   - Request certified integrator status
+   - Request IP whitelisting for production servers
+   - Request CORS header support for Highlights API
+   - Or request alternative API endpoint for best-seller data
+2. ⏳ **Future Enhancements** (see section below)
+
+---
+
+## Future Enhancements
+
+### Sorting by Sold Quantity
+
+**Goal**: Allow users to sort enriched trends by sold quantity (descending)
+
+**Current Limitation**:
+- The enriched trends page uses on-demand enrichment (one trend at a time via user click)
+- Sorting requires all trends to be enriched simultaneously
+- Current architecture (`useEnrichTrendOnDemand`) doesn't support batch enrichment
+
+**Proposed Solution**:
+1. Create a new page `/[locale]/trends/[country]/enriched-batch` that uses `useClientEnrichedTrends` hook
+2. Enrich all trends in batches automatically (like overview page)
+3. Add sort selector: "Rank (default)" / "Sold Quantity (high to low)" / "Opportunity Score (high to low)"
+4. Implement client-side sorting:
+   ```typescript
+   const sortedTrends = useMemo(() => {
+     if (sortBy === 'sold_quantity') {
+       return [...trends].sort((a, b) =>
+         (b.total_sold || 0) - (a.total_sold || 0)
+       );
+     }
+     if (sortBy === 'opportunity_score') {
+       return [...trends].sort((a, b) =>
+         (b.opportunity_score || 0) - (a.opportunity_score || 0)
+       );
+     }
+     return trends; // Default: by rank
+   }, [trends, sortBy]);
+   ```
+
+**Complexity**: Medium
+**Benefit**: High - Users can quickly identify products with highest sales
 
 ---
 
@@ -346,7 +442,7 @@ GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 
 ## Conclusion
 
-**Yes, MercadoLibre has a Sales API**: The **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) provides official best-seller rankings.
+**Yes, MercadoLibre has a Sales API, but it's currently inaccessible**: The **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) provides official best-seller rankings, but faces blocking issues.
 
 **Key Differences from Trends API**:
 | Feature | Trends API (Current) | Highlights API (Sales) |
@@ -356,6 +452,22 @@ GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 | Results | Variable (10-20+ trends) | Fixed top 20 per category |
 | Granularity | Site-wide trends | Category-specific |
 | Authentication | OAuth 2.0 ✅ | OAuth 2.0 ✅ |
-| Server-side | Yes ✅ | Yes ✅ |
+| Server-side Access | Yes ✅ | **No ❌ (CloudFront 403)** |
+| Client-side Access | N/A (requires secret) | **No ❌ (CORS blocked)** |
+| Accessible | **Yes ✅** | **No ❌ (Blocked both ways)** |
 
-**Recommendation**: Implement **Option 1** (Highlights API) as a new "Best Sellers" feature to complement existing Trends views, providing users with both search trends AND actual sales data.
+**Final Status**:
+- ✅ **API exists and is documented** - Official MercadoLibre API for best sellers
+- ❌ **Not accessible from web applications** - Blocked by CloudFront (server) and CORS (client)
+- ⚠️ **Prototype created** - `/prototype/best-sellers` page demonstrates blocking behavior
+- 🔴 **Action Required** - Contact MercadoLibre support for certified integrator status or IP whitelisting
+
+**Recommendation**:
+1. **Short-term**: Implement **Option 2** (enhance existing enrichment with sold_quantity emphasis)
+2. **Long-term**: Contact MercadoLibre support to request access to Highlights API or alternative best-seller endpoint
+
+**External Research Sources**:
+- [MercadoLibre CloudFront Architecture (AWS Blog)](https://aws.amazon.com/blogs/architecture/mercado-libre-how-to-block-malicious-traffic-in-a-dynamic-environment/)
+- [CloudFront 403 Issue (GitHub)](https://github.com/mercadolibre/golang-restclient/issues/9)
+- [MercadoLibre CORS Limitation (Stack Overflow)](https://stackoverflow.com/questions/60098805/trying-to-get-json-from-mercadolibre-api-but-always-gets-the-same-cors-error)
+- [Best Sellers API Documentation (Official)](https://developers.mercadolibre.com.ar/en_us/best-sellers-in-mercado-libre)

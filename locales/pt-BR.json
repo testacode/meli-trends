@@ -25,10 +25,12 @@
       "list": "Visualização em Lista",
       "overview": "Visualização por Categorias"
     },
-    "viewMode": {
-      "title": "Layout de Visualização",
+    "betaTesting": {
+      "title": "Beta Testing",
       "gallery": "Cartões (padrão)",
-      "table": "Tabela Compacta (beta)"
+      "table": "Tabela Compacta",
+      "enriched": "Tendências Enriquecidas (bloqueado)",
+      "prototype": "Mais Vendidos (bloqueado)"
     }
   },
   "common": {
@@ -44,6 +46,9 @@
   },
   "trends": {
     "title": "Tendências",
+    "subtitle": "Descubra os produtos mais pesquisados em",
+    "description": "Tendências atualizadas semanalmente com dados reais do MercadoLibre.",
+    "enrichedTitle": "Tendências Enriquecidas",
     "enriched": "Tendências Enriquecidas",
     "basic": "Tendências Básicas",
     "opportunityScore": "Pontuação de Oportunidade",
@@ -59,6 +64,7 @@
     "copiedTrend": "Copiado",
     "viewDetailsTooltip": "Ver detalhes e métricas",
     "opportunityTooltip": "Pontuação de oportunidade de negócio",
+    "totalSoldTooltip": "Soma de unidades vendidas dos produtos principais",
     "businessOpportunity": "Oportunidade de Negócio",
     "priceRangeLabel": "Faixa de preço:",
     "averagePrice": "Preço médio:",
@@ -70,6 +76,7 @@
     "new": "Novo",
     "more": "mais",
     "units": "unidades",
+    "sold": "vendidos",
     "noTrendsAvailable": "Nenhuma tendência disponível no momento",
     "trendsIn": "Tendências em",
     "showingResults": "Mostrando {showing} de {total} produtos mais pesquisados",
@@ -99,6 +106,8 @@
     }
   },
   "overview": {
+    "title": "Visualização por Categorias",
+    "description": "Tendências organizadas por tipo de crescimento para uma visão geral completa",
     "segments": {
       "fast": "Rápido",
       "wanted": "Procurado",

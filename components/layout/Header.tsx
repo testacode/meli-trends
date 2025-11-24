@@ -27,7 +27,6 @@ import {
   IconLanguage,
   IconCheck,
   IconSettings,
-  IconLayout,
   IconFlask,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
@@ -270,26 +269,50 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 </Menu.Sub.Dropdown>
               </Menu.Sub>
 
-              {/* View Mode Submenu */}
+              {/* Beta Testing Submenu */}
               {mounted && (
                 <Menu.Sub>
                   <Menu.Sub.Target>
-                    <Menu.Sub.Item leftSection={<IconLayout size={18} />}>
-                      {t('header.viewMode.title')}
+                    <Menu.Sub.Item leftSection={<IconFlask size={18} />}>
+                      {t('header.betaTesting.title')}
                     </Menu.Sub.Item>
                   </Menu.Sub.Target>
                   <Menu.Sub.Dropdown>
+                    {/* View Mode: Gallery */}
                     <Menu.Item
                       onClick={() => handleViewModeChange('gallery')}
                       rightSection={viewMode === 'gallery' ? <IconCheck size={16} /> : null}
                     >
-                      {t('header.viewMode.gallery')}
+                      {t('header.betaTesting.gallery')}
                     </Menu.Item>
+                    {/* View Mode: Table */}
                     <Menu.Item
                       onClick={() => handleViewModeChange('table')}
                       rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
                     >
-                      {t('header.viewMode.table')}
+                      {t('header.betaTesting.table')}
+                    </Menu.Item>
+
+                    <Menu.Divider />
+
+                    {/* Enriched Trends */}
+                    {currentCountry && (
+                      <Menu.Item
+                        leftSection={<IconChartBar size={16} />}
+                        onClick={() => router.push(`/trends/${currentCountry}/enriched`)}
+                        c="orange"
+                      >
+                        {t('header.betaTesting.enriched')}
+                      </Menu.Item>
+                    )}
+
+                    {/* Best Sellers Prototype */}
+                    <Menu.Item
+                      leftSection={<IconFlask size={16} />}
+                      onClick={() => router.push('/prototype/best-sellers')}
+                      c="orange"
+                    >
+                      {t('header.betaTesting.prototype')}
                     </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>
@@ -306,15 +329,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
               )}
 
               <Menu.Divider />
-
-              {/* Prototype: Best Sellers */}
-              <Menu.Item
-                leftSection={<IconFlask size={18} />}
-                onClick={() => router.push('/prototype/best-sellers')}
-                c="orange"
-              >
-                {t('header.prototype')}
-              </Menu.Item>
 
               {/* Help - Direct item */}
               <Menu.Item
@@ -408,26 +422,50 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 </Menu.Sub.Dropdown>
               </Menu.Sub>
 
-              {/* View Mode Submenu */}
+              {/* Beta Testing Submenu */}
               {mounted && (
                 <Menu.Sub>
                   <Menu.Sub.Target>
-                    <Menu.Sub.Item leftSection={<IconLayout size={18} />}>
-                      {t('header.viewMode.title')}
+                    <Menu.Sub.Item leftSection={<IconFlask size={18} />}>
+                      {t('header.betaTesting.title')}
                     </Menu.Sub.Item>
                   </Menu.Sub.Target>
                   <Menu.Sub.Dropdown>
+                    {/* View Mode: Gallery */}
                     <Menu.Item
                       onClick={() => handleViewModeChange('gallery')}
                       rightSection={viewMode === 'gallery' ? <IconCheck size={16} /> : null}
                     >
-                      {t('header.viewMode.gallery')}
+                      {t('header.betaTesting.gallery')}
                     </Menu.Item>
+                    {/* View Mode: Table */}
                     <Menu.Item
                       onClick={() => handleViewModeChange('table')}
                       rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
                     >
-                      {t('header.viewMode.table')}
+                      {t('header.betaTesting.table')}
+                    </Menu.Item>
+
+                    <Menu.Divider />
+
+                    {/* Enriched Trends */}
+                    {currentCountry && (
+                      <Menu.Item
+                        leftSection={<IconChartBar size={16} />}
+                        onClick={() => router.push(`/trends/${currentCountry}/enriched`)}
+                        c="orange"
+                      >
+                        {t('header.betaTesting.enriched')}
+                      </Menu.Item>
+                    )}
+
+                    {/* Best Sellers Prototype */}
+                    <Menu.Item
+                      leftSection={<IconFlask size={16} />}
+                      onClick={() => router.push('/prototype/best-sellers')}
+                      c="orange"
+                    >
+                      {t('header.betaTesting.prototype')}
                     </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>
@@ -449,15 +487,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                   {isOverviewPage ? t('header.views.list') : t('header.views.overview')}
                 </Menu.Item>
               )}
-
-              {/* Prototype: Best Sellers */}
-              <Menu.Item
-                leftSection={<IconFlask size={18} />}
-                onClick={() => router.push('/prototype/best-sellers')}
-                c="orange"
-              >
-                {t('header.prototype')}
-              </Menu.Item>
 
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}
