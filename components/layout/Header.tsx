@@ -28,6 +28,7 @@ import {
   IconCheck,
   IconSettings,
   IconLayout,
+  IconFlask,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
@@ -304,6 +305,17 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 </Menu.Item>
               )}
 
+              <Menu.Divider />
+
+              {/* Prototype: Best Sellers */}
+              <Menu.Item
+                leftSection={<IconFlask size={18} />}
+                onClick={() => router.push('/prototype/best-sellers')}
+                c="orange"
+              >
+                {t('header.prototype')}
+              </Menu.Item>
+
               {/* Help - Direct item */}
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}
@@ -437,6 +449,15 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                   {isOverviewPage ? t('header.views.list') : t('header.views.overview')}
                 </Menu.Item>
               )}
+
+              {/* Prototype: Best Sellers */}
+              <Menu.Item
+                leftSection={<IconFlask size={18} />}
+                onClick={() => router.push('/prototype/best-sellers')}
+                c="orange"
+              >
+                {t('header.prototype')}
+              </Menu.Item>
 
               <Menu.Item
                 leftSection={<IconInfoCircle size={18} />}

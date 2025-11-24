@@ -15,6 +15,7 @@
     "settings": "Configurações",
     "selectCountry": "Selecione um país",
     "selectCategory": "Selecione uma categoria",
+    "prototype": "Protótipo: Mais Vendidos",
     "theme": {
       "toggle": "Alternar tema",
       "light": "Modo claro",
@@ -109,6 +110,26 @@
     "insufficientData": "Dados insuficientes",
     "productCount": "{count, plural, one {# produto} other {# produtos}}",
     "noTrendsInCategory": "Nenhuma tendência nesta categoria"
+  },
+  "bestSellers": {
+    "title": "Mais Vendidos (Protótipo)",
+    "description": "Protótipo para testar a API Highlights do MercadoLibre. Esta visualização mostra os 20 produtos mais vendidos por categoria.",
+    "selectCategory": "Selecione uma categoria para ver os mais vendidos",
+    "categoryLabel": "Categoria",
+    "categoryPlaceholder": "Escolha uma categoria...",
+    "loading": "Carregando mais vendidos...",
+    "position": "Posição",
+    "itemType": "Tipo de Item",
+    "viewProduct": "Ver Produto",
+    "noCategory": "Por favor, selecione uma categoria",
+    "cloudFrontWarning": "⚠️ Bloqueio CloudFront Detectado",
+    "cloudFrontDetails": "A API Highlights está bloqueada pelo CloudFront quando chamada do lado do servidor (IPs de datacenter). É necessário implementar chamadas do lado do cliente como a API de Pesquisa.",
+    "testingInfo": "Esta é uma visualização de teste para verificar se a API Highlights tem o mesmo problema do CloudFront que a API de Pesquisa.",
+    "statusLabel": "Status do CloudFront:",
+    "testedAt": "Testado:",
+    "testedFrom": "De:",
+    "top20": "Top 20 Mais Vendidos",
+    "resultsCount": "{count} produtos mais vendidos"
   },
   "about": {
     "metadata": {
