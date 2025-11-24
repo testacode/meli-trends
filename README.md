@@ -42,12 +42,12 @@ MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7
 ### Overview Page
 Category-based analysis with distribution charts showing trend types across different product categories.
 
-![Trends Overview](docs/screenshots/trends-overview.png)
+![Trends Overview](docs/screenshots/trends-overview.jpg)
 
 ### List View
 Grid view displaying all trends with filtering options by category and trend type.
 
-![Trends List](docs/screenshots/trends-list.png)
+![Trends List](docs/screenshots/trends-list.jpg)
 
 ## Features
 
