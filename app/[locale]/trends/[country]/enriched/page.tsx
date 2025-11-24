@@ -14,7 +14,6 @@ import {
   Group,
   Button,
   Box,
-  Chip,
 } from '@mantine/core';
 import {
   IconAlertCircle,
@@ -22,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { useTrends } from '@/hooks/useTrends';
 import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
+import { TrendTypeFilter } from '@/components/trends/TrendTypeFilter';
 import { COUNTRIES } from '@/utils/constants';
 import type { SiteId, TrendType } from '@/types/meli';
 
@@ -122,20 +122,7 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
 
         {/* Trend Type Filter */}
         {trends.length > 0 && (
-          <Center>
-            <Chip.Group
-              value={selectedType}
-              onChange={(value) => setSelectedType(value as 'all' | TrendType)}
-              multiple={false}
-            >
-              <Group justify="center" gap="xs">
-                <Chip value="all" variant="filled">Todos</Chip>
-                <Chip value="fastest_growing" variant="filled">Mayor Crecimiento</Chip>
-                <Chip value="most_wanted" variant="filled">Más Buscados</Chip>
-                <Chip value="most_popular" variant="filled">Más Populares</Chip>
-              </Group>
-            </Chip.Group>
-          </Center>
+          <TrendTypeFilter value={selectedType} onChange={setSelectedType} />
         )}
 
         {/* Loading first page */}

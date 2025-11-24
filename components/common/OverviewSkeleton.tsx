@@ -94,13 +94,14 @@ export function OverviewSkeleton() {
         <SegmentedControl
           value="fastest_growing"
           data={[
-            { label: "🚀 Rápido", value: "fastest_growing" },
-            { label: "🔍 Buscado", value: "most_wanted" },
-            { label: "⭐ Popular", value: "most_popular" },
+            { label: "Rápido", value: "fastest_growing" },
+            { label: "Buscado", value: "most_wanted" },
+            { label: "Popular", value: "most_popular" },
           ]}
           fullWidth
           disabled
-          size="md"
+          size="lg"
+          radius="xl"
         />
 
         {/* Single Column Skeleton */}

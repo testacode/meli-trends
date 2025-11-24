@@ -63,10 +63,10 @@ describe('OverviewSkeleton', () => {
     it('should render disabled SegmentedControl with 3 options', () => {
       const { getByText } = render(<OverviewSkeleton />);
 
-      // Test behavior: SegmentedControl has all 3 category options
-      expect(getByText('🚀 Rápido')).toBeDefined();
-      expect(getByText('🔍 Buscado')).toBeDefined();
-      expect(getByText('⭐ Popular')).toBeDefined();
+      // Test behavior: SegmentedControl has all 3 category options (without emojis)
+      expect(getByText('Rápido')).toBeDefined();
+      expect(getByText('Buscado')).toBeDefined();
+      expect(getByText('Popular')).toBeDefined();
     });
 
     it('should render single CategoryColumn skeleton on mobile', () => {
