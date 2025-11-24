@@ -15,6 +15,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -35,6 +36,18 @@
 ## Overview
 
 MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7 Latin American countries (Argentina, Brazil, Chile, Mexico, Colombia, Uruguay, and Peru). The application provides keyword trends with automatic classification into three categories: Fastest-Growing, Most Wanted, and Most Popular.
+
+## Screenshots
+
+### Overview Page
+Category-based analysis with distribution charts showing trend types across different product categories.
+
+![Trends Overview](docs/screenshots/trends-overview.png)
+
+### List View
+Grid view displaying all trends with filtering options by category and trend type.
+
+![Trends List](docs/screenshots/trends-list.png)
 
 ## Features
 
