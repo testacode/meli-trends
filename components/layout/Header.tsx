@@ -27,10 +27,11 @@ import {
   IconLanguage,
   IconCheck,
   IconSettings,
+  IconLayout,
 } from '@tabler/icons-react';
 import { COUNTRIES_ARRAY, COUNTRIES, type SiteId } from '@/utils/constants';
 import { useCategories } from '@/hooks/useCategories';
-import { saveSelectedCategory, getSavedCategory } from '@/utils/storage';
+import { saveSelectedCategory, getSavedCategory, saveViewMode, getViewMode, type ViewMode } from '@/utils/storage';
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
 
 interface HeaderProps {
@@ -47,15 +48,20 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
   const locale = useLocale() as Locale;
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('gallery');
 
   // Fetch categories for the current country
   const { data: categories, loading: loadingCategories } = useCategories({
     siteId: currentCountry || 'MLA',
   });
 
-  // Load saved category from localStorage on mount
+  // Load saved category and view mode from localStorage on mount
   useEffect(() => {
     setMounted(true);
+
+    // Load saved view mode
+    const savedViewMode = getViewMode();
+    setViewMode(savedViewMode);
 
     if (currentCountry && !currentCategory) {
       const savedCategory = getSavedCategory(currentCountry);
@@ -93,6 +99,13 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
     const newPath = queryString ? `${pathname}?${queryString}` : pathname;
 
     router.push(newPath);
+  };
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    saveViewMode(mode);
+    // Trigger a re-render by forcing the page to reload
+    window.location.reload();
   };
 
   const countryOptions = COUNTRIES_ARRAY.map((country) => ({
@@ -256,6 +269,37 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                 </Menu.Sub.Dropdown>
               </Menu.Sub>
 
+              {/* View Mode Submenu */}
+              {mounted && (
+                <Menu.Sub>
+                  <Menu.Sub.Target>
+                    <Menu.Sub.Item leftSection={<IconLayout size={18} />}>
+                      {t('header.viewMode.title')}
+                    </Menu.Sub.Item>
+                  </Menu.Sub.Target>
+                  <Menu.Sub.Dropdown>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('gallery')}
+                      rightSection={viewMode === 'gallery' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.gallery')}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('table')}
+                      rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.table')}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('list')}
+                      rightSection={viewMode === 'list' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.list')}
+                    </Menu.Item>
+                  </Menu.Sub.Dropdown>
+                </Menu.Sub>
+              )}
+
               {/* Theme Toggle - Direct item */}
               {mounted && (
                 <Menu.Item
@@ -357,6 +401,37 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                   ))}
                 </Menu.Sub.Dropdown>
               </Menu.Sub>
+
+              {/* View Mode Submenu */}
+              {mounted && (
+                <Menu.Sub>
+                  <Menu.Sub.Target>
+                    <Menu.Sub.Item leftSection={<IconLayout size={18} />}>
+                      {t('header.viewMode.title')}
+                    </Menu.Sub.Item>
+                  </Menu.Sub.Target>
+                  <Menu.Sub.Dropdown>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('gallery')}
+                      rightSection={viewMode === 'gallery' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.gallery')}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('table')}
+                      rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.table')}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => handleViewModeChange('list')}
+                      rightSection={viewMode === 'list' ? <IconCheck size={16} /> : null}
+                    >
+                      {t('header.viewMode.list')}
+                    </Menu.Item>
+                  </Menu.Sub.Dropdown>
+                </Menu.Sub>
+              )}
 
               <Menu.Divider />
 

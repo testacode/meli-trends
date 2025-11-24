@@ -23,6 +23,12 @@
     "views": {
       "list": "Vista Lista",
       "overview": "Vista por Categorías"
+    },
+    "viewMode": {
+      "title": "Diseño de Vista",
+      "gallery": "Tarjetas (predeterminado)",
+      "table": "Tabla Compacta (beta)",
+      "list": "Lista Simple (beta)"
     }
   },
   "common": {
@@ -75,6 +81,12 @@
       "good": "Buena",
       "medium": "Media",
       "low": "Baja"
+    },
+    "table": {
+      "rank": "Ranking",
+      "keyword": "Tendencia",
+      "type": "Tipo",
+      "actions": "Acciones"
     }
   },
   "overview": {
