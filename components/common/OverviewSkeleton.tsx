@@ -10,6 +10,7 @@ import {
   SegmentedControl,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { useTranslations } from "next-intl";
 
 /**
  * Skeleton for a single CategoryColumn
@@ -62,6 +63,7 @@ function CategoryColumnSkeleton() {
  * - Mobile: SegmentedControl + single column
  */
 export function OverviewSkeleton() {
+  const t = useTranslations('overview.segments');
   // Defer mobile detection until after mount to prevent hydration mismatch
   const [mounted, setMounted] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -94,9 +96,9 @@ export function OverviewSkeleton() {
         <SegmentedControl
           value="fastest_growing"
           data={[
-            { label: "Rápido", value: "fastest_growing" },
-            { label: "Buscado", value: "most_wanted" },
-            { label: "Popular", value: "most_popular" },
+            { label: t('fast'), value: "fastest_growing" },
+            { label: t('wanted'), value: "most_wanted" },
+            { label: t('popular'), value: "most_popular" },
           ]}
           fullWidth
           disabled

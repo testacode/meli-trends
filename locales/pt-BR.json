@@ -34,8 +34,12 @@
     "loading": "Carregando...",
     "error": "Erro",
     "retry": "Tentar novamente",
+    "refresh": "Atualizar",
     "noData": "Nenhum dado disponível",
     "noResults": "Nenhum resultado encontrado"
+  },
+  "enriched": {
+    "description": "Análise detalhada dos produtos mais pesquisados com métricas de negócio"
   },
   "trends": {
     "title": "Tendências",
@@ -68,6 +72,11 @@
     "noTrendsAvailable": "Nenhuma tendência disponível no momento",
     "trendsIn": "Tendências em",
     "showingResults": "Mostrando {showing} de {total} produtos mais pesquisados",
+    "showingFiltered": "{showing} de {total} tendências disponíveis",
+    "loadingTrends": "Carregando tendências...",
+    "countryNotFound": "País não encontrado",
+    "countryDescription": "Descubra os 50 produtos mais pesquisados e vendidos no MercadoLibre {country}. Tendências atualizadas semanalmente.",
+    "countryImageAlt": "Tendências em {country}",
     "filters": {
       "all": "Todos",
       "fastestGrowing": "Maior Crescimento",
@@ -97,9 +106,17 @@
     "backToList": "Voltar para visualização em lista",
     "trendsAnalysis": "Análise de Tendências em",
     "categoryAnalysisDesc": "Visualização por categorias com análise de tipos de produtos",
-    "insufficientData": "Dados insuficientes"
+    "insufficientData": "Dados insuficientes",
+    "productCount": "{count, plural, one {# produto} other {# produtos}}",
+    "noTrendsInCategory": "Nenhuma tendência nesta categoria"
   },
   "about": {
+    "metadata": {
+      "title": "Ajuda e Informações",
+      "description": "Aprenda como funcionam as tendências do MercadoLibre e como usar essas informações para o seu negócio. Guia completo sobre métricas, estratégias e análise de tendências.",
+      "ogTitle": "Ajuda e Informações | MeLi Trends",
+      "ogDescription": "Guia completo sobre tendências do MercadoLibre: tipos de métricas, estratégias de negócios e análise de produtos populares."
+    },
     "pageTitle": "O que são MeLi Trends?",
     "pageDescription": "As Tendências do MercadoLibre mostram os 50 produtos mais populares entre os usuários. Esta informação é atualizada semanalmente e está disponível para 7 países da América Latina. As tendências são classificadas automaticamente em 3 tipos de acordo com sua posição, e você pode filtrá-las por categoria para encontrar oportunidades específicas.",
     "threeTypes": {

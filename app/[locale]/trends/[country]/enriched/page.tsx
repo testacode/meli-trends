@@ -19,6 +19,7 @@ import {
   IconAlertCircle,
   IconRefresh,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { useTrends } from '@/hooks/useTrends';
 import { EnrichedTrendCard } from '@/components/trends/EnrichedTrendCard';
 import { TrendTypeFilter } from '@/components/trends/TrendTypeFilter';
@@ -35,6 +36,7 @@ interface PageProps {
 }
 
 export default function EnrichedTrendsPage({ params, searchParams }: PageProps) {
+  const t = useTranslations();
   const { country } = use(params);
   const { category } = use(searchParams);
   const siteId = country as SiteId;
@@ -75,7 +77,7 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
             onClick={refetch}
             variant="light"
           >
-            Reintentar
+            {t('common.retry')}
           </Button>
         </Center>
       </Container>
@@ -91,12 +93,11 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
             <Box>
               <Group gap="xs" mb="xs">
                 <Title order={1}>
-                  {countryData.flag} Tendencias Enriquecidas - {countryData.name}
+                  {countryData.flag} {t('trends.enriched')} - {countryData.name}
                 </Title>
               </Group>
               <Text size="lg" c="dimmed">
-                Análisis detallado de los productos más buscados con métricas de
-                negocio
+                {t('enriched.description')}
               </Text>
             </Box>
 
@@ -106,7 +107,7 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
               variant="light"
               loading={loading}
             >
-              Actualizar
+              {t('common.refresh')}
             </Button>
           </Group>
 
@@ -114,7 +115,7 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
           {trends.length > 0 && (
             <Group gap="md">
               <Badge size="lg" variant="light" color="blue">
-                {filteredTrends.length} de {trends.length} trends disponibles
+                {t('trends.showingFiltered', { showing: filteredTrends.length, total: trends.length })}
               </Badge>
             </Group>
           )}
@@ -130,7 +131,7 @@ export default function EnrichedTrendsPage({ params, searchParams }: PageProps) 
           <Center py={60}>
             <Stack align="center" gap="md">
               <Loader size="lg" />
-              <Text c="dimmed">Cargando trends...</Text>
+              <Text c="dimmed">{t('trends.loadingTrends')}</Text>
             </Stack>
           </Center>
         )}

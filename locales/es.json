@@ -34,8 +34,12 @@
     "loading": "Cargando...",
     "error": "Error",
     "retry": "Reintentar",
+    "refresh": "Actualizar",
     "noData": "No hay datos disponibles",
     "noResults": "No se encontraron resultados"
+  },
+  "enriched": {
+    "description": "Análisis detallado de los productos más buscados con métricas de negocio"
   },
   "trends": {
     "title": "Tendencias",
@@ -68,6 +72,11 @@
     "noTrendsAvailable": "No hay trends disponibles en este momento",
     "trendsIn": "Tendencias en",
     "showingResults": "Mostrando {showing} de {total} productos más buscados",
+    "showingFiltered": "{showing} de {total} trends disponibles",
+    "loadingTrends": "Cargando trends...",
+    "countryNotFound": "País no encontrado",
+    "countryDescription": "Descubre los 50 productos más buscados y vendidos en MercadoLibre {country}. Trends actualizados semanalmente.",
+    "countryImageAlt": "Trends de {country}",
     "filters": {
       "all": "Todos",
       "fastestGrowing": "Mayor Crecimiento",
@@ -97,9 +106,17 @@
     "backToList": "Volver a vista lista",
     "trendsAnalysis": "Análisis de Tendencias en",
     "categoryAnalysisDesc": "Vista por categorías con análisis de tipos de productos",
-    "insufficientData": "No hay datos suficientes"
+    "insufficientData": "No hay datos suficientes",
+    "productCount": "{count, plural, one {# producto} other {# productos}}",
+    "noTrendsInCategory": "No hay tendencias en esta categoría"
   },
   "about": {
+    "metadata": {
+      "title": "Ayuda e Información",
+      "description": "Aprende cómo funcionan los trends de MercadoLibre y cómo usar esta información para tu negocio. Guía completa sobre métricas, estrategias y análisis de tendencias.",
+      "ogTitle": "Ayuda e Información | MeLi Trends",
+      "ogDescription": "Guía completa sobre trends de MercadoLibre: tipos de métricas, estrategias de negocio y análisis de productos populares."
+    },
     "pageTitle": "¿Qué son los MeLi Trends?",
     "pageDescription": "Los Trends de MercadoLibre muestran los 50 productos más populares entre los usuarios. Esta información se actualiza semanalmente y está disponible para 7 países de Latinoamérica. Los trends se clasifican automáticamente en 3 tipos según su posición, y puedes filtrarlos por categoría para encontrar oportunidades específicas.",
     "threeTypes": {

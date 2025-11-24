@@ -9,12 +9,15 @@ import {
   Group,
   Chip,
 } from "@mantine/core";
+import { useTranslations } from "next-intl";
 
 /**
  * Skeleton for the table view
  * Replicates the structure: Chip filters + Table with headers and rows
  */
 export function TableSkeleton() {
+  const t = useTranslations('trends.filters');
+
   return (
     <Stack gap="lg">
       {/* Chip Filter Skeleton */}
@@ -22,16 +25,16 @@ export function TableSkeleton() {
         <Chip.Group value="all" multiple={false}>
           <Group justify="center" gap="xs">
             <Chip value="all" variant="filled" disabled>
-              Todos
+              {t('all')}
             </Chip>
             <Chip value="fastest_growing" variant="filled" disabled>
-              Mayor Crecimiento
+              {t('fastestGrowing')}
             </Chip>
             <Chip value="most_wanted" variant="filled" disabled>
-              Más Buscados
+              {t('mostWanted')}
             </Chip>
             <Chip value="most_popular" variant="filled" disabled>
-              Más Populares
+              {t('mostPopular')}
             </Chip>
           </Group>
         </Chip.Group>
