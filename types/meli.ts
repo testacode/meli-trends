@@ -165,3 +165,30 @@ export interface EnrichedTrendsResponse {
   cached_at: string; // ISO timestamp
   cache_ttl: number; // seconds
 }
+
+/**
+ * Highlight item from Highlights API (Best Sellers)
+ */
+export type HighlightItem = {
+  id: string;
+  position: number;
+  type: "ITEM" | "PRODUCT";
+};
+
+/**
+ * Highlights API Response (Best Sellers by category)
+ */
+export type HighlightsResponse = {
+  query_data: {
+    highlight_type: "BEST_SELLER";
+    criteria: "CATEGORY" | "PRODUCT" | "ITEM";
+    id: string;
+  };
+  content: HighlightItem[];
+  _meta?: {
+    cloudfront_status: string;
+    server: string;
+    tested_at: string;
+    tested_from: string;
+  };
+};

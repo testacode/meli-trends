@@ -15,6 +15,7 @@
     "settings": "Settings",
     "selectCountry": "Select a country",
     "selectCategory": "Select a category",
+    "prototype": "Prototype: Best Sellers",
     "theme": {
       "toggle": "Toggle theme",
       "light": "Light mode",
@@ -109,6 +110,26 @@
     "insufficientData": "Insufficient data",
     "productCount": "{count, plural, one {# product} other {# products}}",
     "noTrendsInCategory": "No trends in this category"
+  },
+  "bestSellers": {
+    "title": "Best Sellers (Prototype)",
+    "description": "Prototype to test MercadoLibre's Highlights API. This view shows the top 20 best-selling products by category.",
+    "selectCategory": "Select a category to view best sellers",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "Choose a category...",
+    "loading": "Loading best sellers...",
+    "position": "Position",
+    "itemType": "Item Type",
+    "viewProduct": "View Product",
+    "noCategory": "Please select a category",
+    "cloudFrontWarning": "⚠️ CloudFront Blocking Detected",
+    "cloudFrontDetails": "The Highlights API is blocked by CloudFront when called from server-side (datacenter IPs). Client-side calls need to be implemented like Search API.",
+    "testingInfo": "This is a test view to verify if the Highlights API has the same CloudFront issue as the Search API.",
+    "statusLabel": "CloudFront Status:",
+    "testedAt": "Tested:",
+    "testedFrom": "From:",
+    "top20": "Top 20 Best Sellers",
+    "resultsCount": "{count} best-selling products"
   },
   "about": {
     "metadata": {
