@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Image, Transition } from "@mantine/core";
 import { toastySlide } from "@/lib/transitions";
-import { useShakeDetection } from "@/hooks/useShakeDetection";
 
 // Configuration constants for easy tuning
 const KONAMI_CODE = [
@@ -24,9 +23,7 @@ const IMAGE_SIZE = 200; // Width and height of the toasty image
 
 /**
  * Easter egg component that displays "Toasty" animation and sound
- * Triggered by:
- * - Desktop: Konami code (↑↑↓↓←→←→BA)
- * - Mobile: Device shake
+ * Triggered by Konami code: ↑↑↓↓←→←→BA
  */
 export function KonamiEasterEgg() {
   const [showToasty, setShowToasty] = useState(false);
@@ -78,11 +75,6 @@ export function KonamiEasterEgg() {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
-
-  // Mobile: Shake detection
-  useShakeDetection(() => {
-    setShowToasty(true);
-  });
 
   // Handle toasty display: play sound and auto-dismiss
   useEffect(() => {
