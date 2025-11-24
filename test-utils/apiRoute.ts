@@ -15,10 +15,9 @@
 
 import { NextRequest } from 'next/server';
 
-type ApiRouteHandler = (
-  request: NextRequest,
-  context?: { params: Record<string, string> }
-) => Promise<Response>;
+// Generic API route handler type that supports Next.js 15+ async params pattern
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GenericApiRouteHandler = (request: NextRequest, context?: any) => Promise<Response>;
 
 type ApiRouteOptions = {
   params?: Record<string, string>;
@@ -36,7 +35,7 @@ type ApiRouteOptions = {
  * @returns Response from the handler
  */
 export async function callApiRoute(
-  handler: ApiRouteHandler,
+  handler: GenericApiRouteHandler,
   options: ApiRouteOptions = {}
 ): Promise<Response> {
   const {
@@ -74,7 +73,9 @@ export async function callApiRoute(
   const request = new NextRequest(url, requestInit);
 
   // Call handler with params context
-  const context = Object.keys(params).length > 0 ? { params } : undefined;
+  // Wrap params in Promise to match Next.js 15+ async params pattern
+  const context =
+    Object.keys(params).length > 0 ? { params: Promise.resolve(params) } : undefined;
 
   return await handler(request, context);
 }
@@ -104,7 +105,7 @@ export async function parseJsonResponse<T = unknown>(
  * @returns Parsed JSON response
  */
 export async function expectApiRoute<T = unknown>(
-  handler: ApiRouteHandler,
+  handler: GenericApiRouteHandler,
   options: ApiRouteOptions,
   expectedStatus: number
 ): Promise<T> {

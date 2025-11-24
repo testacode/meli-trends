@@ -38,6 +38,38 @@ export const handlers = [
   }),
 
   /**
+   * Mock MercadoLibre Trends API
+   * Returns trending keywords for the specified country
+   */
+  http.get('https://api.mercadolibre.com/trends/:country', ({ params }) => {
+    const { country } = params;
+
+    // Validate country parameter
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(country as SiteId)) {
+      return HttpResponse.json(
+        {
+          message: 'invalid site_id',
+          error: 'bad_request',
+          status: 400,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock trends data
+    return HttpResponse.json(mockTrends, { status: 200 });
+  }),
+
+  /**
    * Mock /api/trends/:country/enriched endpoint (cache check)
    * Returns null by default (cache miss) - tests can override
    */
