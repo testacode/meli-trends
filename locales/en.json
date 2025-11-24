@@ -44,10 +44,6 @@
   "enriched": {
     "description": "Detailed analysis of the most searched products with business metrics"
   },
-  "overview": {
-    "title": "Category View",
-    "description": "Trends organized by growth type for a complete overview"
-  },
   "trends": {
     "title": "Trends",
     "subtitle": "Discover the most searched products in",
@@ -110,6 +106,8 @@
     }
   },
   "overview": {
+    "title": "Category View",
+    "description": "Trends organized by growth type for a complete overview",
     "segments": {
       "fast": "Fast",
       "wanted": "Wanted",
