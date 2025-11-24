@@ -1,6 +1,20 @@
 import { createConsola } from 'consola';
-import dayjs from 'dayjs';
 import type { Logger, LogContext } from './types';
+
+/**
+ * Format current timestamp as YYYY-MM-DD HH:mm:ss
+ */
+function formatTimestamp(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 /**
  * Create a tagged logger instance
@@ -41,7 +55,7 @@ export function createLogger(tag: LogContext | string): Logger {
     // Wrap Consola methods to add custom timestamp and tag
     const withTimestamp = (level: 'info' | 'warn' | 'error' | 'success') => {
       return (message: string, meta?: Record<string, unknown>) => {
-        const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        const timestamp = formatTimestamp();
         const formattedMessage = `[${timestamp}] [${tag}] ${message}`;
 
         if (meta) {
@@ -56,7 +70,7 @@ export function createLogger(tag: LogContext | string): Logger {
       info: withTimestamp('info'),
       warn: withTimestamp('warn'),
       error: (message: string, error?: Error, meta?: Record<string, unknown>) => {
-        const timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        const timestamp = formatTimestamp();
         const formattedMessage = `[${timestamp}] [${tag}] ${message}`;
 
         if (error && meta) {

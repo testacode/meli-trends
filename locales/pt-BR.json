@@ -282,10 +282,5 @@
     "status429": "Muitas solicitações. Por favor, aguarde alguns minutos e tente novamente.",
     "status0": "Erro de conexão. Verifique sua conexão com a internet.",
     "defaultMessage": "Ocorreu um erro ao carregar os dados."
-  },
-  "languages": {
-    "en": "English",
-    "es": "Español",
-    "pt-BR": "Português"
   }
 }

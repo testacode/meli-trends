@@ -282,10 +282,5 @@
     "status429": "Too many requests. Please wait a few minutes and try again.",
     "status0": "Connection error. Please check your internet connection.",
     "defaultMessage": "An error occurred while loading the data."
-  },
-  "languages": {
-    "en": "English",
-    "es": "Español",
-    "pt-BR": "Português"
   }
 }
