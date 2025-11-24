@@ -27,8 +27,7 @@
     "viewMode": {
       "title": "Diseño de Vista",
       "gallery": "Tarjetas (predeterminado)",
-      "table": "Tabla Compacta (beta)",
-      "list": "Lista Simple (beta)"
+      "table": "Tabla Compacta (beta)"
     }
   },
   "common": {

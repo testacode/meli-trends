@@ -27,8 +27,7 @@
     "viewMode": {
       "title": "View Layout",
       "gallery": "Cards (default)",
-      "table": "Compact Table (beta)",
-      "list": "Simple List (beta)"
+      "table": "Compact Table (beta)"
     }
   },
   "common": {
