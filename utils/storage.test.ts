@@ -2,7 +2,14 @@
  * Tests for localStorage utilities
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { saveSelectedCategory, getSavedCategory, clearSavedCategories } from './storage';
+import {
+  saveSelectedCategory,
+  getSavedCategory,
+  clearSavedCategories,
+  saveViewMode,
+  getViewMode,
+  type ViewMode,
+} from './storage';
 
 describe('Storage Utilities', () => {
   // Mock localStorage
@@ -300,6 +307,147 @@ describe('Storage Utilities', () => {
     });
   });
 
+  describe('saveViewMode', () => {
+    it('should save view mode to localStorage', () => {
+      saveViewMode('table');
+
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('meli-trends-view-mode', 'table');
+      expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('table');
+    });
+
+    it('should save different view modes', () => {
+      const viewModes: ViewMode[] = ['gallery', 'table', 'list'];
+
+      viewModes.forEach((mode) => {
+        saveViewMode(mode);
+        expect(localStorageMock.getItem('meli-trends-view-mode')).toBe(mode);
+      });
+    });
+
+    it('should update existing view mode value', () => {
+      saveViewMode('gallery');
+      expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('gallery');
+
+      saveViewMode('table');
+      expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('table');
+
+      saveViewMode('list');
+      expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('list');
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const error = new Error('localStorage is full');
+
+      localStorageMock.setItem.mockImplementationOnce(() => {
+        throw error;
+      });
+
+      // Should not throw
+      expect(() => saveViewMode('table')).not.toThrow();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to save view mode to localStorage:', error);
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should do nothing when window is undefined (SSR)', () => {
+      const originalWindow = global.window;
+      // @ts-expect-error - Simulating SSR environment
+      delete global.window;
+
+      // Should not throw
+      expect(() => saveViewMode('table')).not.toThrow();
+
+      // Restore window
+      global.window = originalWindow;
+    });
+  });
+
+  describe('getViewMode', () => {
+    it('should retrieve saved view mode from localStorage', () => {
+      localStorageMock.setItem('meli-trends-view-mode', 'table');
+
+      const result = getViewMode();
+
+      expect(localStorageMock.getItem).toHaveBeenCalledWith('meli-trends-view-mode');
+      expect(result).toBe('table');
+    });
+
+    it('should return "gallery" as default when nothing is saved', () => {
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+    });
+
+    it('should retrieve all valid view modes', () => {
+      const viewModes: ViewMode[] = ['gallery', 'table', 'list'];
+
+      viewModes.forEach((mode) => {
+        localStorageMock.setItem('meli-trends-view-mode', mode);
+        expect(getViewMode()).toBe(mode);
+      });
+    });
+
+    it('should return "gallery" for invalid saved values', () => {
+      // Save an invalid value
+      localStorageMock.setItem('meli-trends-view-mode', 'invalid-mode');
+
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const error = new Error('localStorage access denied');
+
+      localStorageMock.getItem.mockImplementationOnce(() => {
+        throw error;
+      });
+
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Failed to read view mode from localStorage:',
+        error
+      );
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should return "gallery" when window is undefined (SSR)', () => {
+      const originalWindow = global.window;
+      // @ts-expect-error - Simulating SSR environment
+      delete global.window;
+
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+
+      // Restore window
+      global.window = originalWindow;
+    });
+
+    it('should handle empty string as invalid value', () => {
+      localStorageMock.setItem('meli-trends-view-mode', '');
+
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+    });
+
+    it('should handle null value from localStorage', () => {
+      // localStorage.getItem returns null when key doesn't exist
+      localStorageMock.getItem.mockReturnValueOnce(null);
+
+      const result = getViewMode();
+
+      expect(result).toBe('gallery');
+    });
+  });
+
   describe('Integration scenarios', () => {
     it('should save, retrieve, and clear category in sequence', () => {
       // Save
@@ -350,6 +498,49 @@ describe('Storage Utilities', () => {
       saveSelectedCategory('MLA', 'home');
 
       expect(getSavedCategory('MLA')).toBe('home');
+    });
+
+    it('should handle viewMode and category storage independently', () => {
+      // Save both
+      saveSelectedCategory('MLA', 'electronics');
+      saveViewMode('table');
+
+      // Verify both saved correctly
+      expect(getSavedCategory('MLA')).toBe('electronics');
+      expect(getViewMode()).toBe('table');
+
+      // Update category shouldn't affect viewMode
+      saveSelectedCategory('MLA', 'sports');
+      expect(getViewMode()).toBe('table');
+      expect(getSavedCategory('MLA')).toBe('sports');
+
+      // Update viewMode shouldn't affect category
+      saveViewMode('list');
+      expect(getSavedCategory('MLA')).toBe('sports');
+      expect(getViewMode()).toBe('list');
+
+      // Clear categories shouldn't affect viewMode
+      clearSavedCategories();
+      expect(getSavedCategory('MLA')).toBeNull();
+      expect(getViewMode()).toBe('list');
+    });
+
+    it('should save, retrieve, and update view mode in sequence', () => {
+      // Initial save
+      saveViewMode('gallery');
+      expect(getViewMode()).toBe('gallery');
+
+      // Update
+      saveViewMode('table');
+      expect(getViewMode()).toBe('table');
+
+      // Update again
+      saveViewMode('list');
+      expect(getViewMode()).toBe('list');
+
+      // Back to gallery
+      saveViewMode('gallery');
+      expect(getViewMode()).toBe('gallery');
     });
   });
 });
