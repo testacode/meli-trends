@@ -43,6 +43,11 @@ export function KonamiEasterEgg() {
       // Normalize key input (handle both 'b'/'B' and 'a'/'A')
       const key = event.key.toLowerCase();
 
+      // Prevent browser extension errors by stopping propagation for arrow keys
+      if (key.startsWith("arrow")) {
+        event.stopPropagation();
+      }
+
       setKeySequence((prev) => {
         const newSequence = [...prev, key];
 
@@ -63,8 +68,9 @@ export function KonamiEasterEgg() {
       });
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress, { capture: true });
+    return () =>
+      window.removeEventListener("keydown", handleKeyPress, { capture: true });
   }, []);
 
   // Handle toasty display: play sound and auto-dismiss
