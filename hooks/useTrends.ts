@@ -65,7 +65,9 @@ export function useTrends({ siteId, categoryId }: UseTrendsOptions): UseTrendsRe
     error,
     refetch,
   } = useQuery({
-    queryKey: ['trends', siteId, categoryId],
+    queryKey: categoryId
+      ? ['trends', siteId, 'category', categoryId]
+      : ['trends', siteId, 'all'],
     queryFn: () => fetchTrends({ siteId, categoryId }),
   });
 
