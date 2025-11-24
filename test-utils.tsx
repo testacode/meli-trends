@@ -1,6 +1,7 @@
 import { render, renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NextIntlClientProvider } from 'next-intl';
+import { MantineProvider } from '@mantine/core';
 import type { ReactElement, ReactNode } from 'react';
 import messages from '@/locales/es.json';
 
@@ -23,15 +24,17 @@ export function createTestQueryClient(): QueryClient {
 }
 
 /**
- * Wrapper component that provides QueryClient and NextIntlClientProvider to children
+ * Wrapper component that provides QueryClient, MantineProvider, and NextIntlClientProvider to children
  */
 function createWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <NextIntlClientProvider locale="es" messages={messages}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <MantineProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </MantineProvider>
       </NextIntlClientProvider>
     );
   };

@@ -542,4 +542,354 @@ describe('searchAPI', () => {
       // Logger is disabled in test environment, no console output expected
     });
   });
+
+  describe('CloudFront and Edge Cases', () => {
+    beforeEach(() => {
+      global.fetch = vi.fn();
+      vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+      vi.restoreAllMocks();
+    });
+    it('should handle CloudFront 403 blocking (x-cache: Error from cloudfront)', async () => {
+      const cloudFrontError = {
+        ok: false,
+        status: 403,
+        headers: new Headers({
+          'x-cache': 'Error from cloudfront',
+          'content-type': 'text/html',
+        }),
+        text: async () => '<!DOCTYPE html><html><body>Request blocked</body></html>',
+      } as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'notebook',
+        paging: { total: 100, offset: 0, limit: 3, primary_results: 100 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // Use multi-word keyword so we have multiple variants
+      // First variant gets CloudFront 403, second variant succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(cloudFrontError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'notebook gaming rgb', 3);
+
+      expect(result).toEqual(successResponse);
+      // Function tries variants until success
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should handle rate limiting (429 Too Many Requests)', async () => {
+      const rateLimitError = {
+        ok: false,
+        status: 429,
+        statusText: 'Too Many Requests',
+      } as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'iphone',
+        paging: { total: 200, offset: 0, limit: 3, primary_results: 200 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First call gets rate limited
+      // Second call succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(rateLimitError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'iphone 15 pro', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle network timeouts', async () => {
+      const timeoutError = new Error('Network request timed out');
+      timeoutError.name = 'TimeoutError';
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'playstation',
+        paging: { total: 50, offset: 0, limit: 3, primary_results: 50 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First call times out
+      // Second call succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockRejectedValueOnce(timeoutError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'playstation 5 digital', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle malformed JSON responses', async () => {
+      const malformedResponse = {
+        ok: true,
+        json: async () => {
+          throw new SyntaxError('Unexpected token < in JSON at position 0');
+        },
+      } as unknown as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'notebook',
+        paging: { total: 75, offset: 0, limit: 3, primary_results: 75 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First call returns malformed JSON
+      // Second call succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(malformedResponse)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'notebook gaming', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle CORS errors', async () => {
+      const corsError = new TypeError('Failed to fetch');
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'xiaomi',
+        paging: { total: 300, offset: 0, limit: 3, primary_results: 300 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First call fails with CORS error
+      // Second call succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockRejectedValueOnce(corsError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'xiaomi redmi note', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle connection refused errors', async () => {
+      const connectionError = new Error('ECONNREFUSED');
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'auriculares',
+        paging: { total: 150, offset: 0, limit: 3, primary_results: 150 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First call fails with connection error
+      // Second call succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockRejectedValueOnce(connectionError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'auriculares bluetooth', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should throw error when all variants fail due to persistent errors', async () => {
+      const persistentError = {
+        ok: false,
+        status: 503,
+        statusText: 'Service Unavailable',
+      } as Response;
+
+      // All variants fail with same error
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(persistentError);
+
+      // Should throw error when all variants fail
+      await expect(fetchSearchDirect('MLA', 'test product xyz', 3)).rejects.toThrow(
+        'Search API failed for all variants: 503 Service Unavailable'
+      );
+    });
+
+    it('should handle 404 Not Found responses', async () => {
+      const notFoundError = {
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+      } as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'monitor',
+        paging: { total: 120, offset: 0, limit: 3, primary_results: 120 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First variant gets 404
+      // Second variant succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(notFoundError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'monitor 4k curved', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle 401 Unauthorized responses', async () => {
+      const unauthorizedError = {
+        ok: false,
+        status: 401,
+        statusText: 'Unauthorized',
+      } as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'tablet',
+        paging: { total: 80, offset: 0, limit: 3, primary_results: 80 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First variant gets 401
+      // Second variant succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(unauthorizedError)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'tablet samsung', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+
+    it('should handle API response with missing required fields gracefully', async () => {
+      const incompleteResponse = {
+        ok: true,
+        json: async () => ({
+          site_id: 'MLA',
+          // Missing query, paging, results, sort, available_sorts
+        }),
+      } as Response;
+
+      const validResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'keyboard',
+        paging: { total: 90, offset: 0, limit: 3, primary_results: 90 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First variant returns incomplete data
+      // Second variant succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(incompleteResponse)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => validResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'keyboard mechanical rgb', 3);
+
+      // Should gracefully handle by trying next variant
+      expect(result).toEqual(validResponse);
+    });
+
+    it('should handle very slow responses that eventually succeed', async () => {
+      const slowResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'mouse',
+        paging: { total: 250, offset: 0, limit: 3, primary_results: 250 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // Simulate slow but successful response
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
+        return {
+          ok: true,
+          json: async () => slowResponse,
+        } as Response;
+      });
+
+      const result = await fetchSearchDirect('MLA', 'mouse gamer', 3);
+
+      expect(result).toEqual(slowResponse);
+    });
+
+    it('should handle redirects (3xx responses)', async () => {
+      const redirectResponse = {
+        ok: false,
+        status: 301,
+        statusText: 'Moved Permanently',
+      } as Response;
+
+      const successResponse: SearchResponse = {
+        site_id: 'MLA',
+        query: 'smartwatch',
+        paging: { total: 180, offset: 0, limit: 3, primary_results: 180 },
+        results: [],
+        sort: { id: 'relevance', name: 'Relevance' },
+        available_sorts: [],
+      };
+
+      // First variant gets redirect
+      // Second variant succeeds
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(redirectResponse)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => successResponse,
+        } as Response);
+
+      const result = await fetchSearchDirect('MLA', 'smartwatch fitness tracker', 3);
+
+      expect(result).toEqual(successResponse);
+    });
+  });
 });
