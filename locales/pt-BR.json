@@ -90,9 +90,9 @@
   },
   "overview": {
     "segments": {
-      "fast": "🚀 Rápido",
-      "wanted": "🔍 Procurado",
-      "popular": "⭐ Popular"
+      "fast": "Rápido",
+      "wanted": "Procurado",
+      "popular": "Popular"
     },
     "backToList": "Voltar para visualização em lista",
     "trendsAnalysis": "Análise de Tendências em",
