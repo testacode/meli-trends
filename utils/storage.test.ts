@@ -8,7 +8,10 @@ import {
   clearSavedCategories,
   saveViewMode,
   getViewMode,
+  saveBadgeStyle,
+  getBadgeStyle,
   type ViewMode,
+  type BadgeStyle,
 } from './storage';
 
 describe('Storage Utilities', () => {
@@ -534,6 +537,196 @@ describe('Storage Utilities', () => {
       // Back to gallery
       saveViewMode('gallery');
       expect(getViewMode()).toBe('gallery');
+    });
+  });
+
+  describe('saveBadgeStyle', () => {
+    it('should save badge style to localStorage', () => {
+      saveBadgeStyle('flat');
+
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('meli-trends-badge-style', 'flat');
+      expect(localStorageMock.getItem('meli-trends-badge-style')).toBe('flat');
+    });
+
+    it('should save different badge styles', () => {
+      const badgeStyles: BadgeStyle[] = ['gradient', 'flat'];
+
+      badgeStyles.forEach((style) => {
+        saveBadgeStyle(style);
+        expect(localStorageMock.getItem('meli-trends-badge-style')).toBe(style);
+      });
+    });
+
+    it('should update existing badge style value', () => {
+      saveBadgeStyle('gradient');
+      expect(localStorageMock.getItem('meli-trends-badge-style')).toBe('gradient');
+
+      saveBadgeStyle('flat');
+      expect(localStorageMock.getItem('meli-trends-badge-style')).toBe('flat');
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const error = new Error('localStorage is full');
+
+      localStorageMock.setItem.mockImplementationOnce(() => {
+        throw error;
+      });
+
+      // Should not throw
+      expect(() => saveBadgeStyle('flat')).not.toThrow();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to save badge style to localStorage:', error);
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should do nothing when window is undefined (SSR)', () => {
+      const originalWindow = global.window;
+      // @ts-expect-error - Simulating SSR environment
+      delete global.window;
+
+      // Should not throw
+      expect(() => saveBadgeStyle('flat')).not.toThrow();
+
+      // Restore window
+      global.window = originalWindow;
+    });
+  });
+
+  describe('getBadgeStyle', () => {
+    it('should retrieve saved badge style from localStorage', () => {
+      localStorageMock.setItem('meli-trends-badge-style', 'flat');
+
+      const result = getBadgeStyle();
+
+      expect(localStorageMock.getItem).toHaveBeenCalledWith('meli-trends-badge-style');
+      expect(result).toBe('flat');
+    });
+
+    it('should return "gradient" as default when nothing is saved', () => {
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+    });
+
+    it('should retrieve all valid badge styles', () => {
+      const badgeStyles: BadgeStyle[] = ['gradient', 'flat'];
+
+      badgeStyles.forEach((style) => {
+        localStorageMock.setItem('meli-trends-badge-style', style);
+        expect(getBadgeStyle()).toBe(style);
+      });
+    });
+
+    it('should return "gradient" for invalid saved values', () => {
+      // Save an invalid value
+      localStorageMock.setItem('meli-trends-badge-style', 'invalid-style');
+
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const error = new Error('localStorage access denied');
+
+      localStorageMock.getItem.mockImplementationOnce(() => {
+        throw error;
+      });
+
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Failed to read badge style from localStorage:',
+        error
+      );
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should return "gradient" when window is undefined (SSR)', () => {
+      const originalWindow = global.window;
+      // @ts-expect-error - Simulating SSR environment
+      delete global.window;
+
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+
+      // Restore window
+      global.window = originalWindow;
+    });
+
+    it('should handle empty string as invalid value', () => {
+      localStorageMock.setItem('meli-trends-badge-style', '');
+
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+    });
+
+    it('should handle null value from localStorage', () => {
+      // localStorage.getItem returns null when key doesn't exist
+      localStorageMock.getItem.mockReturnValueOnce(null);
+
+      const result = getBadgeStyle();
+
+      expect(result).toBe('gradient');
+    });
+  });
+
+  describe('Badge Style Integration', () => {
+    it('should save, retrieve, and update badge style in sequence', () => {
+      // Initial save
+      saveBadgeStyle('gradient');
+      expect(getBadgeStyle()).toBe('gradient');
+
+      // Update
+      saveBadgeStyle('flat');
+      expect(getBadgeStyle()).toBe('flat');
+
+      // Back to gradient
+      saveBadgeStyle('gradient');
+      expect(getBadgeStyle()).toBe('gradient');
+    });
+
+    it('should handle badgeStyle, viewMode and category storage independently', () => {
+      // Save all three
+      saveSelectedCategory('MLA', 'electronics');
+      saveViewMode('table');
+      saveBadgeStyle('flat');
+
+      // Verify all saved correctly
+      expect(getSavedCategory('MLA')).toBe('electronics');
+      expect(getViewMode()).toBe('table');
+      expect(getBadgeStyle()).toBe('flat');
+
+      // Update category shouldn't affect others
+      saveSelectedCategory('MLA', 'sports');
+      expect(getViewMode()).toBe('table');
+      expect(getBadgeStyle()).toBe('flat');
+      expect(getSavedCategory('MLA')).toBe('sports');
+
+      // Update viewMode shouldn't affect others
+      saveViewMode('gallery');
+      expect(getSavedCategory('MLA')).toBe('sports');
+      expect(getBadgeStyle()).toBe('flat');
+      expect(getViewMode()).toBe('gallery');
+
+      // Update badge style shouldn't affect others
+      saveBadgeStyle('gradient');
+      expect(getSavedCategory('MLA')).toBe('sports');
+      expect(getViewMode()).toBe('gallery');
+      expect(getBadgeStyle()).toBe('gradient');
+
+      // Clear categories shouldn't affect viewMode or badgeStyle
+      clearSavedCategories();
+      expect(getSavedCategory('MLA')).toBeNull();
+      expect(getViewMode()).toBe('gallery');
+      expect(getBadgeStyle()).toBe('gradient');
     });
   });
 });
