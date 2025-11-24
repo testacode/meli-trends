@@ -4,13 +4,13 @@ import { createLogger, startTimer } from "@/lib/logger";
 
 const logger = createLogger("API:highlights");
 
-type RouteParams = {
-  params: Promise<{ country: SiteId }>;
-};
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ country: string }> }
+) {
   const timer = startTimer();
-  const { country } = await params;
+  const resolvedParams = await params;
+  const country = resolvedParams.country as SiteId;
   const categoryId = request.nextUrl.searchParams.get("category");
 
   logger.info(`Fetching best sellers for ${country}`, {
