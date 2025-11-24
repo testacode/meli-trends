@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { SimpleGrid, Stack, Title, Text, Group, Chip, Center } from '@mantine/core';
+import { SimpleGrid, Stack, Title, Text, Group } from '@mantine/core';
 import { IconTrendingUp } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import type { TrendsResponse, TrendType } from '@/types/meli';
 import { TrendCard } from './TrendCard';
+import { TrendTypeFilter } from './TrendTypeFilter';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
 
 interface TrendsListProps {
@@ -48,20 +49,7 @@ export function TrendsList({ trends, country }: TrendsListProps) {
       </Text>
 
       {/* Trend Type Filter */}
-      <Center>
-        <Chip.Group
-          value={selectedType}
-          onChange={(value) => setSelectedType(value as 'all' | TrendType)}
-          multiple={false}
-        >
-          <Group justify="center" gap="xs">
-            <Chip value="all" variant="filled">{t('trends.filters.all')}</Chip>
-            <Chip value="fastest_growing" variant="filled">{t('trends.filters.fastestGrowing')}</Chip>
-            <Chip value="most_wanted" variant="filled">{t('trends.filters.mostWanted')}</Chip>
-            <Chip value="most_popular" variant="filled">{t('trends.filters.mostPopular')}</Chip>
-          </Group>
-        </Chip.Group>
-      </Center>
+      <TrendTypeFilter value={selectedType} onChange={setSelectedType} />
 
       {/* Grid of Trend Cards */}
       <SimpleGrid

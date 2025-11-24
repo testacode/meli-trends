@@ -8,7 +8,9 @@ import { Header } from '@/components/layout/Header';
 import { TrendsList } from '@/components/trends/TrendsList';
 import { TrendsTableView } from '@/components/trends/TrendsTableView';
 import { TrendsListView } from '@/components/trends/TrendsListView';
-import { ListSkeleton } from '@/components/common/ListSkeleton';
+import { GallerySkeleton } from '@/components/common/GallerySkeleton';
+import { TableSkeleton } from '@/components/common/TableSkeleton';
+import { ListViewSkeleton } from '@/components/common/ListViewSkeleton';
 import { ErrorState } from '@/components/common/ErrorState';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
 import { fadeSlide } from '@/lib/transitions';
@@ -52,6 +54,19 @@ export default function TrendsPage() {
     return null;
   }
 
+  // Render the appropriate skeleton based on viewMode
+  const renderSkeleton = () => {
+    switch (viewMode) {
+      case 'table':
+        return <TableSkeleton />;
+      case 'list':
+        return <ListViewSkeleton />;
+      case 'gallery':
+      default:
+        return <GallerySkeleton />;
+    }
+  };
+
   // Render the appropriate view based on viewMode
   const renderTrendsView = () => {
     if (!data || loading || error) return null;
@@ -74,7 +89,7 @@ export default function TrendsPage() {
       <AppShell.Main>
         <Container size="xl" py="xl">
           {/* Loading State */}
-          {loading && <ListSkeleton />}
+          {loading && renderSkeleton()}
 
           {/* Error State */}
           {error && !loading && <ErrorState error={error} onRetry={refetch} />}

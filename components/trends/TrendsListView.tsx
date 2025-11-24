@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import { Paper, Group, Badge, Text, ActionIcon, Tooltip, CopyButton, Stack } from '@mantine/core';
 import { IconTrendingUp, IconExternalLink, IconCopy, IconCheck } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
-import type { TrendsResponse } from '@/types/meli';
+import type { TrendsResponse, TrendType } from '@/types/meli';
 import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
+import { TrendTypeFilter } from './TrendTypeFilter';
 
 interface TrendsListViewProps {
   trends: TrendsResponse;
@@ -12,6 +14,12 @@ interface TrendsListViewProps {
 
 export function TrendsListView({ trends }: TrendsListViewProps) {
   const t = useTranslations();
+  const [selectedType, setSelectedType] = useState<'all' | TrendType>('all');
+
+  // Filter trends by selected type
+  const filteredTrends = selectedType === 'all'
+    ? trends
+    : trends.filter(trend => trend.trend_type === selectedType);
 
   if (!trends || trends.length === 0) {
     return (
@@ -39,8 +47,13 @@ export function TrendsListView({ trends }: TrendsListViewProps) {
   };
 
   return (
-    <Stack gap="xs">
-      {trends.map((trend, index) => {
+    <Stack gap="lg">
+      {/* Filter */}
+      <TrendTypeFilter value={selectedType} onChange={setSelectedType} />
+
+      {/* List */}
+      <Stack gap="xs">
+        {filteredTrends.map((trend, index) => {
         const rank = index + 1;
         const isTopThree = rank <= 3;
 
@@ -144,7 +157,8 @@ export function TrendsListView({ trends }: TrendsListViewProps) {
             </Group>
           </Paper>
         );
-      })}
+        })}
+      </Stack>
     </Stack>
   );
 }
