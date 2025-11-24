@@ -134,34 +134,76 @@ The existing **Search API** and **Items API** include `sold_quantity` field in r
 
 ## Recommendations
 
-### Option 1: Implement Highlights API (RECOMMENDED WITH CAUTION)
+### Option 1: Implement Highlights API ⛔ **NOT VIABLE - BLOCKED**
 
-⚠️ **CRITICAL WARNING: CloudFront Blocking Risk**
+🔴 **CONFIRMED: CloudFront Blocking on Highlights API**
 
-Before implementing, we need to verify that the Highlights API doesn't suffer from the same CloudFront blocking issue as the Search API.
+**Testing Results** (November 24, 2025):
+- ❌ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **CONFIRMED BLOCKED server-side**
+- Response: `403 Forbidden` with `x-cache: Error from cloudfront`
+- Tested on: Local development (localhost:3000)
+- Category tested: `MLA1051` (Celulares y Teléfonos)
 
 **Known CloudFront Behavior**:
 - ✅ **Trends API** (`/trends/{SITE_ID}`) - Works server-side without issues
 - ✅ **OAuth Token API** - Works server-side without issues
 - ❌ **Search API** (`/sites/{SITE_ID}/search`) - **BLOCKED server-side** (403 from CloudFront)
-- ❓ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **UNKNOWN, NEEDS TESTING**
+- ❌ **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) - **CONFIRMED BLOCKED server-side** (403 from CloudFront)
 
-**Why This Matters**:
-MercadoLibre's Search API uses CloudFront with aggressive bot detection that blocks datacenter IPs (Vercel, AWS). Server-side requests from these IPs get 403 errors (`x-cache: Error from cloudfront`).
+**Root Cause Analysis**:
 
-See: `/docs/architecture/search-api-403-investigation-2025-11.md` for full details.
+MercadoLibre uses AWS CloudFront + WAF to protect their APIs from malicious traffic. According to [AWS Architecture Blog](https://aws.amazon.com/blogs/architecture/mercado-libre-how-to-block-malicious-traffic-in-a-dynamic-environment/):
+- MercadoLibre processes ~2.2M requests/second through CloudFront
+- Their WAF creates IPSets to block IPs that source malicious traffic
+- Datacenter IPs (Vercel, AWS, Azure) are classified as "hosting provider IPs" and frequently blocked
 
-**Verification Steps Required**:
-1. Test Highlights API from server-side route in development
-2. Test from Vercel deployment (production datacenter IPs)
-3. Monitor for `x-cache: Error from cloudfront` in response headers
-4. If blocked, implement client-side fallback similar to Search API
+**Why Highlights API Gets Blocked**:
+1. **Datacenter IP Blocking**: Server-side requests from Vercel/AWS use datacenter IPs, which CloudFront/WAF flags as potential bots
+2. **Residential IPs Work**: Browser requests from end-users (residential IPs) bypass CloudFront blocking
+3. **Official Pattern**: Other developers reported [same issue on Search API](https://github.com/mercadolibre/golang-restclient/issues/9)
 
-**If CloudFront blocks Highlights API**:
-- Need to implement client-side calls (browser → API direct)
-- Add to `lib/searchAPI.ts` or create `lib/salesAPI.ts`
-- Use batching and delays to prevent rate limiting
-- Update implementation plan below accordingly
+**Critical Discovery: CORS Limitation**
+
+⚠️ **The Highlights API faces TWO blocking mechanisms simultaneously**:
+
+1. ❌ **Server-side calls**: Blocked by CloudFront (403 from datacenter IPs)
+2. ❌ **Client-side calls**: Blocked by CORS (no `Access-Control-Allow-Origin` header)
+
+According to [Stack Overflow reports](https://stackoverflow.com/questions/60098805/trying-to-get-json-from-mercadolibre-api-but-always-gets-the-same-cors-error), MercadoLibre APIs **do NOT support CORS**. Direct browser fetch calls fail with:
+```
+Response to preflight request doesn't pass access control check:
+It does not have HTTP ok status
+```
+
+**Alternative Workarounds Evaluated**:
+
+1. ❌ **JSONP**: MercadoLibre supports JSONP (`?callback=functionName`), but:
+   - Cannot send custom headers (no Bearer token support)
+   - Highlights API requires `Authorization: Bearer` header
+   - Not viable for authenticated endpoints
+
+2. ❌ **CORS Proxy**: Third-party proxy services could work, but:
+   - Security risk: Exposes OAuth token to third party
+   - Not recommended for production
+   - Unreliable (proxies can go down)
+
+3. ❌ **Residential IP Proxy**: Using residential proxies could bypass CloudFront, but:
+   - Against MercadoLibre Terms of Service
+   - Expensive and unreliable
+   - Not a sustainable solution
+
+**Conclusion: Dead End**
+
+The Highlights API is effectively **inaccessible** for web applications due to:
+- CloudFront blocking server-side requests (datacenter IPs)
+- CORS blocking client-side requests (no CORS headers)
+- No Bearer token support in JSONP (only workaround available)
+
+**Recommended Action**: Contact MercadoLibre support to:
+1. Request **certified integrator status**
+2. Request **IP whitelisting** for production servers
+3. Request **CORS header support** for Highlights API
+4. Or request alternative API endpoint for best-seller data
 
 ---
 
@@ -290,17 +332,16 @@ See: `/docs/architecture/search-api-403-investigation-2025-11.md` for full detai
 ## Next Steps
 
 1. ✅ **Research completed** - APIs identified and documented
-2. 🔴 **PRIORITY: Test CloudFront blocking** - Verify Highlights API doesn't get blocked server-side
-   - Create test endpoint in development
-   - Monitor response headers for `x-cache: Error from cloudfront`
-   - Test from Vercel deployment (production environment)
-   - Document findings in `/docs/architecture/search-api-403-investigation-2025-11.md`
-3. ⏳ **Decision needed**: Which option to implement? (depends on CloudFront testing)
-   - Option 1: New "Best Sellers" feature (Highlights API) - only if server-side works
-   - Option 2: Enhance existing enrichment - safe fallback if Highlights is blocked
-   - Option 3: Combine both
-4. ⏳ **Get category IDs**: If using Highlights API, need to map categories per country
-5. ⏳ **Test authentication**: Verify Highlights API works with current OAuth setup
+2. ✅ **CloudFront blocking confirmed** - Highlights API blocked server-side (403 from CloudFront)
+3. ✅ **CORS limitation confirmed** - Highlights API does not support CORS for client-side calls
+4. ✅ **Prototype created** - `/prototype/best-sellers` page demonstrates CloudFront blocking behavior
+5. ✅ **External investigation completed** - Confirmed other developers face same issue
+6. 🔴 **Recommended Next Action**: Contact MercadoLibre support
+   - Request certified integrator status
+   - Request IP whitelisting for production servers
+   - Request CORS header support for Highlights API
+   - Or request alternative API endpoint for best-seller data
+7. ⏳ **Fallback Decision**: While waiting for MercadoLibre response, implement **Option 2** (enhance existing enrichment with sold_quantity)
 
 ---
 
@@ -346,7 +387,7 @@ GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 
 ## Conclusion
 
-**Yes, MercadoLibre has a Sales API**: The **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) provides official best-seller rankings.
+**Yes, MercadoLibre has a Sales API, but it's currently inaccessible**: The **Highlights API** (`/highlights/{SITE_ID}/category/{CATEGORY_ID}`) provides official best-seller rankings, but faces blocking issues.
 
 **Key Differences from Trends API**:
 | Feature | Trends API (Current) | Highlights API (Sales) |
@@ -356,6 +397,22 @@ GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 | Results | Variable (10-20+ trends) | Fixed top 20 per category |
 | Granularity | Site-wide trends | Category-specific |
 | Authentication | OAuth 2.0 ✅ | OAuth 2.0 ✅ |
-| Server-side | Yes ✅ | Yes ✅ |
+| Server-side Access | Yes ✅ | **No ❌ (CloudFront 403)** |
+| Client-side Access | N/A (requires secret) | **No ❌ (CORS blocked)** |
+| Accessible | **Yes ✅** | **No ❌ (Blocked both ways)** |
 
-**Recommendation**: Implement **Option 1** (Highlights API) as a new "Best Sellers" feature to complement existing Trends views, providing users with both search trends AND actual sales data.
+**Final Status**:
+- ✅ **API exists and is documented** - Official MercadoLibre API for best sellers
+- ❌ **Not accessible from web applications** - Blocked by CloudFront (server) and CORS (client)
+- ⚠️ **Prototype created** - `/prototype/best-sellers` page demonstrates blocking behavior
+- 🔴 **Action Required** - Contact MercadoLibre support for certified integrator status or IP whitelisting
+
+**Recommendation**:
+1. **Short-term**: Implement **Option 2** (enhance existing enrichment with sold_quantity emphasis)
+2. **Long-term**: Contact MercadoLibre support to request access to Highlights API or alternative best-seller endpoint
+
+**External Research Sources**:
+- [MercadoLibre CloudFront Architecture (AWS Blog)](https://aws.amazon.com/blogs/architecture/mercado-libre-how-to-block-malicious-traffic-in-a-dynamic-environment/)
+- [CloudFront 403 Issue (GitHub)](https://github.com/mercadolibre/golang-restclient/issues/9)
+- [MercadoLibre CORS Limitation (Stack Overflow)](https://stackoverflow.com/questions/60098805/trying-to-get-json-from-mercadolibre-api-but-always-gets-the-same-cors-error)
+- [Best Sellers API Documentation (Official)](https://developers.mercadolibre.com.ar/en_us/best-sellers-in-mercado-libre)
