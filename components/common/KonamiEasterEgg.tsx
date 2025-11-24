@@ -7,7 +7,7 @@ import { toastySlide } from "@/lib/transitions";
 // Configuration constants for easy tuning
 const KONAMI_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown"];
 const SOUND_DELAY_MS = 200; // Adjust to sync sound with animation
-const ANIMATION_DURATION_MS = 2500; // Total time before auto-dismiss
+const ANIMATION_DURATION_MS = 1000; // Total time before auto-dismiss
 const IMAGE_SIZE = 200; // Width and height of the toasty image
 
 /**

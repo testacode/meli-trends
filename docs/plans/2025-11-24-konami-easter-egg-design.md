@@ -31,7 +31,7 @@ This design implements a fun easter egg that displays the "Toasty" animation and
 1. User types the sequence on keyboard: ↑ ↑ ↓ ↓
 2. "Toasty" image slides in from bottom-right corner
 3. Sound plays (after 200ms delay for sync)
-4. Animation auto-dismisses after 2.5 seconds
+4. Animation auto-dismisses after 1.5 seconds
 5. Can be triggered unlimited times
 6. Works on any device with physical or virtual keyboard
 
@@ -67,7 +67,7 @@ public/
 ```typescript
 const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
 const SOUND_DELAY_MS = 200;        // Tune for audio/animation sync
-const ANIMATION_DURATION_MS = 2500; // Total display time
+const ANIMATION_DURATION_MS = 1500; // Total display time
 const IMAGE_SIZE = 200;             // Width/height in pixels
 ```
 
@@ -175,7 +175,7 @@ export const toastySlide: MantineTransition = {
    - Can trigger multiple times
 
 2. **Auto-dismiss behavior**
-   - Disappears after `ANIMATION_DURATION_MS`
+   - Disappears after `ANIMATION_DURATION_MS` (1500ms)
    - Cleanup on unmount
 
 3. **Audio playback**
@@ -233,7 +233,7 @@ export const toastySlide: MantineTransition = {
 
 **In `KonamiEasterEgg.tsx`:**
 - `SOUND_DELAY_MS`: Sync sound with animation (default: 200ms)
-- `ANIMATION_DURATION_MS`: Total display time (default: 2500ms)
+- `ANIMATION_DURATION_MS`: Total display time (default: 1500ms)
 - `IMAGE_SIZE`: Toasty image dimensions (default: 200px)
 
 **In `useShakeDetection.ts`:**
