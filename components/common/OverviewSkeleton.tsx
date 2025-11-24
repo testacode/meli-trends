@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Stack,
   SimpleGrid,
@@ -61,8 +62,31 @@ function CategoryColumnSkeleton() {
  * - Mobile: SegmentedControl + single column
  */
 export function OverviewSkeleton() {
+  // Defer mobile detection until after mount to prevent hydration mismatch
+  const [mounted, setMounted] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Valid: Mounted flag pattern to prevent SSR/client hydration mismatch
+    setMounted(true);
+  }, []);
+
+  // Before mount, always render desktop layout (matches SSR)
+  if (!mounted) {
+    return (
+      <SimpleGrid
+        cols={{ base: 1, md: 3 }}
+        spacing="lg"
+        style={{ alignItems: "start" }}
+      >
+        <CategoryColumnSkeleton />
+        <CategoryColumnSkeleton />
+        <CategoryColumnSkeleton />
+      </SimpleGrid>
+    );
+  }
+
+  // After mount, use actual media query result
   if (isMobile) {
     return (
       <Stack gap="lg">
@@ -70,13 +94,14 @@ export function OverviewSkeleton() {
         <SegmentedControl
           value="fastest_growing"
           data={[
-            { label: "🚀 Rápido", value: "fastest_growing" },
-            { label: "🔍 Buscado", value: "most_wanted" },
-            { label: "⭐ Popular", value: "most_popular" },
+            { label: "Rápido", value: "fastest_growing" },
+            { label: "Buscado", value: "most_wanted" },
+            { label: "Popular", value: "most_popular" },
           ]}
           fullWidth
           disabled
-          size="md"
+          size="lg"
+          radius="xl"
         />
 
         {/* Single Column Skeleton */}

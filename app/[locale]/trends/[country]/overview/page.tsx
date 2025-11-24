@@ -156,7 +156,8 @@ export default function TrendsOverviewPage() {
                           data={segmentData}
                           fullWidth
                           color="meliBlue"
-                          size="md"
+                          size="lg"
+                          radius="xl"
                         />
 
                         {activeTab === "fastest_growing" && (

@@ -95,6 +95,7 @@ export function TrendsTableView({ trends }: TrendsTableViewProps) {
 
       {/* DataTable */}
       <DataTable
+        idAccessor="url"
         columns={[
           {
             accessor: 'rank',
