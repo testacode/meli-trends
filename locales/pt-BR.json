@@ -23,6 +23,12 @@
     "views": {
       "list": "Visualização em Lista",
       "overview": "Visualização por Categorias"
+    },
+    "viewMode": {
+      "title": "Layout de Visualização",
+      "gallery": "Cartões (padrão)",
+      "table": "Tabela Compacta (beta)",
+      "list": "Lista Simples (beta)"
     }
   },
   "common": {
@@ -75,6 +81,12 @@
       "good": "Boa",
       "medium": "Média",
       "low": "Baixa"
+    },
+    "table": {
+      "rank": "Ranking",
+      "keyword": "Tendência",
+      "type": "Tipo",
+      "actions": "Ações"
     }
   },
   "overview": {

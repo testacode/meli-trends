@@ -23,6 +23,12 @@
     "views": {
       "list": "List View",
       "overview": "Category View"
+    },
+    "viewMode": {
+      "title": "View Layout",
+      "gallery": "Cards (default)",
+      "table": "Compact Table (beta)",
+      "list": "Simple List (beta)"
     }
   },
   "common": {
@@ -75,6 +81,12 @@
       "good": "Good",
       "medium": "Medium",
       "low": "Low"
+    },
+    "table": {
+      "rank": "Rank",
+      "keyword": "Trend",
+      "type": "Type",
+      "actions": "Actions"
     }
   },
   "overview": {

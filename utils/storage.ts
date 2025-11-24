@@ -4,7 +4,13 @@
 
 const STORAGE_KEYS = {
   SELECTED_CATEGORY: 'meli-trends-selected-category',
+  VIEW_MODE: 'meli-trends-view-mode',
 } as const;
+
+/**
+ * View modes for trends display
+ */
+export type ViewMode = 'gallery' | 'table' | 'list';
 
 /**
  * Save selected category to localStorage
@@ -54,5 +60,37 @@ export function clearSavedCategories(): void {
     });
   } catch (error) {
     console.warn('Failed to clear categories from localStorage:', error);
+  }
+}
+
+/**
+ * Save view mode preference to localStorage
+ */
+export function saveViewMode(mode: ViewMode): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.VIEW_MODE, mode);
+  } catch (error) {
+    console.warn('Failed to save view mode to localStorage:', error);
+  }
+}
+
+/**
+ * Get saved view mode from localStorage
+ * Defaults to 'gallery' if not set
+ */
+export function getViewMode(): ViewMode {
+  if (typeof window === 'undefined') return 'gallery';
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.VIEW_MODE);
+    if (saved === 'table' || saved === 'list' || saved === 'gallery') {
+      return saved;
+    }
+    return 'gallery';
+  } catch (error) {
+    console.warn('Failed to read view mode from localStorage:', error);
+    return 'gallery';
   }
 }

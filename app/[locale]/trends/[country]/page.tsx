@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { AppShell, Container, Transition } from '@mantine/core';
 import { useTrends } from '@/hooks/useTrends';
 import { Header } from '@/components/layout/Header';
 import { TrendsList } from '@/components/trends/TrendsList';
+import { TrendsTableView } from '@/components/trends/TrendsTableView';
+import { TrendsListView } from '@/components/trends/TrendsListView';
 import { ListSkeleton } from '@/components/common/ListSkeleton';
 import { ErrorState } from '@/components/common/ErrorState';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
 import { fadeSlide } from '@/lib/transitions';
+import { getViewMode, type ViewMode } from '@/utils/storage';
 
 export default function TrendsPage() {
   const params = useParams();
@@ -18,6 +21,15 @@ export default function TrendsPage() {
 
   const country = params.country as SiteId;
   const selectedCategory = searchParams.get('category');
+
+  // View mode state - initialize with saved value
+  const [viewMode] = useState<ViewMode>(() => {
+    // This runs only once on mount
+    if (typeof window !== 'undefined') {
+      return getViewMode();
+    }
+    return 'gallery';
+  });
 
   // Validate country
   const isValidCountry = country && country in COUNTRIES;
@@ -40,6 +52,21 @@ export default function TrendsPage() {
     return null;
   }
 
+  // Render the appropriate view based on viewMode
+  const renderTrendsView = () => {
+    if (!data || loading || error) return null;
+
+    switch (viewMode) {
+      case 'table':
+        return <TrendsTableView trends={data} />;
+      case 'list':
+        return <TrendsListView trends={data} />;
+      case 'gallery':
+      default:
+        return <TrendsList trends={data} country={country} />;
+    }
+  };
+
   return (
     <AppShell header={{ height: 60 }} padding="md">
       <Header currentCountry={country} currentCategory={selectedCategory} />
@@ -61,7 +88,7 @@ export default function TrendsPage() {
           >
             {(styles) => (
               <div style={styles}>
-                {data && !loading && !error && <TrendsList trends={data} country={country} />}
+                {renderTrendsView()}
               </div>
             )}
           </Transition>
