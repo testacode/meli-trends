@@ -24,6 +24,7 @@
 - [Project Structure](#project-structure)
 - [Supported Countries](#supported-countries)
 - [API Integration](#api-integration)
+- [SEO Implementation](#seo-implementation)
 - [Development](#development)
 - [Testing](#testing)
 - [Deployment](#deployment)
@@ -52,7 +53,7 @@ MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7
 - **⚡ Fast**: Built with Next.js 16 and optimized for performance
 - **🎨 Modern UI**: Clean interface using Mantine UI components
 - **📱 PWA**: Installable as a native app on mobile devices
-- **🔍 SEO Optimized**: Open Graph, Twitter Cards, sitemap.xml, and robots.txt
+- **🔍 SEO Optimized**: Complete SEO implementation with Open Graph, Twitter Cards, hreflang tags, canonical URLs, JSON-LD structured data, and professional OG image
 - **ℹ️ About Page**: Complete guide on trends and business strategies
 - **🎮 Easter Egg**: Hidden surprise (↑↑↓↓)
 
@@ -265,10 +266,14 @@ meli-trends/
 │   └── meli.ts                    # MercadoLibre API types
 ├── utils/                          # Utility functions
 │   ├── constants.ts               # Countries and constants
+│   ├── metadata.ts                # SEO metadata utility
 │   └── trends.ts                  # Trend utilities
+├── public/                         # Static assets
+│   └── og-image.png               # Open Graph image (1200x630)
 ├── proxy.ts                        # Next.js 16 locale routing proxy
 └── docs/                           # Documentation
     ├── architecture/              # Architecture docs
+    ├── audits/                    # Audit reports
     ├── llms/                      # LLM-optimized docs
     └── plans/                     # Implementation plans
 ```
@@ -323,6 +328,65 @@ GET https://api.mercadolibre.com/sites/{SITE_ID}/categories
 - ✅ HTTPS required: Production uses secure connections
 
 For detailed security audit, see [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md).
+
+## SEO Implementation
+
+MeLi Trends includes comprehensive SEO optimization to maximize visibility and social media engagement.
+
+### Open Graph & Twitter Cards
+
+All pages include rich metadata for social sharing:
+
+- **Open Graph tags**: Title, description, image, URL, type, site name, locale
+- **Twitter Cards**: Large image cards with title and description
+- **Professional OG Image**: Custom 1200x630px image featuring "Data Cartography" design
+- **Dynamic Metadata**: Page-specific titles and descriptions for all routes
+
+**Test your social shares:**
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+
+### Multi-Language SEO
+
+Complete internationalization support for search engines:
+
+- **Hreflang tags**: Proper alternate language links for ES, EN, PT-BR
+- **Canonical URLs**: Prevent duplicate content issues
+- **x-default**: Fallback to Spanish for unsupported locales
+- **Language-specific metadata**: Localized titles and descriptions
+
+### Structured Data
+
+JSON-LD structured data for enhanced search results:
+
+```json
+{
+  "@type": "WebApplication",
+  "name": "MeLi Trends",
+  "applicationCategory": "BusinessApplication",
+  "inLanguage": ["es", "en", "pt-BR"]
+}
+```
+
+**Validate structured data:**
+- [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [Schema.org Validator](https://validator.schema.org/)
+
+### SEO Files
+
+- **Sitemap**: `https://meli-trends.carlosmonti.com/sitemap.xml` (9 URLs)
+- **Robots.txt**: `https://meli-trends.carlosmonti.com/robots.txt`
+- **Manifest**: Progressive Web App manifest for installability
+
+### Implementation Details
+
+- **Reusable Utility**: `utils/metadata.ts` for consistent metadata generation
+- **Page Layouts**: SEO metadata in layout files for all routes
+- **Performance**: Optimized bundle (-51% dependency reduction)
+- **Zero Impact**: 100% test coverage maintained (613 tests passing)
+
+For complete SEO audit details, see [docs/audits/2025-11-24-seo-dependency-audit.md](docs/audits/2025-11-24-seo-dependency-audit.md).
 
 ## Development
 
@@ -420,8 +484,12 @@ See [TESTING.md](docs/TESTING.md) for comprehensive testing documentation.
 **Post-deployment**:
 
 - Update Redirect URI in your MercadoLibre app with production URL
-- Verify sitemap in Google Search Console
+- Verify sitemap in Google Search Console: `/sitemap.xml`
 - Test Open Graph with [Facebook Debugger](https://developers.facebook.com/tools/debug/)
+- Validate Twitter Cards with [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+- Check structured data with [Google Rich Results Test](https://search.google.com/test/rich-results)
+- Verify hreflang tags are properly indexed
+- Test OG image loads correctly: `/og-image.png`
 
 ### Other Platforms
 

@@ -303,10 +303,5 @@
     "status429": "Demasiadas solicitudes. Por favor, espera unos minutos e intenta nuevamente.",
     "status0": "Error de conexión. Verifica tu conexión a internet.",
     "defaultMessage": "Ocurrió un error al cargar los datos."
-  },
-  "languages": {
-    "en": "English",
-    "es": "Español",
-    "pt-BR": "Português"
   }
 }
