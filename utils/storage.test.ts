@@ -316,7 +316,7 @@ describe('Storage Utilities', () => {
     });
 
     it('should save different view modes', () => {
-      const viewModes: ViewMode[] = ['gallery', 'table', 'list'];
+      const viewModes: ViewMode[] = ['gallery', 'table'];
 
       viewModes.forEach((mode) => {
         saveViewMode(mode);
@@ -330,9 +330,6 @@ describe('Storage Utilities', () => {
 
       saveViewMode('table');
       expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('table');
-
-      saveViewMode('list');
-      expect(localStorageMock.getItem('meli-trends-view-mode')).toBe('list');
     });
 
     it('should handle localStorage errors gracefully', () => {
@@ -381,7 +378,7 @@ describe('Storage Utilities', () => {
     });
 
     it('should retrieve all valid view modes', () => {
-      const viewModes: ViewMode[] = ['gallery', 'table', 'list'];
+      const viewModes: ViewMode[] = ['gallery', 'table'];
 
       viewModes.forEach((mode) => {
         localStorageMock.setItem('meli-trends-view-mode', mode);
@@ -515,14 +512,14 @@ describe('Storage Utilities', () => {
       expect(getSavedCategory('MLA')).toBe('sports');
 
       // Update viewMode shouldn't affect category
-      saveViewMode('list');
+      saveViewMode('table');
       expect(getSavedCategory('MLA')).toBe('sports');
-      expect(getViewMode()).toBe('list');
+      expect(getViewMode()).toBe('table');
 
       // Clear categories shouldn't affect viewMode
       clearSavedCategories();
       expect(getSavedCategory('MLA')).toBeNull();
-      expect(getViewMode()).toBe('list');
+      expect(getViewMode()).toBe('table');
     });
 
     it('should save, retrieve, and update view mode in sequence', () => {
@@ -533,10 +530,6 @@ describe('Storage Utilities', () => {
       // Update
       saveViewMode('table');
       expect(getViewMode()).toBe('table');
-
-      // Update again
-      saveViewMode('list');
-      expect(getViewMode()).toBe('list');
 
       // Back to gallery
       saveViewMode('gallery');

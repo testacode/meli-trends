@@ -27,8 +27,7 @@
     "viewMode": {
       "title": "Layout de Visualização",
       "gallery": "Cartões (padrão)",
-      "table": "Tabela Compacta (beta)",
-      "list": "Lista Simples (beta)"
+      "table": "Tabela Compacta (beta)"
     }
   },
   "common": {

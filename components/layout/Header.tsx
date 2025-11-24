@@ -290,12 +290,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                     >
                       {t('header.viewMode.table')}
                     </Menu.Item>
-                    <Menu.Item
-                      onClick={() => handleViewModeChange('list')}
-                      rightSection={viewMode === 'list' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.viewMode.list')}
-                    </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>
               )}
@@ -422,12 +416,6 @@ export function Header({ currentCountry, currentCategory }: HeaderProps) {
                       rightSection={viewMode === 'table' ? <IconCheck size={16} /> : null}
                     >
                       {t('header.viewMode.table')}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => handleViewModeChange('list')}
-                      rightSection={viewMode === 'list' ? <IconCheck size={16} /> : null}
-                    >
-                      {t('header.viewMode.list')}
                     </Menu.Item>
                   </Menu.Sub.Dropdown>
                 </Menu.Sub>

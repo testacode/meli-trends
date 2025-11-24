@@ -10,7 +10,7 @@ const STORAGE_KEYS = {
 /**
  * View modes for trends display
  */
-export type ViewMode = 'gallery' | 'table' | 'list';
+export type ViewMode = 'gallery' | 'table';
 
 /**
  * Save selected category to localStorage
@@ -85,7 +85,7 @@ export function getViewMode(): ViewMode {
 
   try {
     const saved = localStorage.getItem(STORAGE_KEYS.VIEW_MODE);
-    if (saved === 'table' || saved === 'list' || saved === 'gallery') {
+    if (saved === 'table' || saved === 'gallery') {
       return saved;
     }
     return 'gallery';
