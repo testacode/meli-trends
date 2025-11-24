@@ -1,6 +1,11 @@
 import { http, HttpResponse } from 'msw';
 import type { SiteId } from '@/types/meli';
-import { mockAccessToken, mockSearchResponse, mockTrends } from './data';
+import {
+  mockAccessToken,
+  mockCategories,
+  mockSearchResponse,
+  mockTrends,
+} from './data';
 
 /**
  * MSW request handlers for MercadoLibre APIs
@@ -67,6 +72,38 @@ export const handlers = [
 
     // Return mock trends data
     return HttpResponse.json(mockTrends, { status: 200 });
+  }),
+
+  /**
+   * Mock MercadoLibre Categories API
+   * Returns category tree for the specified site
+   */
+  http.get('https://api.mercadolibre.com/sites/:siteId/categories', ({ params }) => {
+    const { siteId } = params;
+
+    // Validate site ID
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(siteId as SiteId)) {
+      return HttpResponse.json(
+        {
+          message: 'invalid site_id',
+          error: 'bad_request',
+          status: 400,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock categories data
+    return HttpResponse.json(mockCategories, { status: 200 });
   }),
 
   /**
