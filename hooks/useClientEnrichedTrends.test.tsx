@@ -321,7 +321,7 @@ describe('calculateMetrics', () => {
       expect(result.opportunity_score).toBeLessThanOrEqual(100);
     });
 
-    it('should cap search volume score at 30', () => {
+    it('should cap search volume score at 25', () => {
       const searchData: SearchResponse = {
         ...mockSearchResponse,
         paging: {
@@ -333,11 +333,12 @@ describe('calculateMetrics', () => {
 
       const result = calculateMetrics(baseTrendItem, searchData);
 
-      // Should be 30 (search volume capped) + 0 (everything else)
-      expect(result.opportunity_score).toBe(30);
+      // Should be 25 (search volume capped) + 0 (everything else)
+      // Updated Nov 2025: search volume weight reduced from 30% to 25%
+      expect(result.opportunity_score).toBe(25);
     });
 
-    it('should cap sold quantity score at 25', () => {
+    it('should cap sold quantity score at 35', () => {
       const searchData: SearchResponse = {
         ...mockSearchResponse,
         paging: {
@@ -356,8 +357,9 @@ describe('calculateMetrics', () => {
 
       const result = calculateMetrics(baseTrendItem, searchData);
 
-      // Should be 0 (search) + 25 (sold capped) + 0 (shipping) + 0 (price) + 0 (availability)
-      expect(result.opportunity_score).toBe(25);
+      // Should be 0 (search) + 35 (sold capped) + 0 (shipping) + 0 (price) + 0 (availability)
+      // Updated Nov 2025: sold quantity weight increased from 25% to 35%
+      expect(result.opportunity_score).toBe(35);
     });
 
     it('should give full shipping score for 100% free shipping', () => {
@@ -391,7 +393,7 @@ describe('calculateMetrics', () => {
       expect(result.opportunity_score).toBe(20);
     });
 
-    it('should cap price range score at 15', () => {
+    it('should cap price range score at 10', () => {
       const searchData: SearchResponse = {
         ...mockSearchResponse,
         paging: {
@@ -419,8 +421,9 @@ describe('calculateMetrics', () => {
       const result = calculateMetrics(baseTrendItem, searchData);
 
       // Price range ratio: (500000-100000)/100000 = 4.0
-      // Score: min(15, 4.0 * 10) = 15
-      expect(result.opportunity_score).toBe(15);
+      // Score: min(10, 4.0 * 10) = 10 (capped at 10)
+      // Updated Nov 2025: price range weight reduced from 15% to 10%
+      expect(result.opportunity_score).toBe(10);
     });
 
     it('should cap availability score at 10', () => {

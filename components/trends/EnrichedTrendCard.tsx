@@ -94,16 +94,36 @@ export function EnrichedTrendCard({ trend, rank, siteId }: EnrichedTrendCardProp
       }}
     >
       <Stack gap="md" h="100%">
-        {/* Header: Rank + Enrich Button or Opportunity Score */}
+        {/* Header: Rank + Sold Quantity + Enrich Button or Opportunity Score */}
         <Group justify="space-between" align="flex-start" wrap="nowrap">
-          <Badge
-            size="lg"
-            variant="filled"
-            color={getRankColor(rank)}
-            leftSection={<IconTrendingUp size={14} />}
-          >
-            {getRankLabel(rank)}
-          </Badge>
+          <Group gap="xs">
+            <Badge
+              size="lg"
+              variant="filled"
+              color={getRankColor(rank)}
+              leftSection={<IconTrendingUp size={14} />}
+            >
+              {getRankLabel(rank)}
+            </Badge>
+
+            {/* Show Sold Quantity Badge if enriched and has sales */}
+            {isEnriched && enrichedData && enrichedData.total_sold !== undefined && enrichedData.total_sold > 0 && (
+              <Tooltip label={t('trends.totalSoldTooltip')}>
+                <Badge
+                  size="lg"
+                  variant="filled"
+                  color="green"
+                  leftSection={<IconShoppingCart size={14} />}
+                >
+                  <NumberFormatter
+                    value={enrichedData.total_sold}
+                    thousandSeparator
+                    suffix={` ${t('trends.sold')}`}
+                  />
+                </Badge>
+              </Tooltip>
+            )}
+          </Group>
 
           {/* Show Enrich Button if not enriched */}
           {!isEnriched && state.status !== 'error' && (

@@ -266,55 +266,66 @@ The Highlights API is effectively **inaccessible** for web applications due to:
 
 ---
 
-### Option 2: Enhance Current Enrichment with Sold Quantity
+### Option 2: Enhance Current Enrichment with Sold Quantity ✅ **IMPLEMENTED**
 
-**Use Case**: Improve existing enriched trends by emphasizing `sold_quantity` data.
+**Status**: Implemented on November 24, 2025
 
-**Implementation Plan:**
+**Implementation Summary:**
 
-1. **Update Opportunity Score Weights** (in `calculateMetrics()` function):
+1. ✅ **Updated Opportunity Score Weights** (in both `useClientEnrichedTrends.ts` and `useEnrichTrendOnDemand.ts`):
    ```typescript
-   // Current weights:
-   const weights = {
-     searchVolume: 0.30,  // 30%
-     soldQuantity: 0.25,  // 25% - INCREASE THIS
-     freeShipping: 0.20,  // 20%
-     priceRange: 0.15,    // 15%
-     availableStock: 0.10 // 10%
-   };
+   // Previous weights:
+   // - Search volume: 30%
+   // - Sold quantity: 25%
+   // - Free shipping: 20%
+   // - Price range: 15%
+   // - Available stock: 10%
 
-   // Suggested new weights:
+   // NEW weights (Nov 2025):
    const weights = {
-     soldQuantity: 0.35,  // 35% - emphasize actual sales
-     searchVolume: 0.25,  // 25%
-     freeShipping: 0.20,  // 20%
-     priceRange: 0.10,    // 10%
-     availableStock: 0.10 // 10%
+     soldQuantity: 0.35,  // 35% ⬆️ +10% (increased from 25%)
+     searchVolume: 0.25,  // 25% ⬇️ -5% (decreased from 30%)
+     freeShipping: 0.20,  // 20% (unchanged)
+     priceRange: 0.10,    // 10% ⬇️ -5% (decreased from 15%)
+     availableStock: 0.10 // 10% (unchanged)
    };
    ```
 
-2. **Add Sold Quantity Display** in `EnrichedTrendCard.tsx`:
-   ```tsx
-   <Badge leftSection={<IconShoppingCart size={14} />}>
-     {item.metrics.total_sold.toLocaleString()} vendidos
-   </Badge>
-   ```
+2. ✅ **Added Prominent Sold Quantity Badge** in `EnrichedTrendCard.tsx`:
+   - Green badge in card header showing total sold units
+   - Format: "1,234 vendidos" / "1,234 sold" / "1,234 vendidos"
+   - Displayed next to rank badge when trend is enriched
+   - Includes tooltip: "Suma de unidades vendidas de los productos principales"
 
-3. **Add Sorting by Sold Quantity** in trends lists:
-   ```typescript
-   const sortedTrends = trends.sort((a, b) =>
-     b.metrics.total_sold - a.metrics.total_sold
-   );
-   ```
+3. ✅ **Added i18n Translations** (ES, EN, PT-BR):
+   - `trends.sold`: "vendidos" / "sold" / "vendidos"
+   - `trends.totalSoldTooltip`: Tooltip text for sold quantity badge
+
+4. ⏳ **Sorting by Sold Quantity**: Not implemented yet
+   - Current architecture uses on-demand enrichment (one-by-one)
+   - Sorting requires architectural changes to batch-enrich all trends first
+   - Documented as future enhancement (see "Future Enhancements" section below)
+
+**Files Modified:**
+- `hooks/useClientEnrichedTrends.ts` - Updated weights in `calculateMetrics()`
+- `hooks/useEnrichTrendOnDemand.ts` - Updated weights in `calculateMetrics()`
+- `components/trends/EnrichedTrendCard.tsx` - Added sold quantity badge to header
+- `locales/es.json`, `locales/en.json`, `locales/pt-BR.json` - Added translations
+
+**Impact:**
+- Opportunity scores now prioritize products with proven sales history
+- Users can immediately see sales volume for trending products
+- More accurate reflection of actual market performance vs. search interest
 
 **Pros:**
 - ✅ No new API integration needed
 - ✅ Immediate implementation
 - ✅ Leverages existing data
+- ✅ Emphasizes actual sales over search trends
 
 **Cons:**
-- ⚠️ `sold_quantity` is referential for public searches
-- ⚠️ Not as accurate as Highlights API
+- ⚠️ `sold_quantity` is referential for public searches (not 100% accurate)
+- ⚠️ Not as accurate as official Highlights API (which is blocked)
 - ⚠️ Doesn't provide official "best seller" rankings
 
 ---
@@ -329,19 +340,63 @@ The Highlights API is effectively **inaccessible** for web applications due to:
 
 ---
 
-## Next Steps
+## Implementation Status
 
 1. ✅ **Research completed** - APIs identified and documented
 2. ✅ **CloudFront blocking confirmed** - Highlights API blocked server-side (403 from CloudFront)
 3. ✅ **CORS limitation confirmed** - Highlights API does not support CORS for client-side calls
 4. ✅ **Prototype created** - `/prototype/best-sellers` page demonstrates CloudFront blocking behavior
 5. ✅ **External investigation completed** - Confirmed other developers face same issue
-6. 🔴 **Recommended Next Action**: Contact MercadoLibre support
+6. ✅ **Option 2 implemented** (Nov 24, 2025) - Enhanced enrichment with sold_quantity emphasis
+   - Updated opportunity score weights (sold_quantity: 25% → 35%)
+   - Added prominent sold quantity badge to enriched trend cards
+   - Added i18n translations (ES, EN, PT-BR)
+
+## Next Steps
+
+1. 🔴 **Contact MercadoLibre support**: Request access to Highlights API
    - Request certified integrator status
    - Request IP whitelisting for production servers
    - Request CORS header support for Highlights API
    - Or request alternative API endpoint for best-seller data
-7. ⏳ **Fallback Decision**: While waiting for MercadoLibre response, implement **Option 2** (enhance existing enrichment with sold_quantity)
+2. ⏳ **Future Enhancements** (see section below)
+
+---
+
+## Future Enhancements
+
+### Sorting by Sold Quantity
+
+**Goal**: Allow users to sort enriched trends by sold quantity (descending)
+
+**Current Limitation**:
+- The enriched trends page uses on-demand enrichment (one trend at a time via user click)
+- Sorting requires all trends to be enriched simultaneously
+- Current architecture (`useEnrichTrendOnDemand`) doesn't support batch enrichment
+
+**Proposed Solution**:
+1. Create a new page `/[locale]/trends/[country]/enriched-batch` that uses `useClientEnrichedTrends` hook
+2. Enrich all trends in batches automatically (like overview page)
+3. Add sort selector: "Rank (default)" / "Sold Quantity (high to low)" / "Opportunity Score (high to low)"
+4. Implement client-side sorting:
+   ```typescript
+   const sortedTrends = useMemo(() => {
+     if (sortBy === 'sold_quantity') {
+       return [...trends].sort((a, b) =>
+         (b.total_sold || 0) - (a.total_sold || 0)
+       );
+     }
+     if (sortBy === 'opportunity_score') {
+       return [...trends].sort((a, b) =>
+         (b.opportunity_score || 0) - (a.opportunity_score || 0)
+       );
+     }
+     return trends; // Default: by rank
+   }, [trends, sortBy]);
+   ```
+
+**Complexity**: Medium
+**Benefit**: High - Users can quickly identify products with highest sales
 
 ---
 

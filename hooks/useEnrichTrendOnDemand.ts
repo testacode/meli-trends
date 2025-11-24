@@ -48,28 +48,34 @@ function calculateMetrics(
     products.length > 0 ? (freeShippingCount / products.length) * 100 : 0;
 
   // Opportunity Score (0-100)
+  // Updated weights (Nov 2025): Emphasis on actual sales data
+  // - Sold quantity: 35% (increased from 25%)
+  // - Search volume: 25% (decreased from 30%)
+  // - Free shipping: 20%
+  // - Price range: 10% (decreased from 15%)
+  // - Available stock: 10%
   let opportunityScore = 0;
 
-  // Factor 1: Search volume score (0-30)
+  // Factor 1: Search volume score (0-25) - reduced to emphasize sales
   const searchVolumeScore = Math.min(
-    30,
-    (searchData.paging.total / 10000) * 30
+    25,
+    (searchData.paging.total / 10000) * 25
   );
   opportunityScore += searchVolumeScore;
 
-  // Factor 2: Sold quantity score (0-25)
+  // Factor 2: Sold quantity score (0-35) - INCREASED to emphasize actual sales
   if (totalSold !== undefined) {
-    const soldScore = Math.min(25, (totalSold / 1000) * 25);
+    const soldScore = Math.min(35, (totalSold / 1000) * 35);
     opportunityScore += soldScore;
   }
 
   // Factor 3: Free shipping score (0-20)
   opportunityScore += (freeShippingPercentage / 100) * 20;
 
-  // Factor 4: Price range score (0-15)
+  // Factor 4: Price range score (0-10) - reduced to emphasize sales
   if (minPrice !== undefined && maxPrice !== undefined && minPrice > 0) {
     const priceRangeRatio = (maxPrice - minPrice) / minPrice;
-    const priceRangeScore = Math.min(15, priceRangeRatio * 10);
+    const priceRangeScore = Math.min(10, priceRangeRatio * 10);
     opportunityScore += priceRangeScore;
   }
 
