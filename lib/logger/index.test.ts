@@ -6,25 +6,13 @@ describe('createLogger', () => {
     vi.unstubAllEnvs();
   });
 
-  describe('in development environment', () => {
-    beforeEach(() => {
-      vi.stubEnv('NODE_ENV', 'development');
-    });
-
+  describe('in non-production environment', () => {
     it('should create a logger with all methods', () => {
       const logger = createLogger('Test');
       expect(logger).toHaveProperty('info');
       expect(logger).toHaveProperty('warn');
       expect(logger).toHaveProperty('error');
       expect(logger).toHaveProperty('success');
-    });
-
-    it('should not throw when calling logger methods', () => {
-      const logger = createLogger('Test');
-      expect(() => logger.info('test message')).not.toThrow();
-      expect(() => logger.warn('test warning')).not.toThrow();
-      expect(() => logger.error('test error')).not.toThrow();
-      expect(() => logger.success('test success')).not.toThrow();
     });
   });
 

@@ -1,12 +1,32 @@
 import { http, HttpResponse } from 'msw';
 import type { SiteId } from '@/types/meli';
-import { mockAccessToken, mockSearchResponse, mockTrends } from './data';
+import {
+  mockAccessToken,
+  mockCategories,
+  mockSearchResponse,
+  mockTrends,
+} from './data';
 
 /**
  * MSW request handlers for MercadoLibre APIs
  * Uses MSW 2.0 syntax with http.get/post
  */
 export const handlers = [
+  /**
+   * Mock MercadoLibre OAuth token endpoint
+   * Used by server-side API route /api/token
+   */
+  http.post('https://api.mercadolibre.com/oauth/token', () => {
+    return HttpResponse.json(
+      {
+        access_token: mockAccessToken.access_token,
+        token_type: mockAccessToken.token_type,
+        expires_in: mockAccessToken.expires_in,
+      },
+      { status: 200 }
+    );
+  }),
+
   /**
    * Mock /api/token endpoint
    * Returns a valid OAuth access token
@@ -20,6 +40,70 @@ export const handlers = [
       },
       { status: 200 }
     );
+  }),
+
+  /**
+   * Mock MercadoLibre Trends API
+   * Returns trending keywords for the specified country
+   */
+  http.get('https://api.mercadolibre.com/trends/:country', ({ params }) => {
+    const { country } = params;
+
+    // Validate country parameter
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(country as SiteId)) {
+      return HttpResponse.json(
+        {
+          message: 'invalid site_id',
+          error: 'bad_request',
+          status: 400,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock trends data
+    return HttpResponse.json(mockTrends, { status: 200 });
+  }),
+
+  /**
+   * Mock MercadoLibre Categories API
+   * Returns category tree for the specified site
+   */
+  http.get('https://api.mercadolibre.com/sites/:siteId/categories', ({ params }) => {
+    const { siteId } = params;
+
+    // Validate site ID
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(siteId as SiteId)) {
+      return HttpResponse.json(
+        {
+          message: 'invalid site_id',
+          error: 'bad_request',
+          status: 400,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock categories data
+    return HttpResponse.json(mockCategories, { status: 200 });
   }),
 
   /**
@@ -74,6 +158,36 @@ export const handlers = [
 
     // Return mock trends data
     return HttpResponse.json(mockTrends, { status: 200 });
+  }),
+
+  /**
+   * Mock /api/categories/:country endpoint
+   * Returns categories for the specified country
+   */
+  http.get('http://localhost:3000/api/categories/:country', ({ params }) => {
+    const { country } = params;
+
+    // Validate country parameter
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(country as SiteId)) {
+      return HttpResponse.json(
+        {
+          error: 'Invalid country ID',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock categories data
+    return HttpResponse.json(mockCategories, { status: 200 });
   }),
 
   /**

@@ -1,4 +1,5 @@
 import type {
+  Category,
   OAuthTokenResponse,
   SearchProduct,
   SearchResponse,
@@ -40,6 +41,52 @@ export const mockTrends: TrendItem[] = [
   {
     keyword: 'zapatillas nike',
     url: 'https://www.mercadolibre.com.ar/zapatillas-nike',
+  },
+];
+
+/**
+ * Mock categories data
+ */
+export const mockCategories: Category[] = [
+  {
+    id: 'MLA1403',
+    name: 'Autos, Motos y Otros',
+  },
+  {
+    id: 'MLA1071',
+    name: 'Animales y Mascotas',
+  },
+  {
+    id: 'MLA1367',
+    name: 'Antigüedades y Colecciones',
+  },
+  {
+    id: 'MLA1368',
+    name: 'Arte, Librería y Mercería',
+  },
+  {
+    id: 'MLA1384',
+    name: 'Bebés',
+  },
+  {
+    id: 'MLA1246',
+    name: 'Belleza y Cuidado Personal',
+  },
+  {
+    id: 'MLA1039',
+    name: 'Cámaras y Accesorios',
+  },
+  {
+    id: 'MLA1051',
+    name: 'Celulares y Teléfonos',
+  },
+  {
+    id: 'MLA1648',
+    name: 'Computación',
+  },
+  {
+    id: 'MLA1144',
+    name: 'Consolas y Videojuegos',
   },
 ];
 
