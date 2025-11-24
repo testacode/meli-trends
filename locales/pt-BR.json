@@ -44,6 +44,10 @@
   "enriched": {
     "description": "Análise detalhada dos produtos mais pesquisados com métricas de negócio"
   },
+  "overview": {
+    "title": "Visualização por Categorias",
+    "description": "Tendências organizadas por tipo de crescimento para uma visão geral completa"
+  },
   "trends": {
     "title": "Tendências",
     "subtitle": "Descubra os produtos mais pesquisados em",
