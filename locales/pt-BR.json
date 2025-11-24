@@ -25,10 +25,12 @@
       "list": "Visualização em Lista",
       "overview": "Visualização por Categorias"
     },
-    "viewMode": {
-      "title": "Layout de Visualização",
+    "betaTesting": {
+      "title": "Beta Testing",
       "gallery": "Cartões (padrão)",
-      "table": "Tabela Compacta (beta)"
+      "table": "Tabela Compacta",
+      "enriched": "Tendências Enriquecidas (bloqueado)",
+      "prototype": "Mais Vendidos (bloqueado)"
     }
   },
   "common": {
