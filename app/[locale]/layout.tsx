@@ -9,6 +9,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { locales } from '@/i18n/config';
 import { notFound } from 'next/navigation';
+import { KonamiEasterEgg } from "@/components/common/KonamiEasterEgg";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -55,7 +56,10 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <MantineProvider theme={mantineTheme} defaultColorScheme="auto">
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <KonamiEasterEgg />
+          </AuthProvider>
         </QueryProvider>
       </MantineProvider>
     </NextIntlClientProvider>
