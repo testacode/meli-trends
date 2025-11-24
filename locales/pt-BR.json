@@ -28,6 +28,11 @@
       "title": "Layout de Visualização",
       "gallery": "Cartões (padrão)",
       "table": "Tabela Compacta (beta)"
+    },
+    "badgeStyle": {
+      "title": "Estilo de Emblemas",
+      "gradient": "🏆 Gradiente (padrão)",
+      "flat": "Plano e Minimalista"
     }
   },
   "common": {

@@ -28,6 +28,11 @@
       "title": "Diseño de Vista",
       "gallery": "Tarjetas (predeterminado)",
       "table": "Tabla Compacta (beta)"
+    },
+    "badgeStyle": {
+      "title": "Estilo de Badges",
+      "gradient": "🏆 Gradiente (predeterminado)",
+      "flat": "Plano y Minimalista"
     }
   },
   "common": {

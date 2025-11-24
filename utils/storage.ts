@@ -5,12 +5,18 @@
 const STORAGE_KEYS = {
   SELECTED_CATEGORY: 'meli-trends-selected-category',
   VIEW_MODE: 'meli-trends-view-mode',
+  BADGE_STYLE: 'meli-trends-badge-style',
 } as const;
 
 /**
  * View modes for trends display
  */
 export type ViewMode = 'gallery' | 'table';
+
+/**
+ * Badge styles for rank badges
+ */
+export type BadgeStyle = 'gradient' | 'flat';
 
 /**
  * Save selected category to localStorage
@@ -92,5 +98,37 @@ export function getViewMode(): ViewMode {
   } catch (error) {
     console.warn('Failed to read view mode from localStorage:', error);
     return 'gallery';
+  }
+}
+
+/**
+ * Save badge style preference to localStorage
+ */
+export function saveBadgeStyle(style: BadgeStyle): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.setItem(STORAGE_KEYS.BADGE_STYLE, style);
+  } catch (error) {
+    console.warn('Failed to save badge style to localStorage:', error);
+  }
+}
+
+/**
+ * Get saved badge style from localStorage
+ * Defaults to 'gradient' if not set (current default)
+ */
+export function getBadgeStyle(): BadgeStyle {
+  if (typeof window === 'undefined') return 'gradient';
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.BADGE_STYLE);
+    if (saved === 'gradient' || saved === 'flat') {
+      return saved;
+    }
+    return 'gradient';
+  } catch (error) {
+    console.warn('Failed to read badge style from localStorage:', error);
+    return 'gradient';
   }
 }

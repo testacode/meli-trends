@@ -1,9 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, Text, Badge, Group, Stack, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
 import { IconTrendingUp, IconExternalLink, IconCopy, IconCheck } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
 import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
+import { getRankBadgeColor, getRankBadgeVariant } from '@/utils/categoryColors';
+import { getBadgeStyle, type BadgeStyle } from '@/utils/storage';
 import { useTranslations } from 'next-intl';
 
 interface TrendCardProps {
@@ -13,13 +16,16 @@ interface TrendCardProps {
 
 export function TrendCard({ trend, rank }: TrendCardProps) {
   const t = useTranslations();
+  const [badgeStyle, setBadgeStyle] = useState<BadgeStyle>('gradient');
 
-  const getRankColor = (position: number): string => {
-    if (position === 1) return 'yellow';
-    if (position <= 3) return 'meliBlue';
-    if (position <= 10) return 'meliGreen';
-    return 'gray';
-  };
+  // Load badge style preference on mount
+  useEffect(() => {
+    const savedStyle = getBadgeStyle();
+    if (savedStyle !== badgeStyle) {
+      setBadgeStyle(savedStyle);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getRankLabel = (position: number): string => {
     return `#${position}`;
@@ -55,8 +61,8 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
           <Group gap="xs" wrap="wrap">
             <Badge
               size="lg"
-              variant="filled"
-              color={getRankColor(rank)}
+              variant={getRankBadgeVariant(rank, badgeStyle)}
+              color={getRankBadgeColor(rank, badgeStyle)}
               leftSection={<IconTrendingUp size={14} />}
             >
               {getRankLabel(rank)}
