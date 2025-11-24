@@ -1,36 +1,41 @@
-# Konami Easter Egg Design
+# Easter Egg Design
 
 **Date**: 2025-11-24
-**Status**: Implemented
+**Status**: Implemented (Desktop Only)
 **Feature**: "Toasty" Easter Egg (Mortal Kombat homage)
-**Trigger**: Konami code (desktop) or device shake (mobile)
+**Trigger**: Simplified sequence ↑↑↓↓ (desktop keyboards)
+**Note**: Mobile shake detection removed due to iOS 13+ permission complexity (2025-11-24)
+**Simplification**: Sequence simplified from full Konami code to ↑↑↓↓ (2025-11-24)
 
 ## Overview
 
-This design implements a fun easter egg that displays the "Toasty" animation and sound from Mortal Kombat games when users discover the hidden trigger. The feature works on both desktop (Konami code) and mobile (shake gesture) devices.
+This design implements a fun easter egg that displays the "Toasty" animation and sound from Mortal Kombat games when users discover the hidden trigger. The feature works on desktop via simplified keyboard sequence.
+
+**Updates**:
+- **Mobile removal (2025-11-24)**: Mobile shake detection was removed to keep implementation simple. iOS 13+ requires explicit user permission via button interaction, adding unnecessary complexity for an easter egg feature.
+- **Sequence simplification (2025-11-24)**: Simplified from full Konami code (↑↑↓↓←→←→BA) to just ↑↑↓↓ for better user experience and easier discovery.
 
 ## Goals
 
 - **Fun user experience**: Hidden surprise for users who discover the trigger
-- **Cross-platform**: Works on desktop (keyboard) and mobile (accelerometer)
+- **Desktop-focused**: Works on any device with a keyboard
 - **Non-intrusive**: Doesn't interfere with normal app usage
 - **Zero dependencies**: Uses native browser APIs only
 - **Performance**: Minimal overhead when not triggered
 - **Maintainable**: Well-tested with clear code structure
+- **Simple**: No complex permission flows or mobile-specific code
 
 ## User Behavior
 
-### Desktop Activation
-1. User types the Konami code: ↑ ↑ ↓ ↓ ← → ← → B A
-2. "Toasty" image slides in from bottom-right corner
+### Activation
+1. User types the sequence on keyboard: ↑ ↑ ↓ ↓
+2. "Toasty" image slides in quickly from bottom-right corner (200ms)
 3. Sound plays (after 200ms delay for sync)
-4. Animation auto-dismisses after 2.5 seconds
-5. Can be triggered unlimited times
-
-### Mobile Activation
-1. User shakes their device
-2. Same animation and sound behavior as desktop
-3. 1-second cooldown between shake triggers
+4. Image stays visible for 700ms
+5. Image slides out even faster (150ms)
+6. Total duration: ~1050ms (1 second)
+7. Can be triggered unlimited times
+8. Works on any device with physical or virtual keyboard
 
 ## Technical Implementation
 
@@ -62,25 +67,24 @@ public/
 
 **Configurable constants:**
 ```typescript
-const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-                     'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-                     'b', 'a'];
+const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
+const ENTER_DURATION_MS = 200;     // How fast it enters (slide in)
+const VISIBLE_DURATION_MS = 700;   // How long it stays on screen
+const EXIT_DURATION_MS = 150;      // How fast it exits (faster than enter)
 const SOUND_DELAY_MS = 200;        // Tune for audio/animation sync
-const ANIMATION_DURATION_MS = 2500; // Total display time
-const IMAGE_SIZE = 200;             // Width/height in pixels
+const IMAGE_SIZE = 200;            // Width/height in pixels
 ```
 
 **State management:**
 - `showToasty` (boolean): Controls visibility of animation
-- `keySequence` (string[]): Tracks last 10 keypresses for Konami code detection
+- `keySequence` (string[]): Tracks last 4 keypresses for sequence detection
 - `audioRef` (ref): Audio instance (prevents re-renders)
 - `dismissTimeoutRef` (ref): Cleanup timeout reference
 
 **Effects separation (following React best practices):**
 1. **Audio initialization effect**: Creates Audio instance once on mount
-2. **Keyboard listener effect**: Detects Konami code sequence
-3. **Shake detection**: Uses custom hook (composition pattern)
-4. **Toasty display effect**: Handles sound playback + auto-dismiss
+2. **Keyboard listener effect**: Detects arrow key sequence
+3. **Toasty display effect**: Handles sound playback + auto-dismiss
 
 #### 2. Shake Detection Hook (`useShakeDetection.ts`)
 
@@ -145,9 +149,10 @@ export const toastySlide: MantineTransition = {
 ### Animation Sequence
 
 ```
-0-20% of duration:  Slide up from bottom-right (enter)
-20-80% of duration: Hold at visible position
-80-100% of duration: Slide down to bottom-right (exit)
+0-200ms:         Fast slide up from bottom-right (enter)
+200-900ms:       Hold at visible position (700ms)
+900-1050ms:      Very fast slide down to bottom-right (exit - 150ms)
+Total: ~1050ms (1 second)
 ```
 
 ### Positioning
@@ -160,6 +165,7 @@ export const toastySlide: MantineTransition = {
 ### Sound Timing
 
 - Delay: 200ms after animation starts (configurable via `SOUND_DELAY_MS`)
+- Plays as image finishes entering (synchronized with visibility)
 - Volume: 0.7 (70%)
 - Error handling: Silent fail if autoplay blocked by browser
 
@@ -168,15 +174,15 @@ export const toastySlide: MantineTransition = {
 ### Component Tests (`KonamiEasterEgg.test.tsx`)
 
 **Coverage areas:**
-1. **Konami code detection**
+1. **Sequence detection**
    - Correct sequence triggers toasty
    - Incorrect sequence doesn't trigger
-   - Case-insensitive B/A keys
    - Sequence reset after trigger
    - Can trigger multiple times
 
 2. **Auto-dismiss behavior**
-   - Disappears after `ANIMATION_DURATION_MS`
+   - Enters in 200ms, stays 700ms, exits in 150ms
+   - Total time: ~1050ms
    - Cleanup on unmount
 
 3. **Audio playback**
@@ -191,8 +197,8 @@ export const toastySlide: MantineTransition = {
    - No pointer events blocking
 
 5. **Edge cases**
-   - Rapid konami code inputs
-   - Long key sequences before code (memory trimming)
+   - Rapid sequence inputs
+   - Long key sequences before trigger (memory trimming)
 
 **Mocking strategy:**
 - Mock `Audio` constructor and methods (not available in jsdom)
@@ -233,8 +239,10 @@ export const toastySlide: MantineTransition = {
 ### Adjustable Parameters
 
 **In `KonamiEasterEgg.tsx`:**
+- `ENTER_DURATION_MS`: Slide-in speed (default: 200ms)
+- `VISIBLE_DURATION_MS`: Time visible on screen (default: 700ms)
+- `EXIT_DURATION_MS`: Slide-out speed (default: 150ms - faster than enter)
 - `SOUND_DELAY_MS`: Sync sound with animation (default: 200ms)
-- `ANIMATION_DURATION_MS`: Total display time (default: 2500ms)
 - `IMAGE_SIZE`: Toasty image dimensions (default: 200px)
 
 **In `useShakeDetection.ts`:**
@@ -283,16 +291,14 @@ export const toastySlide: MantineTransition = {
 ### Handled Gracefully
 
 1. **Audio autoplay blocked**: Component still shows animation, sound fails silently
-2. **DeviceMotion not available**: Hook does nothing, keyboard still works
-3. **DeviceMotion permission denied**: No error, just doesn't trigger on shake
-4. **Rapid triggers**: Cooldown prevents spam, cleanup prevents memory leaks
-5. **Component unmount during animation**: Proper cleanup of timeouts and audio
+2. **Rapid triggers**: Sequence reset prevents spam, cleanup prevents memory leaks
+3. **Component unmount during animation**: Proper cleanup of timeouts and audio
 
 ### Known Limitations
 
-1. **iOS 13+ motion permission**: User must interact with page first (can't trigger on page load)
-2. **Safari autoplay**: May require user interaction before audio plays
-3. **Low-end devices**: Animation might be less smooth (hardware-dependent)
+1. **Safari autoplay**: May require user interaction before audio plays
+2. **Low-end devices**: Animation might be less smooth (hardware-dependent)
+3. **Virtual keyboards**: Mobile virtual keyboards may not support arrow keys easily
 
 ## Future Enhancements (YAGNI - Not Implemented)
 
@@ -308,10 +314,10 @@ These features were considered but excluded following YAGNI principle:
 ## Success Criteria
 
 ✅ **Functionality:**
-- Triggers on Konami code (desktop)
-- Triggers on shake (mobile)
+- Triggers on ↑↑↓↓ sequence (keyboard input)
 - Plays sound and animation correctly
 - Auto-dismisses after timeout
+- Works on any device with keyboard
 
 ✅ **Code Quality:**
 - All tests passing (100% coverage)
@@ -329,9 +335,59 @@ These features were considered but excluded following YAGNI principle:
 - Works across all pages
 - Delightful surprise for users who discover it
 
+## Design Decision: Removing Mobile Shake Detection
+
+**Date**: 2025-11-24
+**Decision**: Remove `useShakeDetection` hook and mobile shake functionality
+**Reason**: iOS 13+ permission complexity outweighs benefit for easter egg feature
+
+### Why Mobile Was Removed
+
+**The Problem:**
+- iOS 13+ requires explicit user permission for DeviceMotionEvent
+- Permission must be requested via user gesture (button click)
+- Cannot auto-start - requires UI element for permission prompt
+- All iOS browsers (Chrome, Safari, Firefox) have same restriction due to WebKit
+
+**The Tradeoff:**
+- **Benefit**: Mobile users could shake to trigger easter egg
+- **Cost**: Add permission UI, handle denials, explain iOS Settings, increase code complexity
+
+**Conclusion:**
+For an easter egg feature, the added complexity isn't worth it. Desktop keyboard sequence provides the core experience without permission flows or mobile-specific code.
+
+## Design Decision: Simplifying the Sequence
+
+**Date**: 2025-11-24
+**Decision**: Simplify sequence from full Konami code (↑↑↓↓←→←→BA) to ↑↑↓↓
+**Reason**: Better UX and easier discovery
+
+### Why Sequence Was Simplified
+
+**The Problem:**
+- Full Konami code (10 keys) is too long and hard to discover
+- Letters B and A at the end are less intuitive on modern keyboards
+- Many users may not know the complete Konami code sequence
+
+**The Tradeoff:**
+- **Benefit**: Easier to discover, faster to type, more accessible
+- **Cost**: Loses some nostalgia factor of the complete Konami code
+
+**Conclusion:**
+For better user experience, a simplified 4-key sequence (↑↑↓↓) is more accessible while still being fun and hidden enough to be a surprise.
+
+### Files Kept
+
+The following files remain in the codebase for reference but are not actively used:
+- `hooks/useShakeDetection.ts` - Shake detection implementation
+- `hooks/useShakeDetection.test.ts` - Hook tests
+
+These can be reintroduced if permission flow is added in the future.
+
 ## References
 
 - [MDN: DeviceMotionEvent](https://developer.mozilla.org/en-US/docs/Web/API/DeviceMotionEvent)
 - [MDN: HTMLAudioElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement)
 - [Mantine: Transition Component](https://mantine.dev/core/transition/)
-- [Konami Code Wikipedia](https://en.wikipedia.org/wiki/Konami_Code)
+- [Konami Code Wikipedia](https://en.wikipedia.org/wiki/Konami_Code) (inspiration for simplified sequence)
+- [iOS 13+ DeviceMotion Permissions](https://dev.to/li/how-to-requestpermission-for-devicemotion-and-deviceorientation-events-in-ios-13-46g2)

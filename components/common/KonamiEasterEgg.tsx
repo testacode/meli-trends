@@ -3,30 +3,18 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Image, Transition } from "@mantine/core";
 import { toastySlide } from "@/lib/transitions";
-import { useShakeDetection } from "@/hooks/useShakeDetection";
 
 // Configuration constants for easy tuning
-const KONAMI_CODE = [
-  "ArrowUp",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowLeft",
-  "ArrowRight",
-  "b",
-  "a",
-];
+const KONAMI_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown"];
+const ENTER_DURATION_MS = 200; // How fast it enters (slide in)
+const VISIBLE_DURATION_MS = 700; // How long it stays on screen
+const EXIT_DURATION_MS = 150; // How fast it exits (slide out - faster than enter)
 const SOUND_DELAY_MS = 200; // Adjust to sync sound with animation
-const ANIMATION_DURATION_MS = 2500; // Total time before auto-dismiss
 const IMAGE_SIZE = 200; // Width and height of the toasty image
 
 /**
  * Easter egg component that displays "Toasty" animation and sound
- * Triggered by:
- * - Desktop: Konami code (↑↑↓↓←→←→BA)
- * - Mobile: Device shake
+ * Triggered by sequence: ↑↑↓↓
  */
 export function KonamiEasterEgg() {
   const [showToasty, setShowToasty] = useState(false);
@@ -55,6 +43,11 @@ export function KonamiEasterEgg() {
       // Normalize key input (handle both 'b'/'B' and 'a'/'A')
       const key = event.key.toLowerCase();
 
+      // Prevent browser extension errors by stopping propagation for arrow keys
+      if (key.startsWith("arrow")) {
+        event.stopPropagation();
+      }
+
       setKeySequence((prev) => {
         const newSequence = [...prev, key];
 
@@ -75,14 +68,10 @@ export function KonamiEasterEgg() {
       });
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress, { capture: true });
+    return () =>
+      window.removeEventListener("keydown", handleKeyPress, { capture: true });
   }, []);
-
-  // Mobile: Shake detection
-  useShakeDetection(() => {
-    setShowToasty(true);
-  });
 
   // Handle toasty display: play sound and auto-dismiss
   useEffect(() => {
@@ -95,10 +84,10 @@ export function KonamiEasterEgg() {
         });
       }, SOUND_DELAY_MS);
 
-      // Auto-dismiss after animation
+      // Auto-dismiss: wait for enter + visible time, then trigger exit
       dismissTimeoutRef.current = setTimeout(() => {
         setShowToasty(false);
-      }, ANIMATION_DURATION_MS);
+      }, ENTER_DURATION_MS + VISIBLE_DURATION_MS);
 
       return () => {
         clearTimeout(soundTimeout);
@@ -113,7 +102,8 @@ export function KonamiEasterEgg() {
     <Transition
       mounted={showToasty}
       transition={toastySlide}
-      duration={ANIMATION_DURATION_MS}
+      duration={ENTER_DURATION_MS}
+      exitDuration={EXIT_DURATION_MS}
       timingFunction="ease-out"
     >
       {(styles) => (

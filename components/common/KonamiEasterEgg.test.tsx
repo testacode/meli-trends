@@ -31,32 +31,15 @@ describe("KonamiEasterEgg", () => {
   });
 
   describe("Konami Code Detection", () => {
-    it("should show toasty after correct konami code sequence", async () => {
+    it("should show toasty after correct sequence", async () => {
       render(<KonamiEasterEgg />);
 
       const user = userEvent.setup();
 
-      // Type konami code: ↑↑↓↓←→←→BA
+      // Type sequence: ↑↑↓↓
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       // Check image appears
-      await waitFor(() => {
-        expect(screen.getByAltText("Toasty!")).toBeDefined();
-      });
-    });
-
-    it("should handle uppercase B and A keys", async () => {
-      render(<KonamiEasterEgg />);
-
-      const user = userEvent.setup();
-
-      // Type konami code with uppercase
-      await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("BA");
-
       await waitFor(() => {
         expect(screen.getByAltText("Toasty!")).toBeDefined();
       });
@@ -67,8 +50,8 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Type incorrect sequence
-      await user.keyboard("{ArrowUp}{ArrowDown}{ArrowLeft}{ArrowRight}");
+      // Type incorrect sequence (different order)
+      await user.keyboard("{ArrowUp}{ArrowDown}{ArrowUp}{ArrowDown}");
 
       expect(screen.queryByAltText("Toasty!")).toBeNull();
     });
@@ -79,7 +62,7 @@ describe("KonamiEasterEgg", () => {
       const user = userEvent.setup();
 
       // Type only first half
-      await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
+      await user.keyboard("{ArrowUp}{ArrowUp}");
 
       expect(screen.queryByAltText("Toasty!")).toBeNull();
     });
@@ -91,8 +74,6 @@ describe("KonamiEasterEgg", () => {
 
       // First trigger
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       await waitFor(() => {
         expect(screen.getByAltText("Toasty!")).toBeDefined();
@@ -111,8 +92,6 @@ describe("KonamiEasterEgg", () => {
 
       // Should be able to trigger again
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       await waitFor(() => {
         expect(screen.getByAltText("Toasty!")).toBeDefined();
@@ -126,10 +105,8 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Trigger konami code
+      // Trigger sequence
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       // Verify it appears
       await waitFor(() => {
@@ -169,10 +146,8 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Trigger konami code
+      // Trigger sequence
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       // Wait for audio to play (SOUND_DELAY_MS = 200)
       await waitFor(
@@ -204,10 +179,8 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Trigger konami code
+      // Trigger sequence
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       // Should still show toasty even if audio fails
       await waitFor(() => {
@@ -230,10 +203,8 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Trigger konami code
+      // Trigger sequence
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       // Unmount before auto-dismiss
       unmount();
@@ -251,8 +222,6 @@ describe("KonamiEasterEgg", () => {
 
       // Trigger toasty
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       const image = await screen.findByAltText("Toasty!");
       const container = image.parentElement;
@@ -269,8 +238,6 @@ describe("KonamiEasterEgg", () => {
 
       // Trigger toasty
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       const image = await screen.findByAltText("Toasty!");
       const container = image.parentElement;
@@ -285,8 +252,6 @@ describe("KonamiEasterEgg", () => {
 
       // Trigger toasty
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       const image = await screen.findByAltText("Toasty!");
       const container = image.parentElement;
@@ -296,15 +261,13 @@ describe("KonamiEasterEgg", () => {
   });
 
   describe("Edge Cases", () => {
-    it("should handle rapid konami code inputs", async () => {
+    it("should handle rapid sequence inputs", async () => {
       render(<KonamiEasterEgg />);
 
       const user = userEvent.setup();
 
-      // Type konami code very quickly
-      await user.keyboard(
-        "{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}ba"
-      );
+      // Type sequence very quickly
+      await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
 
       await waitFor(() => {
         expect(screen.getByAltText("Toasty!")).toBeDefined();
@@ -316,14 +279,12 @@ describe("KonamiEasterEgg", () => {
 
       const user = userEvent.setup();
 
-      // Type many random keys before konami code
+      // Type many random keys before sequence
       await user.keyboard("abcdefghijklmnopqrstuvwxyz");
       await user.keyboard("1234567890");
 
-      // Now type konami code
+      // Now type sequence
       await user.keyboard("{ArrowUp}{ArrowUp}{ArrowDown}{ArrowDown}");
-      await user.keyboard("{ArrowLeft}{ArrowRight}{ArrowLeft}{ArrowRight}");
-      await user.keyboard("ba");
 
       await waitFor(() => {
         expect(screen.getByAltText("Toasty!")).toBeDefined();

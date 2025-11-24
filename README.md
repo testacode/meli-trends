@@ -54,6 +54,7 @@ MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7
 - **📱 PWA**: Installable as a native app on mobile devices
 - **🔍 SEO Optimized**: Open Graph, Twitter Cards, sitemap.xml, and robots.txt
 - **ℹ️ About Page**: Complete guide on trends and business strategies
+- **🎮 Easter Egg**: Hidden surprise (↑↑↓↓)
 
 ## Tech Stack
 
