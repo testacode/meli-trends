@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, Text, Badge, Group, Stack, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
-import { IconTrendingUp, IconExternalLink, IconCopy, IconCheck } from '@tabler/icons-react';
+import { IconExternalLink, IconCopy, IconCheck } from '@tabler/icons-react';
 import type { TrendItem } from '@/types/meli';
 import { getTrendTypeLabel, getTrendTypeColor } from '@/utils/trends';
 import { getRankBadgeColor, getRankBadgeVariant } from '@/utils/categoryColors';
@@ -63,7 +63,6 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
               size="lg"
               variant={getRankBadgeVariant(rank, badgeStyle)}
               color={getRankBadgeColor(rank, badgeStyle)}
-              leftSection={<IconTrendingUp size={14} />}
             >
               {getRankLabel(rank)}
             </Badge>
@@ -116,13 +115,6 @@ export function TrendCard({ trend, rank }: TrendCardProps) {
         >
           {trend.keyword}
         </Text>
-
-        {/* View Link */}
-        <Group justify="flex-end">
-          <Text size="sm" fw={500} c="meliBlue">
-            {t('trends.viewOnMeli')}
-          </Text>
-        </Group>
       </Stack>
     </Card>
   );

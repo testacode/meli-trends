@@ -31,10 +31,12 @@ describe('TrendCard', () => {
       expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     });
 
-    it('should display "Ver en MercadoLibre →" link text', () => {
+    it('should be fully clickable (entire card is a link)', () => {
       render(<TrendCard trend={mockTrend} rank={1} />);
 
-      expect(screen.getByText('Ver en MercadoLibre →')).toBeDefined();
+      const link = screen.getByRole('link');
+      expect(link).toBeDefined();
+      expect(link.getAttribute('href')).toBe(mockTrend.url);
     });
   });
 
@@ -137,12 +139,16 @@ describe('TrendCard', () => {
       expect(link.tagName).toBe('A');
     });
 
-    it('should render IconTrendingUp in badge', () => {
+    it('should render rank badge without icon (compact design)', () => {
       const { container } = render(<TrendCard trend={mockTrend} rank={1} />);
 
-      // IconTrendingUp is rendered as SVG with specific class from tabler-icons
+      // Badge should exist
+      const badge = container.querySelector('.mantine-Badge-root');
+      expect(badge).toBeDefined();
+
+      // Should NOT have IconTrendingUp (removed for compact design)
       const icon = container.querySelector('svg.tabler-icon-trending-up');
-      expect(icon).toBeDefined();
+      expect(icon).toBeNull();
     });
 
     it('should render IconExternalLink indicator', () => {
