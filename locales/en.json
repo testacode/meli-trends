@@ -44,6 +44,9 @@
   },
   "trends": {
     "title": "Trends",
+    "subtitle": "Discover the most searched products in",
+    "description": "Trends updated weekly with real data from MercadoLibre.",
+    "enrichedTitle": "Enriched Trends",
     "enriched": "Enriched Trends",
     "basic": "Basic Trends",
     "opportunityScore": "Opportunity Score",

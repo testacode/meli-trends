@@ -11,15 +11,17 @@ MeLi Trends visualizes trending products from MercadoLibre's Trends API across 7
 1. **Basic Trends**: Keyword trends only ✅ **WORKING**
 2. **Enriched Trends**: Keywords + real product data + metrics + opportunity scores ⚠️ **TEMPORARILY UNAVAILABLE**
 
-### ⚠️ CRITICAL STATUS UPDATE (November 2025)
+### ⚠️ CRITICAL STATUS UPDATE (November 24, 2025)
 
-**Search API is currently blocked by MercadoLibre's CloudFront (403 errors)**
+**Search API is NOW BLOCKED from browser (client-side) - Enrichment completely unavailable**
 
-- **Working**: Basic trends (Trends API)
-- **Broken**: Enriched trends (Search API)
-- **Cause**: CloudFront IP-based blocking, likely requires certified integrator status
-- **Details**: See `/docs/architecture/search-api-403-investigation-2025-11.md`
-- **Action**: Contact MercadoLibre support to request certified integrator status and IP whitelisting
+- **Working**: Basic trends (Trends API only)
+- **BROKEN**: All enriched trends features (Search API blocked everywhere)
+- **Recent Change**: CloudFront now blocks browser requests (previously only server-side)
+- **Status**: Both server-side AND client-side Search API calls return 403 errors
+- **Cause**: CloudFront IP-based blocking escalated, requires certified integrator status
+- **Details**: See `/docs/research/sales-api-investigation-2025-11.md`
+- **Action**: **URGENT** - Contact MercadoLibre support to request certified integrator status and IP whitelisting
 
 ### Essential Commands
 

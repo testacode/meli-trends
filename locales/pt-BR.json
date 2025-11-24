@@ -44,6 +44,9 @@
   },
   "trends": {
     "title": "Tendências",
+    "subtitle": "Descubra os produtos mais pesquisados em",
+    "description": "Tendências atualizadas semanalmente com dados reais do MercadoLibre.",
+    "enrichedTitle": "Tendências Enriquecidas",
     "enriched": "Tendências Enriquecidas",
     "basic": "Tendências Básicas",
     "opportunityScore": "Pontuação de Oportunidade",
