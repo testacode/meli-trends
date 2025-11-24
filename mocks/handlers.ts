@@ -161,6 +161,36 @@ export const handlers = [
   }),
 
   /**
+   * Mock /api/categories/:country endpoint
+   * Returns categories for the specified country
+   */
+  http.get('http://localhost:3000/api/categories/:country', ({ params }) => {
+    const { country } = params;
+
+    // Validate country parameter
+    const validSites: SiteId[] = [
+      'MLA',
+      'MLB',
+      'MLC',
+      'MLM',
+      'MCO',
+      'MLU',
+      'MPE',
+    ];
+    if (!validSites.includes(country as SiteId)) {
+      return HttpResponse.json(
+        {
+          error: 'Invalid country ID',
+        },
+        { status: 400 }
+      );
+    }
+
+    // Return mock categories data
+    return HttpResponse.json(mockCategories, { status: 200 });
+  }),
+
+  /**
    * Mock MercadoLibre Search API
    * Handles searches for any site with query parameters
    */
