@@ -39,8 +39,12 @@
     "loading": "Loading...",
     "error": "Error",
     "retry": "Retry",
+    "refresh": "Refresh",
     "noData": "No data available",
     "noResults": "No results found"
+  },
+  "enriched": {
+    "description": "Detailed analysis of the most searched products with business metrics"
   },
   "trends": {
     "title": "Trends",
@@ -73,6 +77,11 @@
     "noTrendsAvailable": "No trends available at this time",
     "trendsIn": "Trends in",
     "showingResults": "Showing {showing} of {total} most searched products",
+    "showingFiltered": "{showing} of {total} trends available",
+    "loadingTrends": "Loading trends...",
+    "countryNotFound": "Country not found",
+    "countryDescription": "Discover the 50 most searched and sold products on MercadoLibre {country}. Trends updated weekly.",
+    "countryImageAlt": "Trends in {country}",
     "filters": {
       "all": "All",
       "fastestGrowing": "Fastest Growing",
@@ -102,9 +111,17 @@
     "backToList": "Back to list view",
     "trendsAnalysis": "Trends Analysis in",
     "categoryAnalysisDesc": "Category view with product type analysis",
-    "insufficientData": "Insufficient data"
+    "insufficientData": "Insufficient data",
+    "productCount": "{count, plural, one {# product} other {# products}}",
+    "noTrendsInCategory": "No trends in this category"
   },
   "about": {
+    "metadata": {
+      "title": "Help & Information",
+      "description": "Learn how MercadoLibre trends work and how to use this information for your business. Complete guide on metrics, strategies and trend analysis.",
+      "ogTitle": "Help & Information | MeLi Trends",
+      "ogDescription": "Complete guide on MercadoLibre trends: metric types, business strategies and popular product analysis."
+    },
     "pageTitle": "What are MeLi Trends?",
     "pageDescription": "MercadoLibre Trends show the 50 most popular products among users. This information is updated weekly and is available for 7 Latin American countries. Trends are automatically classified into 3 types based on their position, and you can filter them by category to find specific opportunities.",
     "threeTypes": {

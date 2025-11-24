@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Stack, Title, Text, Paper, Box } from "@mantine/core";
+import { useTranslations } from "next-intl";
 import type { TrendItem, TrendType } from "@/types/meli";
 import type { CategoryDistribution } from "@/utils/productCategories";
 import { getTrendTypeLabel } from "@/utils/trends";
@@ -39,6 +40,8 @@ export function CategoryColumn({
   trends,
   distribution,
 }: CategoryColumnProps) {
+  const t = useTranslations();
+
   return (
     <Stack gap="md">
       {/* Header */}
@@ -53,7 +56,7 @@ export function CategoryColumn({
             {getTrendTypeLabel(trendType)}
           </Title>
           <Text size="sm" c="dimmed">
-            {trends.length} producto{trends.length !== 1 ? "s" : ""}
+            {t('overview.productCount', { count: trends.length })}
           </Text>
         </Stack>
 
@@ -70,7 +73,7 @@ export function CategoryColumn({
         {trends.length === 0 ? (
           <Paper p="xl" withBorder>
             <Text size="sm" c="dimmed" ta="center">
-              No hay tendencias en esta categoría
+              {t('overview.noTrendsInCategory')}
             </Text>
           </Paper>
         ) : (

@@ -1,24 +1,26 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { COUNTRIES, type SiteId } from '@/utils/constants';
 
 interface GenerateMetadataProps {
-  params: Promise<{ country: string }>;
+  params: Promise<{ locale: string; country: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: GenerateMetadataProps): Promise<Metadata> {
-  const { country } = await params;
+  const { locale, country } = await params;
+  const t = await getTranslations({ locale, namespace: 'trends' });
   const countryData = COUNTRIES[country as SiteId];
 
   if (!countryData) {
     return {
-      title: 'País no encontrado',
+      title: t('countryNotFound'),
     };
   }
 
-  const title = `Tendencias en ${countryData.name} ${countryData.flag}`;
-  const description = `Descubre los 50 productos más buscados y vendidos en MercadoLibre ${countryData.name}. Trends actualizados semanalmente.`;
+  const title = `${t('trendsIn')} ${countryData.name} ${countryData.flag}`;
+  const description = t('countryDescription', { country: countryData.name });
 
   return {
     title,
@@ -32,7 +34,7 @@ export async function generateMetadata({
           url: `/og-${country}.png`,
           width: 1200,
           height: 630,
-          alt: `Trends de ${countryData.name}`,
+          alt: t('countryImageAlt', { country: countryData.name }),
         },
       ],
     },

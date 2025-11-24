@@ -1,25 +1,32 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Ayuda e Información',
-  description:
-    'Aprende cómo funcionan los trends de MercadoLibre y cómo usar esta información para tu negocio. Guía completa sobre métricas, estrategias y análisis de tendencias.',
-  openGraph: {
-    title: 'Ayuda e Información | MeLi Trends',
-    description:
-      'Guía completa sobre trends de MercadoLibre: tipos de métricas, estrategias de negocio y análisis de productos populares.',
-    url: '/about',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Ayuda e Información | MeLi Trends',
-    description:
-      'Guía completa sobre trends de MercadoLibre y estrategias de e-commerce.',
-  },
-  alternates: {
-    canonical: '/about',
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'about.metadata' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    openGraph: {
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+      url: '/about',
+    },
+    twitter: {
+      card: 'summary',
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+    },
+    alternates: {
+      canonical: '/about',
+    },
+  };
+}
 
 export default function AboutLayout({
   children,
