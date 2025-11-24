@@ -5,25 +5,14 @@ import { Box, Image, Transition } from "@mantine/core";
 import { toastySlide } from "@/lib/transitions";
 
 // Configuration constants for easy tuning
-const KONAMI_CODE = [
-  "ArrowUp",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowLeft",
-  "ArrowRight",
-  "b",
-  "a",
-];
+const KONAMI_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown"];
 const SOUND_DELAY_MS = 200; // Adjust to sync sound with animation
 const ANIMATION_DURATION_MS = 2500; // Total time before auto-dismiss
 const IMAGE_SIZE = 200; // Width and height of the toasty image
 
 /**
  * Easter egg component that displays "Toasty" animation and sound
- * Triggered by Konami code: ↑↑↓↓←→←→BA
+ * Triggered by sequence: ↑↑↓↓
  */
 export function KonamiEasterEgg() {
   const [showToasty, setShowToasty] = useState(false);

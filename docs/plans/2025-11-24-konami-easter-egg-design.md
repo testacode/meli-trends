@@ -1,16 +1,19 @@
-# Konami Easter Egg Design
+# Easter Egg Design
 
 **Date**: 2025-11-24
 **Status**: Implemented (Desktop Only)
 **Feature**: "Toasty" Easter Egg (Mortal Kombat homage)
-**Trigger**: Konami code (desktop keyboards)
+**Trigger**: Simplified sequence ↑↑↓↓ (desktop keyboards)
 **Note**: Mobile shake detection removed due to iOS 13+ permission complexity (2025-11-24)
+**Simplification**: Sequence simplified from full Konami code to ↑↑↓↓ (2025-11-24)
 
 ## Overview
 
-This design implements a fun easter egg that displays the "Toasty" animation and sound from Mortal Kombat games when users discover the hidden trigger. The feature works on desktop via Konami code keyboard input.
+This design implements a fun easter egg that displays the "Toasty" animation and sound from Mortal Kombat games when users discover the hidden trigger. The feature works on desktop via simplified keyboard sequence.
 
-**Update (2025-11-24)**: Mobile shake detection was removed to keep implementation simple. iOS 13+ requires explicit user permission via button interaction, adding unnecessary complexity for an easter egg feature.
+**Updates**:
+- **Mobile removal (2025-11-24)**: Mobile shake detection was removed to keep implementation simple. iOS 13+ requires explicit user permission via button interaction, adding unnecessary complexity for an easter egg feature.
+- **Sequence simplification (2025-11-24)**: Simplified from full Konami code (↑↑↓↓←→←→BA) to just ↑↑↓↓ for better user experience and easier discovery.
 
 ## Goals
 
@@ -25,7 +28,7 @@ This design implements a fun easter egg that displays the "Toasty" animation and
 ## User Behavior
 
 ### Activation
-1. User types the Konami code on keyboard: ↑ ↑ ↓ ↓ ← → ← → B A
+1. User types the sequence on keyboard: ↑ ↑ ↓ ↓
 2. "Toasty" image slides in from bottom-right corner
 3. Sound plays (after 200ms delay for sync)
 4. Animation auto-dismisses after 2.5 seconds
@@ -62,9 +65,7 @@ public/
 
 **Configurable constants:**
 ```typescript
-const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-                     'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-                     'b', 'a'];
+const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
 const SOUND_DELAY_MS = 200;        // Tune for audio/animation sync
 const ANIMATION_DURATION_MS = 2500; // Total display time
 const IMAGE_SIZE = 200;             // Width/height in pixels
@@ -72,15 +73,14 @@ const IMAGE_SIZE = 200;             // Width/height in pixels
 
 **State management:**
 - `showToasty` (boolean): Controls visibility of animation
-- `keySequence` (string[]): Tracks last 10 keypresses for Konami code detection
+- `keySequence` (string[]): Tracks last 4 keypresses for sequence detection
 - `audioRef` (ref): Audio instance (prevents re-renders)
 - `dismissTimeoutRef` (ref): Cleanup timeout reference
 
 **Effects separation (following React best practices):**
 1. **Audio initialization effect**: Creates Audio instance once on mount
-2. **Keyboard listener effect**: Detects Konami code sequence
-3. **Shake detection**: Uses custom hook (composition pattern)
-4. **Toasty display effect**: Handles sound playback + auto-dismiss
+2. **Keyboard listener effect**: Detects arrow key sequence
+3. **Toasty display effect**: Handles sound playback + auto-dismiss
 
 #### 2. Shake Detection Hook (`useShakeDetection.ts`)
 
@@ -168,10 +168,9 @@ export const toastySlide: MantineTransition = {
 ### Component Tests (`KonamiEasterEgg.test.tsx`)
 
 **Coverage areas:**
-1. **Konami code detection**
+1. **Sequence detection**
    - Correct sequence triggers toasty
    - Incorrect sequence doesn't trigger
-   - Case-insensitive B/A keys
    - Sequence reset after trigger
    - Can trigger multiple times
 
@@ -191,8 +190,8 @@ export const toastySlide: MantineTransition = {
    - No pointer events blocking
 
 5. **Edge cases**
-   - Rapid konami code inputs
-   - Long key sequences before code (memory trimming)
+   - Rapid sequence inputs
+   - Long key sequences before trigger (memory trimming)
 
 **Mocking strategy:**
 - Mock `Audio` constructor and methods (not available in jsdom)
@@ -285,7 +284,6 @@ export const toastySlide: MantineTransition = {
 1. **Audio autoplay blocked**: Component still shows animation, sound fails silently
 2. **Rapid triggers**: Sequence reset prevents spam, cleanup prevents memory leaks
 3. **Component unmount during animation**: Proper cleanup of timeouts and audio
-4. **Case-insensitive input**: Both 'B'/'b' and 'A'/'a' work for Konami code
 
 ### Known Limitations
 
@@ -307,7 +305,7 @@ These features were considered but excluded following YAGNI principle:
 ## Success Criteria
 
 ✅ **Functionality:**
-- Triggers on Konami code (keyboard input)
+- Triggers on ↑↑↓↓ sequence (keyboard input)
 - Plays sound and animation correctly
 - Auto-dismisses after timeout
 - Works on any device with keyboard
@@ -347,7 +345,27 @@ These features were considered but excluded following YAGNI principle:
 - **Cost**: Add permission UI, handle denials, explain iOS Settings, increase code complexity
 
 **Conclusion:**
-For an easter egg feature, the added complexity isn't worth it. Desktop Konami code provides the core experience without permission flows or mobile-specific code.
+For an easter egg feature, the added complexity isn't worth it. Desktop keyboard sequence provides the core experience without permission flows or mobile-specific code.
+
+## Design Decision: Simplifying the Sequence
+
+**Date**: 2025-11-24
+**Decision**: Simplify sequence from full Konami code (↑↑↓↓←→←→BA) to ↑↑↓↓
+**Reason**: Better UX and easier discovery
+
+### Why Sequence Was Simplified
+
+**The Problem:**
+- Full Konami code (10 keys) is too long and hard to discover
+- Letters B and A at the end are less intuitive on modern keyboards
+- Many users may not know the complete Konami code sequence
+
+**The Tradeoff:**
+- **Benefit**: Easier to discover, faster to type, more accessible
+- **Cost**: Loses some nostalgia factor of the complete Konami code
+
+**Conclusion:**
+For better user experience, a simplified 4-key sequence (↑↑↓↓) is more accessible while still being fun and hidden enough to be a surprise.
 
 ### Files Kept
 
@@ -362,5 +380,5 @@ These can be reintroduced if permission flow is added in the future.
 - [MDN: DeviceMotionEvent](https://developer.mozilla.org/en-US/docs/Web/API/DeviceMotionEvent)
 - [MDN: HTMLAudioElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement)
 - [Mantine: Transition Component](https://mantine.dev/core/transition/)
-- [Konami Code Wikipedia](https://en.wikipedia.org/wiki/Konami_Code)
+- [Konami Code Wikipedia](https://en.wikipedia.org/wiki/Konami_Code) (inspiration for simplified sequence)
 - [iOS 13+ DeviceMotion Permissions](https://dev.to/li/how-to-requestpermission-for-devicemotion-and-deviceorientation-events-in-ios-13-46g2)
