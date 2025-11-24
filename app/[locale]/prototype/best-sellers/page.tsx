@@ -163,11 +163,15 @@ export default function BestSellersPrototypePage() {
           </Card>
         )}
 
-        {isLoading && <ListSkeleton count={20} />}
+        {isLoading && <ListSkeleton />}
 
         {error && !error.message.includes("CloudFront blocking") && (
           <ErrorState
-            message={error.message}
+            error={{
+              message: error.message,
+              error: error.message,
+              status: 500,
+            }}
             onRetry={() => {
               // Query will auto-retry
             }}
@@ -186,7 +190,7 @@ export default function BestSellersPrototypePage() {
                     </Group>
                   </Title>
                   <Text size="sm" c="dimmed" mt={4}>
-                    {t("resultsCount", { count: data.content.length })}
+                    {data.content.length} productos más vendidos
                   </Text>
                 </div>
                 <Badge size="lg" variant="light" color="blue">

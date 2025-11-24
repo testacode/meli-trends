@@ -45,11 +45,11 @@ export function useBestSellers({
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
 
         // Check for CloudFront blocking
         if (response.status === 403 && errorData.error?.includes("CloudFront")) {
-          logger.error("🔴 CloudFront blocking detected on Highlights API", {
+          logger.error("🔴 CloudFront blocking detected on Highlights API", undefined, {
             status: 403,
             headers: errorData.headers,
           });
@@ -58,14 +58,13 @@ export function useBestSellers({
           );
         }
 
-        logger.error("Failed to fetch best sellers", {
+        logger.error("Failed to fetch best sellers", undefined, {
           status: response.status,
           error: errorData,
         });
 
-        throw new Error(
-          errorData.error || `Failed to fetch best sellers: ${response.status}`
-        );
+        const errorMessage = errorData.error || errorData.message || `Failed to fetch best sellers: ${response.status}`;
+        throw new Error(errorMessage);
       }
 
       const data: HighlightsResponse = await response.json();

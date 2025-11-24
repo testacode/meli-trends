@@ -36,11 +36,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const tokenResponse = await fetch(tokenUrl);
 
     if (!tokenResponse.ok) {
-      logger.error("Failed to get OAuth token", {
+      logger.error("Failed to get OAuth token", undefined, {
         status: tokenResponse.status,
       });
       return NextResponse.json(
-        { error: "Failed to authenticate with MercadoLibre" },
+        {
+          error: "Failed to authenticate with MercadoLibre",
+          message: "Failed to authenticate with MercadoLibre",
+        },
         { status: 500 }
       );
     }
@@ -74,7 +77,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       highlightsResponse.status === 403 &&
       (xCache?.includes("cloudfront") || xCache?.includes("Error"))
     ) {
-      logger.error("🔴 CLOUDFRONT BLOCKING DETECTED", {
+      logger.error("🔴 CLOUDFRONT BLOCKING DETECTED", undefined, {
         status: 403,
         "x-cache": xCache,
         "cf-ray": cfRay,
@@ -98,14 +101,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (!highlightsResponse.ok) {
       const errorText = await highlightsResponse.text();
-      logger.error("Highlights API error", {
+      logger.error("Highlights API error", undefined, {
         status: highlightsResponse.status,
         error: errorText,
       });
       return NextResponse.json(
         {
           error: "Failed to fetch highlights from MercadoLibre",
-          status: highlightsResponse.status,
+          message: "Failed to fetch highlights from MercadoLibre",
           details: errorText,
         },
         { status: highlightsResponse.status }
@@ -137,11 +140,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       }
     );
   } catch (error) {
-    logger.error("Unexpected error fetching highlights", error, timer.end());
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorObj = error instanceof Error ? error : new Error(errorMessage);
+    logger.error("Unexpected error fetching highlights", errorObj, timer.end());
     return NextResponse.json(
       {
         error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: "Internal server error",
+        details: errorMessage,
       },
       { status: 500 }
     );
