@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // Metadata is now in [locale]/layout.tsx since it needs to be localized
@@ -17,7 +18,10 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
-      <body>{children}</body>
+      <body>
+          {children}
+          <Analytics />
+        </body>
     </html>
   );
 }
