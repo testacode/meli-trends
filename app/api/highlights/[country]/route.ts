@@ -27,11 +27,11 @@ export async function GET(
 
   try {
     // Get OAuth token
-    const origin =
-      process.env.VERCEL_URL || process.env.NEXT_PUBLIC_REDIRECT_URI || "";
-    const tokenUrl = origin.startsWith("http")
-      ? `${origin}/api/token`
-      : `http://${origin}/api/token`;
+    const requestUrl = new URL(request.url);
+    const origin = `${requestUrl.protocol}//${requestUrl.host}`;
+    const tokenUrl = `${origin}/api/token`;
+
+    logger.info(`Fetching token from: ${tokenUrl}`);
 
     const tokenResponse = await fetch(tokenUrl);
 
