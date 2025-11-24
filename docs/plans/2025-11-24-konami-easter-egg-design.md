@@ -29,11 +29,13 @@ This design implements a fun easter egg that displays the "Toasty" animation and
 
 ### Activation
 1. User types the sequence on keyboard: ↑ ↑ ↓ ↓
-2. "Toasty" image slides in from bottom-right corner
+2. "Toasty" image slides in quickly from bottom-right corner (200ms)
 3. Sound plays (after 200ms delay for sync)
-4. Animation auto-dismisses after 1.5 seconds
-5. Can be triggered unlimited times
-6. Works on any device with physical or virtual keyboard
+4. Image stays visible for 700ms
+5. Image slides out even faster (150ms)
+6. Total duration: ~1050ms (1 second)
+7. Can be triggered unlimited times
+8. Works on any device with physical or virtual keyboard
 
 ## Technical Implementation
 
@@ -66,9 +68,11 @@ public/
 **Configurable constants:**
 ```typescript
 const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
+const ENTER_DURATION_MS = 200;     // How fast it enters (slide in)
+const VISIBLE_DURATION_MS = 700;   // How long it stays on screen
+const EXIT_DURATION_MS = 150;      // How fast it exits (faster than enter)
 const SOUND_DELAY_MS = 200;        // Tune for audio/animation sync
-const ANIMATION_DURATION_MS = 1500; // Total display time
-const IMAGE_SIZE = 200;             // Width/height in pixels
+const IMAGE_SIZE = 200;            // Width/height in pixels
 ```
 
 **State management:**
@@ -145,9 +149,10 @@ export const toastySlide: MantineTransition = {
 ### Animation Sequence
 
 ```
-0-20% of duration:  Slide up from bottom-right (enter)
-20-80% of duration: Hold at visible position
-80-100% of duration: Slide down to bottom-right (exit)
+0-200ms:         Fast slide up from bottom-right (enter)
+200-900ms:       Hold at visible position (700ms)
+900-1050ms:      Very fast slide down to bottom-right (exit - 150ms)
+Total: ~1050ms (1 second)
 ```
 
 ### Positioning
@@ -160,6 +165,7 @@ export const toastySlide: MantineTransition = {
 ### Sound Timing
 
 - Delay: 200ms after animation starts (configurable via `SOUND_DELAY_MS`)
+- Plays as image finishes entering (synchronized with visibility)
 - Volume: 0.7 (70%)
 - Error handling: Silent fail if autoplay blocked by browser
 
@@ -175,7 +181,8 @@ export const toastySlide: MantineTransition = {
    - Can trigger multiple times
 
 2. **Auto-dismiss behavior**
-   - Disappears after `ANIMATION_DURATION_MS` (1500ms)
+   - Enters in 200ms, stays 700ms, exits in 150ms
+   - Total time: ~1050ms
    - Cleanup on unmount
 
 3. **Audio playback**
@@ -232,8 +239,10 @@ export const toastySlide: MantineTransition = {
 ### Adjustable Parameters
 
 **In `KonamiEasterEgg.tsx`:**
+- `ENTER_DURATION_MS`: Slide-in speed (default: 200ms)
+- `VISIBLE_DURATION_MS`: Time visible on screen (default: 700ms)
+- `EXIT_DURATION_MS`: Slide-out speed (default: 150ms - faster than enter)
 - `SOUND_DELAY_MS`: Sync sound with animation (default: 200ms)
-- `ANIMATION_DURATION_MS`: Total display time (default: 1500ms)
 - `IMAGE_SIZE`: Toasty image dimensions (default: 200px)
 
 **In `useShakeDetection.ts`:**

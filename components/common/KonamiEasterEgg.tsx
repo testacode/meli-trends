@@ -6,8 +6,10 @@ import { toastySlide } from "@/lib/transitions";
 
 // Configuration constants for easy tuning
 const KONAMI_CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown"];
+const ENTER_DURATION_MS = 200; // How fast it enters (slide in)
+const VISIBLE_DURATION_MS = 700; // How long it stays on screen
+const EXIT_DURATION_MS = 150; // How fast it exits (slide out - faster than enter)
 const SOUND_DELAY_MS = 200; // Adjust to sync sound with animation
-const ANIMATION_DURATION_MS = 1000; // Total time before auto-dismiss
 const IMAGE_SIZE = 200; // Width and height of the toasty image
 
 /**
@@ -76,10 +78,10 @@ export function KonamiEasterEgg() {
         });
       }, SOUND_DELAY_MS);
 
-      // Auto-dismiss after animation
+      // Auto-dismiss: wait for enter + visible time, then trigger exit
       dismissTimeoutRef.current = setTimeout(() => {
         setShowToasty(false);
-      }, ANIMATION_DURATION_MS);
+      }, ENTER_DURATION_MS + VISIBLE_DURATION_MS);
 
       return () => {
         clearTimeout(soundTimeout);
@@ -94,7 +96,8 @@ export function KonamiEasterEgg() {
     <Transition
       mounted={showToasty}
       transition={toastySlide}
-      duration={ANIMATION_DURATION_MS}
+      duration={ENTER_DURATION_MS}
+      exitDuration={EXIT_DURATION_MS}
       timingFunction="ease-out"
     >
       {(styles) => (
