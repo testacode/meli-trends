@@ -22,14 +22,14 @@ export default function TrendsPage() {
   const country = params.country as SiteId;
   const selectedCategory = searchParams.get('category');
 
-  // View mode state - initialize with saved value
-  const [viewMode] = useState<ViewMode>(() => {
-    // This runs only once on mount
-    if (typeof window !== 'undefined') {
-      return getViewMode();
-    }
-    return 'gallery';
-  });
+  // View mode state - always start with 'gallery' for SSR hydration
+  const [viewMode, setViewMode] = useState<ViewMode>('gallery');
+
+  // Load saved viewMode after hydration to avoid hydration mismatch
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Valid: Synchronizing with localStorage after hydration
+    setViewMode(getViewMode());
+  }, []);
 
   // Validate country
   const isValidCountry = country && country in COUNTRIES;
