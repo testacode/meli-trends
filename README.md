@@ -2,6 +2,11 @@
 
 > A modern, responsive web application for visualizing trending products from MercadoLibre across Latin America.
 
+[![CI](https://img.shields.io/github/actions/workflow/status/testacode/meli-trends/ci.yml?branch=master&label=CI&logo=github)](https://github.com/testacode/meli-trends/actions/workflows/ci.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/testacode/meli-trends/build.yml?branch=master&label=Build&logo=github)](https://github.com/testacode/meli-trends/actions/workflows/build.yml)
+[![codecov](https://codecov.io/gh/testacode/meli-trends/branch/master/graph/badge.svg)](https://codecov.io/gh/testacode/meli-trends)
+[![Vercel](https://vercelbadge.vercel.app/api/testacode/meli-trends)](https://meli-trends.vercel.app)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen?logo=node.js)](https://nodejs.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Mantine](https://img.shields.io/badge/Mantine-8-339af0)](https://mantine.dev/)
