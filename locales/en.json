@@ -225,6 +225,56 @@
         "cameras": "Cameras & Accessories"
       }
     },
+    "apiTechnicalDetails": {
+      "title": "API Technical Details",
+      "description": "Official information about how MercadoLibre calculates and updates trends:",
+      "updateFrequency": {
+        "title": "Update Frequency",
+        "description": "Trends are updated {frequency} by MercadoLibre. This information is available for 7 Latin American countries.",
+        "frequency": "weekly"
+      },
+      "calculationMethod": {
+        "title": "Calculation Methodology",
+        "fastestGrowing": {
+          "label": "Fastest-Growing",
+          "description": "Calculated by comparing the {period}. Shows products with the highest revenue increase.",
+          "period": "last 2 weeks"
+        },
+        "mostWanted": {
+          "label": "Most Wanted",
+          "description": "Calculated with data from {period}. Shows products with the highest search volume.",
+          "period": "the last week"
+        },
+        "mostPopular": {
+          "label": "Most Popular",
+          "description": "Calculated by comparing {period}. Shows products with the highest increase in search volume.",
+          "period": "the last week vs 2 weeks ago"
+        }
+      },
+      "dataStructure": {
+        "title": "Data Structure",
+        "description": "The API returns the {count} most searched products. Each element contains:",
+        "count": "50",
+        "keyword": "{field}: Term or product that users have searched for",
+        "url": "{field}: Link to related search results",
+        "keywordField": "keyword",
+        "urlField": "url"
+      },
+      "endpoints": {
+        "title": "API Endpoints",
+        "general": "General trends: {endpoint}",
+        "generalEndpoint": "GET /trends/{SITE_ID}",
+        "category": "By category: {endpoint}",
+        "categoryEndpoint": "GET /trends/{SITE_ID}/{CATEGORY_ID}",
+        "example": "Example for Argentina: {endpoint}",
+        "exampleEndpoint": "GET /trends/MLA"
+      },
+      "authentication": {
+        "title": "Authentication",
+        "description": "The Trends API requires {auth}. Our application handles authentication securely on the server.",
+        "auth": "OAuth 2.0"
+      }
+    },
     "faq": {
       "title": "Frequently Asked Questions",
       "updateFrequency": {

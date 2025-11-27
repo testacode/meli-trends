@@ -27,6 +27,11 @@ import {
   IconCategory,
   IconWorld,
   IconExternalLink,
+  IconCode,
+  IconClock,
+  IconDatabase,
+  IconApi,
+  IconLock,
 } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { AppShell } from "@mantine/core";
@@ -296,6 +301,166 @@ export default function AboutPage() {
                 </Text>
               </Paper>
             </Box>
+
+            {/* API Technical Details Section */}
+            <Paper shadow="xs" p="xl" radius="md" withBorder>
+              <Group mb="md">
+                <ThemeIcon size="lg" radius="md" variant="light" color="violet">
+                  <IconCode size={24} />
+                </ThemeIcon>
+                <Title order={2}>🔧 {t('about.apiTechnicalDetails.title')}</Title>
+              </Group>
+
+              <Text size="md" mb="lg" c="dimmed">
+                {t('about.apiTechnicalDetails.description')}
+              </Text>
+
+              <Stack gap="lg">
+                {/* Update Frequency */}
+                <Box>
+                  <Group gap="xs" mb="xs">
+                    <ThemeIcon size="sm" radius="md" variant="light" color="blue">
+                      <IconClock size={14} />
+                    </ThemeIcon>
+                    <Title order={4}>{t('about.apiTechnicalDetails.updateFrequency.title')}</Title>
+                  </Group>
+                  <Text size="sm" c="dimmed">
+                    {t.rich('about.apiTechnicalDetails.updateFrequency.description', {
+                      frequency: (chunks) => <strong>{chunks}</strong>
+                    })}
+                  </Text>
+                </Box>
+
+                {/* Calculation Method */}
+                <Box>
+                  <Group gap="xs" mb="sm">
+                    <ThemeIcon size="sm" radius="md" variant="light" color="orange">
+                      <IconChartLine size={14} />
+                    </ThemeIcon>
+                    <Title order={4}>{t('about.apiTechnicalDetails.calculationMethod.title')}</Title>
+                  </Group>
+                  <Stack gap="xs">
+                    <Paper p="sm" radius="sm" withBorder>
+                      <Badge color="red" variant="light" mb="xs">
+                        {t('about.apiTechnicalDetails.calculationMethod.fastestGrowing.label')}
+                      </Badge>
+                      <Text size="sm" c="dimmed">
+                        {t.rich('about.apiTechnicalDetails.calculationMethod.fastestGrowing.description', {
+                          period: (chunks) => <strong>{chunks}</strong>
+                        })}
+                      </Text>
+                    </Paper>
+                    <Paper p="sm" radius="sm" withBorder>
+                      <Badge color="blue" variant="light" mb="xs">
+                        {t('about.apiTechnicalDetails.calculationMethod.mostWanted.label')}
+                      </Badge>
+                      <Text size="sm" c="dimmed">
+                        {t.rich('about.apiTechnicalDetails.calculationMethod.mostWanted.description', {
+                          period: (chunks) => <strong>{chunks}</strong>
+                        })}
+                      </Text>
+                    </Paper>
+                    <Paper p="sm" radius="sm" withBorder>
+                      <Badge color="green" variant="light" mb="xs">
+                        {t('about.apiTechnicalDetails.calculationMethod.mostPopular.label')}
+                      </Badge>
+                      <Text size="sm" c="dimmed">
+                        {t.rich('about.apiTechnicalDetails.calculationMethod.mostPopular.description', {
+                          period: (chunks) => <strong>{chunks}</strong>
+                        })}
+                      </Text>
+                    </Paper>
+                  </Stack>
+                </Box>
+
+                {/* Data Structure */}
+                <Box>
+                  <Group gap="xs" mb="xs">
+                    <ThemeIcon size="sm" radius="md" variant="light" color="teal">
+                      <IconDatabase size={14} />
+                    </ThemeIcon>
+                    <Title order={4}>{t('about.apiTechnicalDetails.dataStructure.title')}</Title>
+                  </Group>
+                  <Text size="sm" c="dimmed" mb="xs">
+                    {t.rich('about.apiTechnicalDetails.dataStructure.description', {
+                      count: (chunks) => <strong>{chunks}</strong>
+                    })}
+                  </Text>
+                  <List size="sm" spacing="xs">
+                    <List.Item>
+                      <Text component="span" ff="monospace" size="sm" c="violet">
+                        {t('about.apiTechnicalDetails.dataStructure.keywordField')}
+                      </Text>
+                      {t.rich('about.apiTechnicalDetails.dataStructure.keyword', {
+                        field: () => ':'
+                      })}
+                    </List.Item>
+                    <List.Item>
+                      <Text component="span" ff="monospace" size="sm" c="violet">
+                        {t('about.apiTechnicalDetails.dataStructure.urlField')}
+                      </Text>
+                      {t.rich('about.apiTechnicalDetails.dataStructure.url', {
+                        field: () => ':'
+                      })}
+                    </List.Item>
+                  </List>
+                </Box>
+
+                {/* API Endpoints */}
+                <Box>
+                  <Group gap="xs" mb="xs">
+                    <ThemeIcon size="sm" radius="md" variant="light" color="pink">
+                      <IconApi size={14} />
+                    </ThemeIcon>
+                    <Title order={4}>{t('about.apiTechnicalDetails.endpoints.title')}</Title>
+                  </Group>
+                  <Stack gap="xs">
+                    <Text size="sm" c="dimmed">
+                      • {t.rich('about.apiTechnicalDetails.endpoints.general', {
+                        endpoint: () => (
+                          <Text component="span" ff="monospace" size="sm" c="meliBlue">
+                            {t('about.apiTechnicalDetails.endpoints.generalEndpoint')}
+                          </Text>
+                        )
+                      })}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      • {t.rich('about.apiTechnicalDetails.endpoints.category', {
+                        endpoint: () => (
+                          <Text component="span" ff="monospace" size="sm" c="meliBlue">
+                            {t('about.apiTechnicalDetails.endpoints.categoryEndpoint')}
+                          </Text>
+                        )
+                      })}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      • {t.rich('about.apiTechnicalDetails.endpoints.example', {
+                        endpoint: () => (
+                          <Text component="span" ff="monospace" size="sm" c="meliBlue">
+                            {t('about.apiTechnicalDetails.endpoints.exampleEndpoint')}
+                          </Text>
+                        )
+                      })}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                {/* Authentication */}
+                <Box>
+                  <Group gap="xs" mb="xs">
+                    <ThemeIcon size="sm" radius="md" variant="light" color="gray">
+                      <IconLock size={14} />
+                    </ThemeIcon>
+                    <Title order={4}>{t('about.apiTechnicalDetails.authentication.title')}</Title>
+                  </Group>
+                  <Text size="sm" c="dimmed">
+                    {t.rich('about.apiTechnicalDetails.authentication.description', {
+                      auth: (chunks) => <strong>{chunks}</strong>
+                    })}
+                  </Text>
+                </Box>
+              </Stack>
+            </Paper>
 
             {/* FAQ Section */}
             <Box>

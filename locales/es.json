@@ -225,6 +225,56 @@
         "cameras": "Cámaras y Accesorios"
       }
     },
+    "apiTechnicalDetails": {
+      "title": "Detalles Técnicos de la API",
+      "description": "Información oficial sobre cómo MercadoLibre calcula y actualiza los trends:",
+      "updateFrequency": {
+        "title": "Frecuencia de Actualización",
+        "description": "Los trends se actualizan {frequency} por MercadoLibre. La información está disponible para 7 países de Latinoamérica.",
+        "frequency": "semanalmente"
+      },
+      "calculationMethod": {
+        "title": "Metodología de Cálculo",
+        "fastestGrowing": {
+          "label": "Fastest-Growing (Mayor Crecimiento)",
+          "description": "Se calcula comparando las {period}. Muestra productos con el mayor aumento de revenue.",
+          "period": "últimas 2 semanas"
+        },
+        "mostWanted": {
+          "label": "Most Wanted (Más Buscados)",
+          "description": "Se calcula con los datos de {period}. Muestra productos con el mayor volumen de búsquedas.",
+          "period": "la última semana"
+        },
+        "mostPopular": {
+          "label": "Most Popular (Más Populares)",
+          "description": "Se calcula comparando {period}. Muestra productos con el mayor aumento en volumen de búsquedas.",
+          "period": "la última semana vs hace 2 semanas"
+        }
+      },
+      "dataStructure": {
+        "title": "Estructura de Datos",
+        "description": "La API devuelve los {count} productos más buscados. Cada elemento contiene:",
+        "count": "50",
+        "keyword": "{field}: Término o producto que los usuarios han buscado",
+        "url": "{field}: Enlace a los resultados de búsqueda relacionados",
+        "keywordField": "keyword",
+        "urlField": "url"
+      },
+      "endpoints": {
+        "title": "Endpoints de la API",
+        "general": "Trends generales: {endpoint}",
+        "generalEndpoint": "GET /trends/{SITE_ID}",
+        "category": "Por categoría: {endpoint}",
+        "categoryEndpoint": "GET /trends/{SITE_ID}/{CATEGORY_ID}",
+        "example": "Ejemplo para Argentina: {endpoint}",
+        "exampleEndpoint": "GET /trends/MLA"
+      },
+      "authentication": {
+        "title": "Autenticación",
+        "description": "La API de Trends requiere {auth}. Nuestra aplicación maneja la autenticación de forma segura en el servidor.",
+        "auth": "OAuth 2.0"
+      }
+    },
     "faq": {
       "title": "Preguntas Frecuentes",
       "updateFrequency": {
